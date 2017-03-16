@@ -27,7 +27,7 @@ void CreateShaders()
 	//create vertex shader
 	ID3DBlob* pVS = nullptr;
 	D3DCompileFromFile(
-		L"vertexShader.hlsl", // filename
+		L"Shaders/vertexShader.hlsl", // filename
 		nullptr,		// optional macros
 		nullptr,		// optional include files
 		"VS_main",		// entry point
@@ -54,7 +54,7 @@ void CreateShaders()
 	//create pixel shader
 	ID3DBlob* pPS = nullptr;
 	D3DCompileFromFile(
-		L"pixelShader.hlsl", // filename
+		L"Shaders/pixelShader.hlsl", // filename
 		nullptr,		// optional macros
 		nullptr,		// optional include files
 		"PS_main",		// entry point
