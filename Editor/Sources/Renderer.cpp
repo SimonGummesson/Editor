@@ -1,7 +1,9 @@
 #include "../Headers/Renderer.hpp"
 
-Renderer::Renderer(HWND wndHandle)
+Renderer::Renderer(HWND wndHandle, int width, int height)
 {
+	this->width = width;
+	this->height = height;
 	// create a struct to hold information about the swap chain
 	DXGI_SWAP_CHAIN_DESC scd;
 
@@ -48,6 +50,15 @@ Renderer::Renderer(HWND wndHandle)
 	this->clearColor[1] = 0;
 	this->clearColor[2] = 0;
 	this->clearColor[3] = 1;
+
+	D3D11_VIEWPORT vp;
+	vp.Width = (float)width;
+	vp.Height = (float)height;
+	vp.MinDepth = 0.0f;
+	vp.MaxDepth = 1.0f;
+	vp.TopLeftX = 0;
+	vp.TopLeftY = 0;
+	this->deviceContext->RSSetViewports(1, &vp);
 }
 
 void Renderer::drawFrame()

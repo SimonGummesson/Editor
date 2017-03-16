@@ -11,22 +11,10 @@
 #include "../Headers/Object.hpp"
 #include "../Headers/structs.hpp"
 
+
+
 HWND InitWindow(HINSTANCE hInstance);
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
-
-
-void SetViewport(Renderer &renderer)
-{
-	D3D11_VIEWPORT vp;
-	vp.Width = (float)640;
-	vp.Height = (float)480;
-	vp.MinDepth = 0.0f;
-	vp.MaxDepth = 1.0f;
-	vp.TopLeftX = 0;
-	vp.TopLeftY = 0;
-	renderer.getDeviceContext()->RSSetViewports(1, &vp);
-}
-
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
 {
@@ -34,15 +22,13 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	freopen("conin$", "r", stdin);
 	freopen("conout$", "w", stdout);
 	freopen("conout$", "w", stderr);
-	printf("Debugging Window:\n");
+
 	MSG msg = { 0 };
-	HWND wndHandle = InitWindow(hInstance); //1. Skapa fönster
+	HWND wndHandle = InitWindow(hInstance);
 	
-	Renderer renderer(wndHandle);
+	Renderer renderer(wndHandle, 1280, 1024);
 	if (wndHandle)
 	{
-		SetViewport(renderer); //3. Sätt viewport
-		
 		// Create standard pass
 		Pass *forwardPass = new Pass();
 		forwardPass->setVertexShaderAndLayout(*renderer.getDevice(), L"Shaders/vertexShader.hlsl");
@@ -91,16 +77,16 @@ HWND InitWindow(HINSTANCE hInstance)
 	wcex.style = CS_HREDRAW | CS_VREDRAW;
 	wcex.lpfnWndProc = WndProc;
 	wcex.hInstance = hInstance;
-	wcex.lpszClassName = L"BTH_D3D_DEMO";
+	wcex.lpszClassName = L"Editor";
 	if (!RegisterClassEx(&wcex))
 		return false;
 
-	RECT rc = { 0, 0, 640, 480 };
+	RECT rc = { 0, 0, 1280, 1024 };
 	AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, FALSE);
 
 	HWND handle = CreateWindow(
-		L"BTH_D3D_DEMO",
-		L"BTH Direct3D Demo",
+		L"Editor",
+		L"Editor",
 		WS_OVERLAPPEDWINDOW,
 		CW_USEDEFAULT,
 		CW_USEDEFAULT,

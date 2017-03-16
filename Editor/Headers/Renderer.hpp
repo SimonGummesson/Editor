@@ -13,10 +13,12 @@ private:
 	ID3D11DeviceContext* deviceContext;
 	ID3D11RenderTargetView* backBufferRTV;
 
+	int width;
+	int height;
 	float clearColor[4];
 	std::vector<Pass*> passes;
 public:
-	Renderer(HWND wndHandle);
+	Renderer(HWND wndHandle, int width, int height);
 	void drawFrame();
 	void addPass(Pass* pass);
 	IDXGISwapChain* getSwapChain();
