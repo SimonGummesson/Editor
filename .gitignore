@@ -1,7 +1,7 @@
 Debug/
 Release/
-LS/Debug/
-LS/Release/
+Editor/Debug/
+Editor/Release/
 *.VC.db
 *.VC.opendb
 *.vcxproj.filters
@@ -18,9 +18,6 @@ LS/Release/
 *.VC.VC.opendb
 x64/
 x86/
-LS/x64/
-LS/x86/
-LS/build
-main
-
-LS/Resources/settings\.conf
+Editor/x64/
+Editor/x86/
+Editor/build
