@@ -6,15 +6,10 @@
 #pragma comment (lib, "d3d11.lib")
 #pragma comment (lib, "d3dcompiler.lib")
 
+#include "../Headers/Renderer.hpp"
+
 HWND InitWindow(HINSTANCE hInstance);
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
-
-HRESULT CreateDirect3DContext(HWND wndHandle);
-
-IDXGISwapChain* gSwapChain = nullptr;
-ID3D11Device* gDevice = nullptr;
-ID3D11DeviceContext* gDeviceContext = nullptr;
-ID3D11RenderTargetView* gBackbufferRTV = nullptr;
 
 ID3D11Buffer* gVertexBuffer = nullptr;
 
@@ -22,7 +17,7 @@ ID3D11InputLayout* gVertexLayout = nullptr;
 ID3D11VertexShader* gVertexShader = nullptr;
 ID3D11PixelShader* gPixelShader = nullptr;
 
-void CreateShaders()
+void CreateShaders(Renderer &renderer)
 {
 	//create vertex shader
 	ID3DBlob* pVS = nullptr;
@@ -40,14 +35,14 @@ void CreateShaders()
 						// https://msdn.microsoft.com/en-us/library/windows/desktop/hh968107(v=vs.85).aspx
 	);
 
-	gDevice->CreateVertexShader(pVS->GetBufferPointer(), pVS->GetBufferSize(), nullptr, &gVertexShader);
+	renderer.getDevice()->CreateVertexShader(pVS->GetBufferPointer(), pVS->GetBufferSize(), nullptr, &gVertexShader);
 
 	//create input layout (verified using vertex shader)
 	D3D11_INPUT_ELEMENT_DESC inputDesc[] = {
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
-	gDevice->CreateInputLayout(inputDesc, ARRAYSIZE(inputDesc), pVS->GetBufferPointer(), pVS->GetBufferSize(), &gVertexLayout);
+	renderer.getDevice()->CreateInputLayout(inputDesc, ARRAYSIZE(inputDesc), pVS->GetBufferPointer(), pVS->GetBufferSize(), &gVertexLayout);
 	// we do not need anymore this COM object, so we release it.
 	pVS->Release();
 
@@ -67,12 +62,12 @@ void CreateShaders()
 						// https://msdn.microsoft.com/en-us/library/windows/desktop/hh968107(v=vs.85).aspx
 	);
 
-	gDevice->CreatePixelShader(pPS->GetBufferPointer(), pPS->GetBufferSize(), nullptr, &gPixelShader);
+	renderer.getDevice()->CreatePixelShader(pPS->GetBufferPointer(), pPS->GetBufferSize(), nullptr, &gPixelShader);
 	// we do not need anymore this COM object, so we release it.
 	pPS->Release();
 }
 
-void CreateTriangleData()
+void CreateTriangleData(Renderer &renderer)
 {
 	struct TriangleVertex
 	{
@@ -100,10 +95,10 @@ void CreateTriangleData()
 
 	D3D11_SUBRESOURCE_DATA data;
 	data.pSysMem = triangleVertices;
-	gDevice->CreateBuffer(&bufferDesc, &data, &gVertexBuffer);
+	renderer.getDevice()->CreateBuffer(&bufferDesc, &data, &gVertexBuffer);
 }
 
-void SetViewport()
+void SetViewport(Renderer &renderer)
 {
 	D3D11_VIEWPORT vp;
 	vp.Width = (float)640;
@@ -112,30 +107,30 @@ void SetViewport()
 	vp.MaxDepth = 1.0f;
 	vp.TopLeftX = 0;
 	vp.TopLeftY = 0;
-	gDeviceContext->RSSetViewports(1, &vp);
+	renderer.getDeviceContext()->RSSetViewports(1, &vp);
 }
 
-void Render()
+void Render(Renderer &renderer)
 {
 	// clear the back buffer to a deep blue
 	float clearColor[] = { 0, 0, 0, 1 };
-	gDeviceContext->ClearRenderTargetView(gBackbufferRTV, clearColor);
+	renderer.getDeviceContext()->ClearRenderTargetView(renderer.getBackBufferRTV(), clearColor);
 
-	gDeviceContext->VSSetShader(gVertexShader, nullptr, 0);
-	gDeviceContext->HSSetShader(nullptr, nullptr, 0);
-	gDeviceContext->DSSetShader(nullptr, nullptr, 0);
-	gDeviceContext->GSSetShader(nullptr, nullptr, 0);
-	gDeviceContext->PSSetShader(gPixelShader, nullptr, 0);
+	renderer.getDeviceContext()->VSSetShader(gVertexShader, nullptr, 0);
+	renderer.getDeviceContext()->HSSetShader(nullptr, nullptr, 0);
+	renderer.getDeviceContext()->DSSetShader(nullptr, nullptr, 0);
+	renderer.getDeviceContext()->GSSetShader(nullptr, nullptr, 0);
+	renderer.getDeviceContext()->PSSetShader(gPixelShader, nullptr, 0);
 
 	UINT32 vertexSize = sizeof(float) * 6;
 	UINT32 offset = 0;
-	gDeviceContext->IASetVertexBuffers(0, 1, &gVertexBuffer, &vertexSize, &offset);
+	renderer.getDeviceContext()->IASetVertexBuffers(0, 1, &gVertexBuffer, &vertexSize, &offset);
 
-	gDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	gDeviceContext->IASetInputLayout(gVertexLayout);
+	renderer.getDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	renderer.getDeviceContext()->IASetInputLayout(gVertexLayout);
 
 
-	gDeviceContext->Draw(3, 0);
+	renderer.getDeviceContext()->Draw(3, 0);
 }
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
@@ -147,16 +142,15 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	printf("Debugging Window:\n");
 	MSG msg = { 0 };
 	HWND wndHandle = InitWindow(hInstance); //1. Skapa fönster
-
+	
+	Renderer renderer(wndHandle);
 	if (wndHandle)
 	{
-		CreateDirect3DContext(wndHandle); //2. Skapa och koppla SwapChain, Device och Device Context
+		SetViewport(renderer); //3. Sätt viewport
 
-		SetViewport(); //3. Sätt viewport
+		CreateShaders(renderer); //4. Skapa vertex- och pixel-shaders
 
-		CreateShaders(); //4. Skapa vertex- och pixel-shaders
-
-		CreateTriangleData(); //5. Definiera triangelvertiser, 6. Skapa vertex buffer, 7. Skapa input layout
+		CreateTriangleData(renderer); //5. Definiera triangelvertiser, 6. Skapa vertex buffer, 7. Skapa input layout
 
 		ShowWindow(wndHandle, nCmdShow);
 
@@ -169,9 +163,9 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 			}
 			else
 			{
-				Render(); //8. Rendera
+				Render(renderer); //8. Rendera
 
-				gSwapChain->Present(0, 0); //9. Växla front- och back-buffer
+				renderer.getSwapChain()->Present(0, 0); //9. Växla front- och back-buffer
 			}
 		}
 
@@ -181,10 +175,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		gVertexShader->Release();
 		gPixelShader->Release();
 
-		gBackbufferRTV->Release();
-		gSwapChain->Release();
-		gDevice->Release();
-		gDeviceContext->Release();
 		DestroyWindow(wndHandle);
 	}
 
@@ -231,50 +221,4 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	}
 
 	return DefWindowProc(hWnd, message, wParam, lParam);
-}
-
-HRESULT CreateDirect3DContext(HWND wndHandle)
-{
-	// create a struct to hold information about the swap chain
-	DXGI_SWAP_CHAIN_DESC scd;
-
-	// clear out the struct for use
-	ZeroMemory(&scd, sizeof(DXGI_SWAP_CHAIN_DESC));
-
-	// fill the swap chain description struct
-	scd.BufferCount = 1;                                    // one back buffer
-	scd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;     // use 32-bit color
-	scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;      // how swap chain is to be used
-	scd.OutputWindow = wndHandle;                           // the window to be used
-	scd.SampleDesc.Count = 4;                               // how many multisamples
-	scd.Windowed = TRUE;                                    // windowed/full-screen mode
-
-															// create a device, device context and swap chain using the information in the scd struct
-	HRESULT hr = D3D11CreateDeviceAndSwapChain(NULL,
-		D3D_DRIVER_TYPE_HARDWARE,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		D3D11_SDK_VERSION,
-		&scd,
-		&gSwapChain,
-		&gDevice,
-		NULL,
-		&gDeviceContext);
-
-	if (SUCCEEDED(hr))
-	{
-		// get the address of the back buffer
-		ID3D11Texture2D* pBackBuffer = nullptr;
-		gSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBackBuffer);
-
-		// use the back buffer address to create the render target
-		gDevice->CreateRenderTargetView(pBackBuffer, NULL, &gBackbufferRTV);
-		pBackBuffer->Release();
-
-		// set the render target as the back buffer
-		gDeviceContext->OMSetRenderTargets(1, &gBackbufferRTV, NULL);
-	}
-	return hr;
 }
