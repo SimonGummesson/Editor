@@ -43,6 +43,24 @@ Renderer::Renderer(HWND wndHandle)
 		// set the render target as the back buffer
 		deviceContext->OMSetRenderTargets(1, &backBufferRTV, NULL);
 	}
+
+	this->clearColor[0] = 0;
+	this->clearColor[1] = 0;
+	this->clearColor[2] = 0;
+	this->clearColor[3] = 1;
+}
+
+void Renderer::drawFrame()
+{
+	this->deviceContext->ClearRenderTargetView(this->backBufferRTV, this->clearColor);
+	for (unsigned int i = 0; i < passes.size(); i++)
+		passes[i]->drawPass(*deviceContext);
+	this->swapChain->Present(0, 0);
+}
+
+void Renderer::addPass(Pass *pass)
+{
+	this->passes.push_back(pass);
 }
 
 IDXGISwapChain * Renderer::getSwapChain()
@@ -67,6 +85,8 @@ ID3D11RenderTargetView * Renderer::getBackBufferRTV()
 
 Renderer::~Renderer()
 {
+	for (unsigned int i = 0; i < passes.size(); i++)
+		delete passes[i];
 	this->backBufferRTV->Release();
 	this->swapChain->Release();
 	this->device->Release();
