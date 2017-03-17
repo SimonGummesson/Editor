@@ -30,16 +30,16 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	if (wndHandle)
 	{
 		// Create standard pass
-		ColorPass *colorPass = new ColorPass();
-		colorPass->setVertexShaderAndLayout(*renderer.getDevice(), L"Shaders/vertexShader.hlsl");
-		colorPass->setPixelShader(*renderer.getDevice(), L"Shaders/pixelShader.hlsl");
+		ColorPass *colorPass = new ColorPass(*renderer.getDevice());
+		colorPass->setVertexShaderAndLayout(*renderer.getDevice(), L"Shaders/colorVertexShader.hlsl");
+		colorPass->setPixelShader(*renderer.getDevice(), L"Shaders/colorPixelShader.hlsl");
 
 		Object *triangle = new Object();
 
 		std::vector<Vertex> vertexes;
-		vertexes.push_back(Vertex(XMFLOAT3(-0.5f,  0.5f, 0.0f), XMFLOAT3(1.0f, 0.0f, 0.0f)));
-		vertexes.push_back(Vertex(XMFLOAT3( 0.5f, -0.5f, 0.0f), XMFLOAT3(0.0f, 1.0f, 0.0f)));
-		vertexes.push_back(Vertex(XMFLOAT3(-0.5f, -0.5f, 0.0f), XMFLOAT3(0.0f, 0.0f, 1.0f)));
+		vertexes.push_back(Vertex(DirectX::XMFLOAT3(-0.5f,  0.5f, 0.0f), DirectX::XMFLOAT3(1.0f, 0.0f, 0.0f)));
+		vertexes.push_back(Vertex(DirectX::XMFLOAT3( 0.5f, -0.5f, 0.0f), DirectX::XMFLOAT3(0.0f, 1.0f, 0.0f)));
+		vertexes.push_back(Vertex(DirectX::XMFLOAT3(-0.5f, -0.5f, 0.0f), DirectX::XMFLOAT3(0.0f, 0.0f, 1.0f)));
 		std::vector<unsigned int> indices;
 		triangle->setBuffers(renderer.getDevice(), vertexes, 0, sizeof(Vertex), indices);
 		
@@ -51,9 +51,12 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		vertexes[0].position = { -0.5f,  0.5f, 0.f };
 		vertexes[1].position = {  0.5f,  0.5f, 0.f };
 		vertexes[2].position = {  0.5f, -0.5f, 0.f };
-		vertexes[1].color = { 0.f,  0.f, 1.f };
+		vertexes[1].color = { 0.f, 0.f, 1.f };
 		vertexes[2].color = { 0.f, 1.f, 0.f };
 		triangle2->setBuffers(renderer.getDevice(), vertexes, 0, sizeof(Vertex), indices);
+		
+		triangle->translate(DirectX::XMVECTOR{ -0.2f, 0.f, 0.f });
+		triangle2->translate(DirectX::XMVECTOR{ 0.2f, 0.f, 0.f });
 
 		colorPass->addObject(triangle);
 		colorPass->addObject(triangle2);

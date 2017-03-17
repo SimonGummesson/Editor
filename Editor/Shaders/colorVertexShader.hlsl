@@ -1,3 +1,7 @@
+cbuffer modelMatrix : register(b0)
+{
+	matrix modelMatrix;
+};
 struct VS_IN
 {
 	float3 Pos : POSITION;
@@ -16,7 +20,7 @@ VS_OUT VS_main(VS_IN input)
 {
 	VS_OUT output = (VS_OUT)0;
 
-	output.Pos = float4(input.Pos, 1);
+	output.Pos = mul(float4(input.Pos, 1.0f), modelMatrix);
 	output.Color = input.Color;
 
 	return output;

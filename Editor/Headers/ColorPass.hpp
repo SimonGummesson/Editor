@@ -5,6 +5,7 @@
 #include <iostream>
 
 #include "Object.hpp"
+#include "structs.hpp"
 using namespace std;
 
 class ColorPass
@@ -14,7 +15,8 @@ public:
 	void setVertexShaderAndLayout(ID3D11Device &device, LPCWSTR path);
 	void setPixelShader(ID3D11Device &device, LPCWSTR path);
 	void addObject(Object *object);
-	ColorPass();
+	void updateBuffer(ID3D11DeviceContext &deviceContext, DirectX::XMMATRIX &worldMatrix);
+	ColorPass(ID3D11Device & device);
 	~ColorPass();
 private:
 	vector<Object*> objects;
@@ -24,4 +26,5 @@ private:
 	ID3D11DomainShader *domainShader;
 	ID3D11GeometryShader *geometryShader;
 	ID3D11PixelShader *pixelShader;
+	ID3D11Buffer* VSConstantBuffer;
 };

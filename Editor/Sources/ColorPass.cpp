@@ -11,8 +11,13 @@ void ColorPass::drawPass(ID3D11DeviceContext &deviceContext)
 	deviceContext.IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	deviceContext.IASetInputLayout(this->vertexLayout);
 
+	deviceContext.VSSetConstantBuffers(0, 1, &this->VSConstantBuffer);
+
 	for (unsigned int i = 0; i < this->objects.size(); i++)
+	{
+		this->updateBuffer(deviceContext, objects[i]->getWorldMatrix());
 		this->objects[i]->draw(deviceContext);
+	}
 }
 
 void ColorPass::setVertexShaderAndLayout(ID3D11Device & device, LPCWSTR path)
@@ -78,7 +83,22 @@ void ColorPass::addObject(Object *object)
 	this->objects.push_back(object);
 }
 
-ColorPass::ColorPass()
+void ColorPass::updateBuffer(ID3D11DeviceContext &deviceContext, DirectX::XMMATRIX &worldMatrix)
+{
+	HRESULT hr;
+	//	Disable GPU access to the constant buffer data.
+	D3D11_MAPPED_SUBRESOURCE mappedResource;
+	hr = deviceContext.Map(this->VSConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	if FAILED(hr)
+		cout << "Failed to disable gpu access to gConstantBuffer." << endl;
+	//	Update the constant buffer here.
+	VS_COLORPASS_CONSTANT_BUFFER* dataptr = (VS_COLORPASS_CONSTANT_BUFFER*)mappedResource.pData;
+	dataptr->worldMatrix = XMMatrixTranspose(worldMatrix);
+	//	Reenable GPU access to the constant buffer data.
+	deviceContext.Unmap(this->VSConstantBuffer, 0);
+}
+
+ColorPass::ColorPass(ID3D11Device & device)
 {
 	for (unsigned int i = 0; i < objects.size(); i++)
 		objects.erase(objects.begin() + i);
@@ -88,6 +108,22 @@ ColorPass::ColorPass()
 	this->domainShader = nullptr;
 	this->geometryShader = nullptr;
 	this->pixelShader = nullptr;
+	
+	// Fill in a buffer description.
+	D3D11_BUFFER_DESC cbDesc;
+	cbDesc.ByteWidth = sizeof(VS_COLORPASS_CONSTANT_BUFFER);
+	cbDesc.Usage = D3D11_USAGE_DYNAMIC;
+	cbDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	cbDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	cbDesc.MiscFlags = 0;
+	cbDesc.StructureByteStride = 0;
+
+	// Create the buffer.
+	HRESULT hr = device.CreateBuffer(&cbDesc, NULL, &this->VSConstantBuffer);
+
+	if (FAILED(hr))
+		std::cout << "Failed to create vertex shader constant buffer for color pass" << std::endl;
+
 }
 
 ColorPass::~ColorPass()
@@ -96,6 +132,8 @@ ColorPass::~ColorPass()
 		delete objects[i];
 	this->vertexLayout->Release();
 	this->vertexShader->Release();
+
+	this->VSConstantBuffer->Release();
 
 	if (this->hullShader != nullptr)
 		this->hullShader->Release();

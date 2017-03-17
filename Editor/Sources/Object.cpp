@@ -4,6 +4,7 @@ Object::Object()
 {
 	this->vertexBuffer = nullptr;
 	this->indexBuffer = nullptr;
+	this->worldMatrix = DirectX::XMMatrixIdentity();
 }
 
 Object::~Object()
@@ -11,6 +12,16 @@ Object::~Object()
 	this->vertexBuffer->Release();
 	if (this->indexCount != 0)
 		this->indexBuffer->Release();
+}
+
+DirectX::XMMATRIX &Object::getWorldMatrix()
+{
+	return this->worldMatrix;
+}
+
+void Object::translate(DirectX::XMVECTOR translation)
+{
+	this->worldMatrix = XMMatrixMultiply(DirectX::XMMatrixTranslationFromVector(translation), this->worldMatrix);
 }
 
 void Object::setBuffers(ID3D11Device* device, std::vector<Vertex> vertexes, UINT32 offset, UINT32 vertexSize, std::vector<unsigned int> indices)
@@ -41,7 +52,7 @@ void Object::setBuffers(ID3D11Device* device, std::vector<Vertex> vertexes, UINT
 	memset(&bufferDesc, 0, sizeof(bufferDesc));
 	bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	bufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	bufferDesc.ByteWidth = 2 * sizeof(XMFLOAT3) * (UINT)vertexes.size();
+	bufferDesc.ByteWidth = 2 * sizeof(DirectX::XMFLOAT3) * (UINT)vertexes.size();
 
 	D3D11_SUBRESOURCE_DATA data;
 	data.pSysMem = vertexes.data();
@@ -61,6 +72,6 @@ void Object::draw(ID3D11DeviceContext &deviceContext)
 	else
 	{
 		deviceContext.IASetIndexBuffer(this->indexBuffer, DXGI_FORMAT_R32_UINT, 0);
-		deviceContext.DrawIndexed(indexCount, 0, 0);
+		deviceContext.DrawIndexed(this->indexCount, 0, 0);
 	}
 }
