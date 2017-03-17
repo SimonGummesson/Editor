@@ -1,6 +1,6 @@
-#include "../Headers/Pass.hpp"
+#include "../Headers/ColorPass.hpp"
 
-void Pass::drawPass(ID3D11DeviceContext &deviceContext)
+void ColorPass::drawPass(ID3D11DeviceContext &deviceContext)
 {
 	deviceContext.VSSetShader(this->vertexShader, nullptr, 0);
 	deviceContext.HSSetShader(this->hullShader, nullptr, 0);
@@ -15,7 +15,7 @@ void Pass::drawPass(ID3D11DeviceContext &deviceContext)
 		this->objects[i]->draw(deviceContext);
 }
 
-void Pass::setVertexShaderAndLayout(ID3D11Device & device, LPCWSTR path)
+void ColorPass::setVertexShaderAndLayout(ID3D11Device & device, LPCWSTR path)
 {
 	//create vertex shader
 	ID3DBlob* pVS = nullptr;
@@ -48,7 +48,7 @@ void Pass::setVertexShaderAndLayout(ID3D11Device & device, LPCWSTR path)
 	pVS->Release();
 }
 
-void Pass::setPixelShader(ID3D11Device & device, LPCWSTR path)
+void ColorPass::setPixelShader(ID3D11Device & device, LPCWSTR path)
 {
 	//create pixel shader
 	ID3DBlob* pPS = nullptr;
@@ -73,14 +73,14 @@ void Pass::setPixelShader(ID3D11Device & device, LPCWSTR path)
 	pPS->Release();
 }
 
-void Pass::addObject(Object *object)
+void ColorPass::addObject(Object *object)
 {
 	this->objects.push_back(object);
 }
 
-Pass::Pass()
+ColorPass::ColorPass()
 {
-	for (int i = 0; i < objects.size(); i++)
+	for (unsigned int i = 0; i < objects.size(); i++)
 		objects.erase(objects.begin() + i);
 	this->vertexLayout = nullptr;
 	this->vertexShader = nullptr;
@@ -90,7 +90,7 @@ Pass::Pass()
 	this->pixelShader = nullptr;
 }
 
-Pass::~Pass()
+ColorPass::~ColorPass()
 {
 	for (unsigned int i = 0; i < objects.size(); i++)
 		delete objects[i];

@@ -147,7 +147,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Sources\Object.cpp" />
-    <ClCompile Include="Sources\Pass.cpp" />
+    <ClCompile Include="Sources\ColorPass.cpp" />
     <ClCompile Include="Sources\Renderer.cpp" />
     <ClCompile Include="Sources\Editor.cpp" />
     <ClCompile Include="Sources\main.cpp" />
@@ -167,7 +167,7 @@
   <ItemGroup>
     <ClInclude Include="Headers\Editor.hpp" />
     <ClInclude Include="Headers\Object.hpp" />
-    <ClInclude Include="Headers\Pass.hpp" />
+    <ClInclude Include="Headers\ColorPass.hpp" />
     <ClInclude Include="Headers\Renderer.hpp" />
     <ClInclude Include="Headers\SimpleMath.h" />
     <ClInclude Include="Headers\structs.hpp" />

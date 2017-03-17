@@ -7,15 +7,15 @@
 #include "Object.hpp"
 using namespace std;
 
-class Pass
+class ColorPass
 {
 public:
 	void drawPass(ID3D11DeviceContext &deviceContext);
 	void setVertexShaderAndLayout(ID3D11Device &device, LPCWSTR path);
 	void setPixelShader(ID3D11Device &device, LPCWSTR path);
 	void addObject(Object *object);
-	Pass();
-	~Pass();
+	ColorPass();
+	~ColorPass();
 private:
 	vector<Object*> objects;
 	ID3D11InputLayout* vertexLayout;

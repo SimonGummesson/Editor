@@ -3,7 +3,7 @@
 #include <d3d11.h>
 #include <d3dcompiler.h>
 
-#include "Pass.hpp"
+#include "ColorPass.hpp"
 
 class Renderer
 {
@@ -16,11 +16,11 @@ private:
 	int width;
 	int height;
 	float clearColor[4];
-	std::vector<Pass*> passes;
+	ColorPass *colorPass;
 public:
 	Renderer(HWND wndHandle, int width, int height);
 	void drawFrame();
-	void addPass(Pass* pass);
+	void setColorPass(ColorPass *colorPass);
 	IDXGISwapChain* getSwapChain();
 	ID3D11Device* getDevice();
 	ID3D11DeviceContext* getDeviceContext();

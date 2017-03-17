@@ -7,7 +7,7 @@
 #pragma comment (lib, "d3dcompiler.lib")
 
 #include "../Headers/Renderer.hpp"
-#include "../Headers/Pass.hpp"
+#include "../Headers/ColorPass.hpp"
 #include "../Headers/Object.hpp"
 #include "../Headers/structs.hpp"
 
@@ -30,9 +30,9 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	if (wndHandle)
 	{
 		// Create standard pass
-		Pass *forwardPass = new Pass();
-		forwardPass->setVertexShaderAndLayout(*renderer.getDevice(), L"Shaders/vertexShader.hlsl");
-		forwardPass->setPixelShader(*renderer.getDevice(), L"Shaders/pixelShader.hlsl");
+		ColorPass *colorPass = new ColorPass();
+		colorPass->setVertexShaderAndLayout(*renderer.getDevice(), L"Shaders/vertexShader.hlsl");
+		colorPass->setPixelShader(*renderer.getDevice(), L"Shaders/pixelShader.hlsl");
 
 		Object *triangle = new Object();
 
@@ -55,9 +55,9 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		vertexes[2].color = { 0.f, 1.f, 0.f };
 		triangle2->setBuffers(renderer.getDevice(), vertexes, 0, sizeof(Vertex), indices);
 
-		forwardPass->addObject(triangle);
-		forwardPass->addObject(triangle2);
-		renderer.addPass(forwardPass);
+		colorPass->addObject(triangle);
+		colorPass->addObject(triangle2);
+		renderer.setColorPass(colorPass);
 
 		ShowWindow(wndHandle, nCmdShow);
 
