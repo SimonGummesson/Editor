@@ -15,6 +15,7 @@ private:
 	UINT32 vertexSize;
 	UINT32 offset;
 	unsigned int indexCount;
+	unsigned int vertexCount;
 public:
 	Object();
 	~Object();
