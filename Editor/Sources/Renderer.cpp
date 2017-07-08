@@ -65,7 +65,7 @@ void Renderer::drawFrame()
 {
 	this->deviceContext->ClearRenderTargetView(this->backBufferRTV, this->clearColor);
 	
-	this->colorPass->drawPass(*this->deviceContext);
+	this->colorPass->drawPass(this->deviceContext);
 
 	this->swapChain->Present(0, 0);
 }
