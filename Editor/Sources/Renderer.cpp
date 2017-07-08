@@ -36,14 +36,14 @@ Renderer::Renderer(HWND wndHandle, int width, int height)
 	{
 		// get the address of the back buffer
 		ID3D11Texture2D* pBackBuffer = nullptr;
-		swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBackBuffer);
+		this->swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBackBuffer);
 
 		// use the back buffer address to create the render target
-		device->CreateRenderTargetView(pBackBuffer, NULL, &backBufferRTV);
+		this->device->CreateRenderTargetView(pBackBuffer, NULL, &this->backBufferRTV);
 		pBackBuffer->Release();
 
 		// set the render target as the back buffer
-		deviceContext->OMSetRenderTargets(1, &backBufferRTV, NULL);
+		this->deviceContext->OMSetRenderTargets(1, &backBufferRTV, NULL);
 	}
 
 	this->clearColor[0] = 0;

@@ -11,12 +11,12 @@ using namespace std;
 class ColorPass
 {
 public:
-	void drawPass(ID3D11DeviceContext &deviceContext);
-	void setVertexShaderAndLayout(ID3D11Device &device, LPCWSTR path);
-	void setPixelShader(ID3D11Device &device, LPCWSTR path);
+	void drawPass(ID3D11DeviceContext *deviceContext);
+	void setVertexShaderAndLayout(ID3D11Device *device, LPCWSTR path);
+	void setPixelShader(ID3D11Device *device, LPCWSTR path);
 	void addObject(Object *object);
-	void updateBuffer(ID3D11DeviceContext &deviceContext, DirectX::XMMATRIX &worldMatrix);
-	ColorPass(ID3D11Device & device);
+	void updateBuffer(ID3D11DeviceContext *deviceContext, DirectX::XMMATRIX &worldMatrix);
+	ColorPass(ID3D11Device * device);
 	~ColorPass();
 private:
 	vector<Object*> objects;

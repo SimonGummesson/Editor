@@ -29,6 +29,7 @@ void Object::setBuffers(ID3D11Device* device, std::vector<Vertex> vertexes, UINT
 	this->offset = offset;
 	this->vertexSize = vertexSize;
 	this->indexCount = (unsigned int)indices.size();
+	this->vertexCount = (unsigned int)vertexes.size();
 
 	HRESULT hr;
 	if (this->indexCount != 0)
@@ -61,17 +62,17 @@ void Object::setBuffers(ID3D11Device* device, std::vector<Vertex> vertexes, UINT
 		std::cout << "Failed to create vertex buffer!" << std::endl;
 }
 
-void Object::draw(ID3D11DeviceContext &deviceContext)
+void Object::draw(ID3D11DeviceContext * deviceContext)
 {
-	deviceContext.IASetVertexBuffers(0, 1, &this->vertexBuffer, &this->vertexSize, &this->offset);
+	deviceContext->IASetVertexBuffers(0, 1, &this->vertexBuffer, &this->vertexSize, &this->offset);
 	if (indexCount == 0)
 	{
-		deviceContext.IASetIndexBuffer(nullptr, DXGI_FORMAT_R32_UINT, 0);
-		deviceContext.Draw(this->vertexCount, 0);
+		deviceContext->IASetIndexBuffer(nullptr, DXGI_FORMAT_R32_UINT, 0);
+		deviceContext->Draw(this->vertexCount, 0);
 	}
 	else
 	{
-		deviceContext.IASetIndexBuffer(this->indexBuffer, DXGI_FORMAT_R32_UINT, 0);
-		deviceContext.DrawIndexed(this->indexCount, 0, 0);
+		deviceContext->IASetIndexBuffer(this->indexBuffer, DXGI_FORMAT_R32_UINT, 0);
+		deviceContext->DrawIndexed(this->indexCount, 0, 0);
 	}
 }
