@@ -37,17 +37,17 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		Object *triangle = new Object();
 
 		std::vector<Vertex> vertexes;
-		vertexes.push_back(Vertex(DirectX::XMFLOAT3(-0.5f,  0.5f, 0.0f), DirectX::XMFLOAT3(1.0f, 0.0f, 0.0f)));
-		vertexes.push_back(Vertex(DirectX::XMFLOAT3( 0.5f, -0.5f, 0.0f), DirectX::XMFLOAT3(0.0f, 1.0f, 0.0f)));
-		vertexes.push_back(Vertex(DirectX::XMFLOAT3(-0.5f, -0.5f, 0.0f), DirectX::XMFLOAT3(0.0f, 0.0f, 1.0f)));
+		vertexes.push_back(Vertex(DirectX::XMFLOAT3(-0.5f,  0.5f, 3.0f), DirectX::XMFLOAT3(1.0f, 0.0f, 0.0f)));
+		vertexes.push_back(Vertex(DirectX::XMFLOAT3( 0.5f, -0.5f, 3.0f), DirectX::XMFLOAT3(0.0f, 1.0f, 0.0f)));
+		vertexes.push_back(Vertex(DirectX::XMFLOAT3(-0.5f, -0.5f, 3.0f), DirectX::XMFLOAT3(0.0f, 0.0f, 1.0f)));
 		std::vector<unsigned int> indices;
 
 		triangle->setBuffers(renderer.getDevice(), vertexes, 0, sizeof(Vertex), indices);
 		
 		Object *triangle2 = new Object();
-		vertexes[0].position = { -0.5f,  0.5f, 0.f };
-		vertexes[1].position = {  0.5f,  0.5f, 0.f };
-		vertexes[2].position = {  0.5f, -0.5f, 0.f };
+		vertexes[0].position = { -0.5f,  0.5f, 3.f };
+		vertexes[1].position = {  0.5f,  0.5f, 3.f };
+		vertexes[2].position = {  0.5f, -0.5f, 3.f };
 		vertexes[0].color = { 0.f, 0.f, 1.f };
 		vertexes[1].color = { 0.f, 1.f, 0.f };
 		vertexes[2].color = { 1.f, 0.f, 0.f };

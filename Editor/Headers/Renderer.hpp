@@ -4,6 +4,7 @@
 #include <d3dcompiler.h>
 
 #include "ColorPass.hpp"
+#include "Camera.hpp"
 
 class Renderer
 {
@@ -17,9 +18,12 @@ private:
 	int height;
 	float clearColor[4];
 	ColorPass *colorPass;
+
+	Camera* camera;
 public:
 	Renderer(HWND wndHandle, int width, int height);
 	void drawFrame();
+	void update();
 	void setColorPass(ColorPass *colorPass);
 	IDXGISwapChain* getSwapChain();
 	ID3D11Device* getDevice();

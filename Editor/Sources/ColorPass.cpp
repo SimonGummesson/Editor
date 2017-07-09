@@ -1,6 +1,6 @@
 #include "../Headers/ColorPass.hpp"
 
-void ColorPass::drawPass(ID3D11DeviceContext *deviceContext)
+void ColorPass::drawPass(ID3D11DeviceContext *deviceContext, DirectX::XMMATRIX& VPMatrix)
 {
 	deviceContext->VSSetShader(this->vertexShader, nullptr, 0);
 	deviceContext->HSSetShader(this->hullShader, nullptr, 0);
@@ -15,9 +15,15 @@ void ColorPass::drawPass(ID3D11DeviceContext *deviceContext)
 
 	for (unsigned int i = 0; i < this->objects.size(); i++)
 	{
-		this->updateBuffer(deviceContext, objects[i]->getWorldMatrix());
+		this->updateBuffer(deviceContext, VPMatrix * objects[i]->getWorldMatrix());
 		this->objects[i]->draw(deviceContext);
 	}
+}
+
+void ColorPass::update()
+{
+	for (unsigned int i = 0; i < objects.size(); i++)
+		objects[i]->update();
 }
 
 void ColorPass::setVertexShaderAndLayout(ID3D11Device * device, LPCWSTR path)
@@ -93,7 +99,7 @@ void ColorPass::updateBuffer(ID3D11DeviceContext * deviceContext, DirectX::XMMAT
 		cout << "Failed to disable gpu access to gConstantBuffer." << endl;
 	//	Update the constant buffer here.
 	VS_COLORPASS_CONSTANT_BUFFER* dataptr = (VS_COLORPASS_CONSTANT_BUFFER*)mappedResource.pData;
-	dataptr->worldMatrix = XMMatrixTranspose(worldMatrix);
+	dataptr->WVPMatrix = XMMatrixTranspose(worldMatrix);
 	//	Reenable GPU access to the constant buffer data.
 	deviceContext->Unmap(this->VSConstantBuffer, 0);
 }

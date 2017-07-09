@@ -11,5 +11,5 @@ struct Vertex {
 };
 struct VS_COLORPASS_CONSTANT_BUFFER
 {
-	DirectX::XMMATRIX worldMatrix;
+	DirectX::XMMATRIX WVPMatrix;
 };

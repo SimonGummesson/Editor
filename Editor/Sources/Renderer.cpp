@@ -59,15 +59,22 @@ Renderer::Renderer(HWND wndHandle, int width, int height)
 	vp.TopLeftX = 0;
 	vp.TopLeftY = 0;
 	this->deviceContext->RSSetViewports(1, &vp);
+
+	this->camera = new Camera(this->width, this->height);
 }
 
 void Renderer::drawFrame()
 {
 	this->deviceContext->ClearRenderTargetView(this->backBufferRTV, this->clearColor);
 	
-	this->colorPass->drawPass(this->deviceContext);
+	this->colorPass->drawPass(this->deviceContext, this->camera->getVPMatrix());
 
 	this->swapChain->Present(0, 0);
+}
+
+void Renderer::update()
+{
+	this->colorPass->update();
 }
 
 void Renderer::setColorPass(ColorPass * colorPass)
@@ -98,7 +105,8 @@ ID3D11RenderTargetView * Renderer::getBackBufferRTV()
 Renderer::~Renderer()
 {
 	delete this->colorPass;
-
+	delete this->camera;
+	
 	this->backBufferRTV->Release();
 	this->swapChain->Release();
 	this->device->Release();

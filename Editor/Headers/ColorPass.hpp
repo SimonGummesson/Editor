@@ -11,7 +11,8 @@ using namespace std;
 class ColorPass
 {
 public:
-	void drawPass(ID3D11DeviceContext *deviceContext);
+	void drawPass(ID3D11DeviceContext *deviceContext, DirectX::XMMATRIX& VPMatrix);
+	void update();
 	void setVertexShaderAndLayout(ID3D11Device *device, LPCWSTR path);
 	void setPixelShader(ID3D11Device *device, LPCWSTR path);
 	void addObject(Object *object);

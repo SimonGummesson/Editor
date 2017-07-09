@@ -21,7 +21,12 @@ DirectX::XMMATRIX &Object::getWorldMatrix()
 
 void Object::translate(DirectX::XMVECTOR translation)
 {
-	this->worldMatrix = XMMatrixMultiply(DirectX::XMMatrixTranslationFromVector(translation), this->worldMatrix);
+	this->worldMatrix = this->worldMatrix * DirectX::XMMatrixTranslationFromVector(translation);
+}
+
+void Object::update()
+{
+
 }
 
 void Object::setBuffers(ID3D11Device* device, std::vector<Vertex> vertexes, UINT32 offset, UINT32 vertexSize, std::vector<unsigned int> indices)
