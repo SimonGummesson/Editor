@@ -9,8 +9,6 @@
 #include "ColorPass.hpp"
 #include "Camera.hpp"
 
-enum inputCommand { idle, walkForward, walkBackward, strafeRight, strafeLeft };
-
 class Renderer
 {
 private:
@@ -26,8 +24,7 @@ private:
 	Camera* camera;
 	std::string command;
 
-	inputCommand getInput();
-	void consumeInput(inputCommand command, float dt);
+	void getInput(float dt);
 
 	std::chrono::time_point<std::chrono::system_clock> lastTime;
 public:

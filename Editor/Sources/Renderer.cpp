@@ -1,6 +1,6 @@
 #include "../Headers/Renderer.hpp"
 #include <iostream>
-inputCommand Renderer::getInput()
+void Renderer::getInput(float dt)
 {
 	SHORT WKey = GetAsyncKeyState('W');
 	SHORT AKey = GetAsyncKeyState('A');
@@ -8,37 +8,13 @@ inputCommand Renderer::getInput()
 	SHORT DKey = GetAsyncKeyState('D');
 
 	if (WKey)
-		return walkForward;
-	else if (AKey)
-		return strafeLeft;
-	else if (SKey)
-		return walkBackward;
-	else if (DKey)
-		return strafeRight;
-	else
-		return idle;
-}
-
-void Renderer::consumeInput(inputCommand command, float dt)
-{
-	XMFLOAT3 pos;
-	switch (command)
-	{
-	case walkForward:
 		this->camera->moveCamera(this->camera->getForward() * dt);
-		break;
-	case strafeLeft:
+	if (AKey)
 		this->camera->moveCamera(-this->camera->getRight() * dt);
-		break;
-	case walkBackward:
+	if (SKey)
 		this->camera->moveCamera(-this->camera->getForward() * dt);
-		break;
-	case strafeRight:
+	if (DKey)
 		this->camera->moveCamera(this->camera->getRight() * dt);
-		break;
-	default:  return;
-		break;
-	}
 }
 
 Renderer::Renderer(HWND wndHandle, int width, int height)
@@ -119,7 +95,7 @@ void Renderer::update()
 	std::chrono::time_point<std::chrono::system_clock> now = std::chrono::system_clock::now();	// Get current time
 	std::chrono::duration<float> deltaTime = now - this->lastTime;								// Calculate difference
 	this->lastTime = now;																		// Update old time
-	this->consumeInput(this->getInput(), deltaTime.count());
+	this->getInput(deltaTime.count());
 	this->colorPass->update();
 }
 
