@@ -45,21 +45,22 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		triangle->setBuffers(renderer.getDevice(), vertexes, 0, sizeof(Vertex), indices);
 		
 		Object *triangle2 = new Object();
-		vertexes[0].position = { -0.5f,  0.5f, 3.f };
-		vertexes[1].position = {  0.5f,  0.5f, 3.f };
-		vertexes[2].position = {  0.5f, -0.5f, 3.f };
+		vertexes[0].position = { -0.5f,  0.5f, 3.0f };
+		vertexes[1].position = {  0.5f,  0.5f, 3.0f };
+		vertexes[2].position = {  0.5f, -0.5f, 3.0f };
 		vertexes[0].color = { 0.f, 0.f, 1.f };
 		vertexes[1].color = { 0.f, 1.f, 0.f };
 		vertexes[2].color = { 1.f, 0.f, 0.f };
 		triangle2->setBuffers(renderer.getDevice(), vertexes, 0, sizeof(Vertex), indices);
 		
-		triangle->translate(DirectX::XMVECTOR{ -0.2f, 0.f, 0.f });
-		triangle2->translate(DirectX::XMVECTOR{ 0.2f, 0.f, 0.f });
+		triangle->translate({ -0.2f, 0.f, 0.f });
+		triangle->scale({ 1.5f, 1.5f, 1.f });
+		triangle2->translate({ 0.2f, 0.f, 0.f });
+		triangle2->scale({ 1.5f, 1.5f, 1.f });
 
 		colorPass->addObject(triangle);
 		colorPass->addObject(triangle2);
 		renderer.setColorPass(colorPass);
-
 		ShowWindow(wndHandle, nCmdShow);
 
 		while (WM_QUIT != msg.message)
@@ -71,6 +72,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 			}
 			else
 			{
+				renderer.update();
 				renderer.drawFrame();
 			}
 		}

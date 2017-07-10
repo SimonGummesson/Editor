@@ -21,7 +21,12 @@ DirectX::XMMATRIX &Object::getWorldMatrix()
 
 void Object::translate(DirectX::XMVECTOR translation)
 {
-	this->worldMatrix = this->worldMatrix * DirectX::XMMatrixTranslationFromVector(translation);
+	this->worldMatrix = this->worldMatrix + DirectX::XMMatrixTranslationFromVector(translation);
+}
+
+void Object::scale(DirectX::XMVECTOR scale)
+{
+	this->worldMatrix = this->worldMatrix * DirectX::XMMatrixScalingFromVector(scale);
 }
 
 void Object::update()

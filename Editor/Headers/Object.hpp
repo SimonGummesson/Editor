@@ -30,6 +30,7 @@ public:
 	~Object();
 	DirectX::XMMATRIX &getWorldMatrix();
 	void translate(DirectX::XMVECTOR translation);
+	void scale(DirectX::XMVECTOR translation);
 	void update();
 	void setBuffers(ID3D11Device * device, std::vector<Vertex> vertexes, UINT32 offset, UINT32 vertexSize, std::vector<unsigned int> indices);
 	void draw(ID3D11DeviceContext * deviceContext);

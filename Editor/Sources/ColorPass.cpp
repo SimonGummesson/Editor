@@ -15,7 +15,7 @@ void ColorPass::drawPass(ID3D11DeviceContext *deviceContext, DirectX::XMMATRIX& 
 
 	for (unsigned int i = 0; i < this->objects.size(); i++)
 	{
-		this->updateBuffer(deviceContext, VPMatrix * objects[i]->getWorldMatrix());
+		this->updateBuffer(deviceContext, objects[i]->getWorldMatrix() * VPMatrix);
 		this->objects[i]->draw(deviceContext);
 	}
 }
