@@ -25,12 +25,10 @@ private:
 	std::string command;
 
 	void getInput(float dt);
-
-	std::chrono::time_point<std::chrono::system_clock> lastTime;
 public:
-	Renderer(HWND wndHandle, int width, int height);
+	Renderer(HWND& wndHandle, int width, int height);
 	void drawFrame();
-	void update();
+	void update(float dt);
 	void setColorPass(ColorPass *colorPass);
 	IDXGISwapChain* getSwapChain();
 	ID3D11Device* getDevice();

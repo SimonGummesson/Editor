@@ -6,22 +6,25 @@ void Renderer::getInput(float dt)
 	SHORT AKey = GetAsyncKeyState('A');
 	SHORT SKey = GetAsyncKeyState('S');
 	SHORT DKey = GetAsyncKeyState('D');
+	SHORT ShiftKey = GetAsyncKeyState(VK_SHIFT);
+	bool running = false;
 
+	if (ShiftKey)
+		running = true;
 	if (WKey)
-		this->camera->moveCamera(this->camera->getForward() * dt);
+		this->camera->moveCamera(this->camera->getForward() * dt, running);
 	if (AKey)
-		this->camera->moveCamera(-this->camera->getRight() * dt);
+		this->camera->moveCamera(-this->camera->getRight() * dt, running);
 	if (SKey)
-		this->camera->moveCamera(-this->camera->getForward() * dt);
+		this->camera->moveCamera(-this->camera->getForward() * dt, running);
 	if (DKey)
-		this->camera->moveCamera(this->camera->getRight() * dt);
+		this->camera->moveCamera(this->camera->getRight() * dt, running);
 }
 
-Renderer::Renderer(HWND wndHandle, int width, int height)
+Renderer::Renderer(HWND& wndHandle, int width, int height)
 {
 	this->width = width;
 	this->height = height;
-	this->lastTime = std::chrono::system_clock::now();
 	// create a struct to hold information about the swap chain
 	DXGI_SWAP_CHAIN_DESC scd;
 
@@ -90,12 +93,9 @@ void Renderer::drawFrame()
 	this->swapChain->Present(0, 0);
 }
 
-void Renderer::update()
+void Renderer::update(float dt)
 {
-	std::chrono::time_point<std::chrono::system_clock> now = std::chrono::system_clock::now();	// Get current time
-	std::chrono::duration<float> deltaTime = now - this->lastTime;								// Calculate difference
-	this->lastTime = now;																		// Update old time
-	this->getInput(deltaTime.count());
+	this->getInput(dt);
 	this->colorPass->update();
 }
 

@@ -13,6 +13,7 @@ private:
 	XMVECTOR rightVector;
 
 	float speed;
+	float runSpeed;
 	XMMATRIX viewMatrix;
 	XMMATRIX projectionMatrix;
 	XMMATRIX VPMatrix;
@@ -28,7 +29,7 @@ public:
 	}
 	Camera(int width, int height);
 	~Camera();
-	void moveCamera(XMVECTOR translation);
+	void moveCamera(XMVECTOR translation, bool run);
 	void setViewMatrix(XMMATRIX& matrix);
 	void setProjectionMatrix(XMMATRIX& matrix);
 	XMMATRIX &getViewMatrix();

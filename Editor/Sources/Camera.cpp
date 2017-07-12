@@ -7,6 +7,7 @@ Camera::Camera(int width, int height)
 	this->upVector =	  { 0, 1, 0 };
 	this->forwardVector = { 0, 0, 1 };
 	this->speed = 1.f;
+	this->runSpeed = 2.f;
 
 	this->viewMatrix = XMMatrixLookAtLH(this->position, this->position + this->forwardVector, this->upVector);
 	this->projectionMatrix = XMMatrixPerspectiveLH(3.141592f * 0.45f, (float)width / (float)height, 0.1f, 100.f);
@@ -18,9 +19,9 @@ Camera::~Camera()
 
 }
 
-void Camera::moveCamera(XMVECTOR translation)
+void Camera::moveCamera(XMVECTOR translation, bool run)
 {
-	this->position += translation * this->speed;
+	this->position += translation * (run ? this->runSpeed : this->speed);
 	this->setViewMatrix(XMMatrixLookAtLH(this->position, this->position + this->forwardVector, this->upVector));
 }
 

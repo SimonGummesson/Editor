@@ -6,7 +6,7 @@
 #pragma comment (lib, "d3d11.lib")
 #pragma comment (lib, "d3dcompiler.lib")
 
-#include "../Headers/Renderer.hpp"
+#include "../Headers/Editor.hpp"
 #include "../Headers/ColorPass.hpp"
 #include "../Headers/Object.hpp"
 #include "../Headers/structs.hpp"
@@ -26,13 +26,13 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	MSG msg = { 0 };
 	HWND wndHandle = InitWindow(hInstance);
 	
-	Renderer renderer(wndHandle, 1280, 1024);
 	if (wndHandle)
 	{
+		Editor editor(wndHandle, 1280, 1024, 60); // width, height, fps
 		// Create standard pass
-		ColorPass *colorPass = new ColorPass(renderer.getDevice());
-		colorPass->setVertexShaderAndLayout(renderer.getDevice(), L"Shaders/colorVertexShader.hlsl");
-		colorPass->setPixelShader(renderer.getDevice(), L"Shaders/colorPixelShader.hlsl");
+		ColorPass *colorPass = new ColorPass(editor.getRenderer()->getDevice());
+		colorPass->setVertexShaderAndLayout(editor.getRenderer()->getDevice(), L"Shaders/colorVertexShader.hlsl");
+		colorPass->setPixelShader(editor.getRenderer()->getDevice(), L"Shaders/colorPixelShader.hlsl");
 
 		Object *triangle = new Object();
 
@@ -42,7 +42,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		vertexes.push_back(Vertex(DirectX::XMFLOAT3(-0.5f, -0.5f, 3.0f), DirectX::XMFLOAT3(0.0f, 0.0f, 1.0f)));
 		std::vector<unsigned int> indices;
 
-		triangle->setBuffers(renderer.getDevice(), vertexes, 0, sizeof(Vertex), indices);
+		triangle->setBuffers(editor.getRenderer()->getDevice(), vertexes, 0, sizeof(Vertex), indices);
 		
 		Object *triangle2 = new Object();
 		vertexes[0].position = { -0.5f,  0.5f, 3.0f };
@@ -51,7 +51,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		vertexes[0].color = { 0.f, 0.f, 1.f };
 		vertexes[1].color = { 0.f, 1.f, 0.f };
 		vertexes[2].color = { 1.f, 0.f, 0.f };
-		triangle2->setBuffers(renderer.getDevice(), vertexes, 0, sizeof(Vertex), indices);
+		triangle2->setBuffers(editor.getRenderer()->getDevice(), vertexes, 0, sizeof(Vertex), indices);
 		
 		triangle->translate({ -0.2f, 0.f, 0.f });
 		triangle->scale({ 1.5f, 1.5f, 1.f });
@@ -60,7 +60,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
 		colorPass->addObject(triangle);
 		colorPass->addObject(triangle2);
-		renderer.setColorPass(colorPass);
+		editor.getRenderer()->setColorPass(colorPass);
 		ShowWindow(wndHandle, nCmdShow);
 
 		while (WM_QUIT != msg.message)
@@ -71,10 +71,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 				DispatchMessage(&msg);
 			}
 			else
-			{
-				renderer.update();
-				renderer.drawFrame();
-			}
+				editor.update();
 		}
 
 		DestroyWindow(wndHandle);
