@@ -178,7 +178,7 @@
     <None Include="Headers\SimpleMath.inl" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Image.bmp" />
+    <Image Include="UML.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
