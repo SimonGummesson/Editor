@@ -35,32 +35,26 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		colorPass->setPixelShader(editor.getRenderer()->getDevice(), L"Shaders/colorPixelShader.hlsl");
 		colorPass->setVertexSizeAndOffset(sizeof(Vertex), 0);
 
-		Object *triangle = new Object();
-
 		std::vector<Vertex> vertexes;
-		vertexes.push_back(Vertex(DirectX::XMFLOAT3(-0.5f,  0.5f, 3.0f), DirectX::XMFLOAT3(1.0f, 0.0f, 0.0f)));
-		vertexes.push_back(Vertex(DirectX::XMFLOAT3( 0.5f, -0.5f, 3.0f), DirectX::XMFLOAT3(0.0f, 1.0f, 0.0f)));
-		vertexes.push_back(Vertex(DirectX::XMFLOAT3(-0.5f, -0.5f, 3.0f), DirectX::XMFLOAT3(0.0f, 0.0f, 1.0f)));
+		vertexes.push_back(Vertex({ -0.5f, -0.5f, 3.0f }, { 1.0f, 0.0f, 0.0f }));
+		vertexes.push_back(Vertex({ -0.5f, 0.5f, 3.0f }, { 0.0f, 0.0f, 1.0f }));
+		vertexes.push_back(Vertex({ 0.5f, -0.5f, 3.0f }, { 0.0f, 1.0f, 0.0f }));
+		vertexes.push_back(Vertex({ 0.5f, 0.5f, 3.0f }, { 0.0f, 0.0f, 1.0f }));
+
 		std::vector<unsigned int> indices;
+		ObjectData *quad = new ObjectData("quad", editor.getRenderer()->getDevice(), vertexes, indices, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 
-		triangle->setBuffers(editor.getRenderer()->getDevice(), vertexes, indices);
+		Object *quadObject = new Object("quad");
+		Object *quadObject2 = new Object("quad");
 		
-		Object *triangle2 = new Object();
-		vertexes[0].position = { -0.5f,  0.5f, 3.0f };
-		vertexes[1].position = {  0.5f,  0.5f, 3.0f };
-		vertexes[2].position = {  0.5f, -0.5f, 3.0f };
-		vertexes[0].color = { 0.f, 0.f, 1.f };
-		vertexes[1].color = { 0.f, 1.f, 0.f };
-		vertexes[2].color = { 1.f, 0.f, 0.f };
-		triangle2->setBuffers(editor.getRenderer()->getDevice(), vertexes, indices);
-		
-		triangle->translate({ -0.2f, 0.f, 0.f });
-		triangle->scale({ 1.5f, 1.5f, 1.f });
-		triangle2->translate({ 0.2f, 0.f, 0.f });
-		triangle2->scale({ 1.5f, 1.5f, 1.f });
+		quadObject->translate({ 1.0f, 0.f, 0.f });
+		quadObject->scale({ 1.5f, 1.5f, 1.f });
+		quadObject2->translate({ -1.0f, 0.f, 0.f });
+		quadObject2->scale({ 1.5f, 1.5f, 1.f });
 
-		colorPass->addObject(triangle);
-		colorPass->addObject(triangle2);
+		colorPass->addObjectData(quad);
+		colorPass->addObject(quadObject);
+		colorPass->addObject(quadObject2);
 		editor.getRenderer()->setColorPass(colorPass);
 		ShowWindow(wndHandle, nCmdShow);
 
@@ -74,7 +68,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 			else
 				editor.update();
 		}
-
 		DestroyWindow(wndHandle);
 	}
 

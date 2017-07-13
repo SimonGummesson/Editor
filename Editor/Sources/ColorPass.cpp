@@ -8,16 +8,31 @@ void ColorPass::drawPass(ID3D11DeviceContext *deviceContext, DirectX::XMMATRIX& 
 	deviceContext->GSSetShader(this->geometryShader, nullptr, 0);
 	deviceContext->PSSetShader(this->pixelShader, nullptr, 0);
 
-	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	deviceContext->IASetInputLayout(this->vertexLayout);
 
 	deviceContext->VSSetConstantBuffers(0, 1, &this->VSConstantBuffer);
 
-	for (unsigned int i = 0; i < this->objects.size(); i++)
+	for (unsigned int i = 0; i < this->objectData.size(); i++)
 	{
-		deviceContext->IASetVertexBuffers(0, 1, objects[i]->getVertexBuffer(), &this->vertexSize, &this->offset);
-		this->updateBuffer(deviceContext, objects[i]->getWorldMatrix() * VPMatrix);
-		this->objects[i]->draw(deviceContext);
+		deviceContext->IASetVertexBuffers(0, 1, objectData[i]->getVertexBuffer(), &this->vertexSize, &this->offset);
+		deviceContext->IASetPrimitiveTopology(objectData[i]->getPrimitiveTopology());
+		for (unsigned int j = 0; j < this->objects.size(); j++)
+		{
+			if (this->objectData[i]->getName() == this->objects[j]->getName())
+			{
+				this->updateBuffer(deviceContext, objects[j]->getWorldMatrix() * VPMatrix);
+				if (objectData[i]->getIndexCount() == 0)
+				{
+					deviceContext->IASetIndexBuffer(nullptr, DXGI_FORMAT_R32_UINT, 0);
+					deviceContext->Draw(objectData[i]->getVertexCount(), 0);
+				}
+				else
+				{
+					deviceContext->IASetIndexBuffer(*objectData[i]->getIndexBuffer(), DXGI_FORMAT_R32_UINT, 0);
+					deviceContext->DrawIndexed(objectData[i]->getIndexCount(), 0, 0);
+				}
+			}
+		}
 	}
 }
 
@@ -96,6 +111,16 @@ void ColorPass::addObject(Object *object)
 	this->objects.push_back(object);
 }
 
+void ColorPass::addObjectData(ObjectData * objectData)
+{
+	for (unsigned int i = 0; i < this->objectData.size(); i++)
+	{
+		if (this->objectData[i]->getName() == objectData->getName())
+			return;
+	}
+	this->objectData.push_back(objectData);
+}
+
 void ColorPass::updateBuffer(ID3D11DeviceContext * deviceContext, DirectX::XMMATRIX &worldMatrix)
 {
 	HRESULT hr;
@@ -144,6 +169,10 @@ ColorPass::~ColorPass()
 {
 	for (unsigned int i = 0; i < objects.size(); i++)
 		delete objects[i];
+
+	for (unsigned int i = 0; i < objectData.size(); i++)
+		delete objectData[i];
+
 	this->vertexLayout->Release();
 	this->vertexShader->Release();
 
