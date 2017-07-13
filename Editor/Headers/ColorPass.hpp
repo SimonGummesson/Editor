@@ -14,6 +14,7 @@ public:
 	void drawPass(ID3D11DeviceContext *deviceContext, DirectX::XMMATRIX& VPMatrix);
 	void update();
 	void setVertexShaderAndLayout(ID3D11Device *device, LPCWSTR path);
+	void setVertexSizeAndOffset(UINT32 vertexSize, UINT32 offset);
 	void setPixelShader(ID3D11Device *device, LPCWSTR path);
 	void addObject(Object *object);
 	void updateBuffer(ID3D11DeviceContext *deviceContext, DirectX::XMMATRIX &worldMatrix);
@@ -23,6 +24,8 @@ private:
 	vector<Object*> objects;
 	ID3D11InputLayout* vertexLayout;
 	ID3D11VertexShader *vertexShader;
+	UINT32 vertexSize;
+	UINT32 offset;
 	ID3D11HullShader *hullShader;
 	ID3D11DomainShader *domainShader;
 	ID3D11GeometryShader *geometryShader;

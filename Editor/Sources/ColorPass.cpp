@@ -15,6 +15,7 @@ void ColorPass::drawPass(ID3D11DeviceContext *deviceContext, DirectX::XMMATRIX& 
 
 	for (unsigned int i = 0; i < this->objects.size(); i++)
 	{
+		deviceContext->IASetVertexBuffers(0, 1, objects[i]->getVertexBuffer(), &this->vertexSize, &this->offset);
 		this->updateBuffer(deviceContext, objects[i]->getWorldMatrix() * VPMatrix);
 		this->objects[i]->draw(deviceContext);
 	}
@@ -57,6 +58,12 @@ void ColorPass::setVertexShaderAndLayout(ID3D11Device * device, LPCWSTR path)
 		std::cout << "Failed to create vertex shader input layout for shader: " << path << std::endl;
 	// we do not need anymore this COM object, so we release it.
 	pVS->Release();
+}
+
+void ColorPass::setVertexSizeAndOffset(UINT32 vertexSize, UINT32 offset)
+{
+	this->vertexSize = vertexSize;
+	this->offset = offset;
 }
 
 void ColorPass::setPixelShader(ID3D11Device * device, LPCWSTR path)
@@ -106,6 +113,9 @@ void ColorPass::updateBuffer(ID3D11DeviceContext * deviceContext, DirectX::XMMAT
 
 ColorPass::ColorPass(ID3D11Device * device)
 {
+	this->vertexSize = 6;	// default value
+	this->offset = 0;		// default value
+
 	this->vertexLayout = nullptr;
 	this->vertexShader = nullptr;
 	this->hullShader = nullptr;

@@ -33,6 +33,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		ColorPass *colorPass = new ColorPass(editor.getRenderer()->getDevice());
 		colorPass->setVertexShaderAndLayout(editor.getRenderer()->getDevice(), L"Shaders/colorVertexShader.hlsl");
 		colorPass->setPixelShader(editor.getRenderer()->getDevice(), L"Shaders/colorPixelShader.hlsl");
+		colorPass->setVertexSizeAndOffset(sizeof(Vertex), 0);
 
 		Object *triangle = new Object();
 
@@ -42,7 +43,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		vertexes.push_back(Vertex(DirectX::XMFLOAT3(-0.5f, -0.5f, 3.0f), DirectX::XMFLOAT3(0.0f, 0.0f, 1.0f)));
 		std::vector<unsigned int> indices;
 
-		triangle->setBuffers(editor.getRenderer()->getDevice(), vertexes, 0, sizeof(Vertex), indices);
+		triangle->setBuffers(editor.getRenderer()->getDevice(), vertexes, indices);
 		
 		Object *triangle2 = new Object();
 		vertexes[0].position = { -0.5f,  0.5f, 3.0f };
@@ -51,7 +52,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		vertexes[0].color = { 0.f, 0.f, 1.f };
 		vertexes[1].color = { 0.f, 1.f, 0.f };
 		vertexes[2].color = { 1.f, 0.f, 0.f };
-		triangle2->setBuffers(editor.getRenderer()->getDevice(), vertexes, 0, sizeof(Vertex), indices);
+		triangle2->setBuffers(editor.getRenderer()->getDevice(), vertexes, indices);
 		
 		triangle->translate({ -0.2f, 0.f, 0.f });
 		triangle->scale({ 1.5f, 1.5f, 1.f });

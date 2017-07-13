@@ -11,8 +11,6 @@ __declspec(align(16)) class Object
 private:
 	ID3D11Buffer* vertexBuffer;
 	ID3D11Buffer* indexBuffer;
-	UINT32 vertexSize;
-	UINT32 offset;
 	unsigned int indexCount;
 	unsigned int vertexCount;
 	DirectX::XMMATRIX worldMatrix;
@@ -32,6 +30,7 @@ public:
 	void translate(DirectX::XMVECTOR translation);
 	void scale(DirectX::XMVECTOR translation);
 	void update();
-	void setBuffers(ID3D11Device * device, std::vector<Vertex> vertexes, UINT32 offset, UINT32 vertexSize, std::vector<unsigned int> indices);
+	void setBuffers(ID3D11Device * device, std::vector<Vertex> vertexes, std::vector<unsigned int> indices);
+	ID3D11Buffer** getVertexBuffer();
 	void draw(ID3D11DeviceContext * deviceContext);
 };

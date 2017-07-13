@@ -34,10 +34,8 @@ void Object::update()
 
 }
 
-void Object::setBuffers(ID3D11Device* device, std::vector<Vertex> vertexes, UINT32 offset, UINT32 vertexSize, std::vector<unsigned int> indices)
+void Object::setBuffers(ID3D11Device* device, std::vector<Vertex> vertexes, std::vector<unsigned int> indices)
 {
-	this->offset = offset;
-	this->vertexSize = vertexSize;
 	this->indexCount = (unsigned int)indices.size();
 	this->vertexCount = (unsigned int)vertexes.size();
 
@@ -72,9 +70,13 @@ void Object::setBuffers(ID3D11Device* device, std::vector<Vertex> vertexes, UINT
 		std::cout << "Failed to create vertex buffer!" << std::endl;
 }
 
+ID3D11Buffer ** Object::getVertexBuffer()
+{
+	return &this->vertexBuffer;
+}
+
 void Object::draw(ID3D11DeviceContext * deviceContext)
 {
-	deviceContext->IASetVertexBuffers(0, 1, &this->vertexBuffer, &this->vertexSize, &this->offset);
 	if (indexCount == 0)
 	{
 		deviceContext->IASetIndexBuffer(nullptr, DXGI_FORMAT_R32_UINT, 0);
