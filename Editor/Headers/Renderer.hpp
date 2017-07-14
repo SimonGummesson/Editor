@@ -16,8 +16,8 @@ private:
 	ID3D11Device* device;
 	ID3D11DeviceContext* deviceContext;
 	ID3D11RenderTargetView* backBufferRTV;
-	int width;
-	int height;
+	float width;
+	float height;
 	float clearColor[4];
 
 	ColorPass *colorPass;
@@ -26,7 +26,7 @@ private:
 
 	void getInput(float dt);
 public:
-	Renderer(HWND& wndHandle, int width, int height);
+	Renderer(HWND& wndHandle, float width, float height);
 	void drawFrame();
 	void update(float dt);
 	void setColorPass(ColorPass *colorPass);

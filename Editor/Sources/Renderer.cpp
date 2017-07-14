@@ -7,6 +7,8 @@ void Renderer::getInput(float dt)
 	SHORT SKey = GetAsyncKeyState('S');
 	SHORT DKey = GetAsyncKeyState('D');
 	SHORT ShiftKey = GetAsyncKeyState(VK_SHIFT);
+	SHORT SpaceKey = GetAsyncKeyState(VK_SPACE);
+	SHORT LCTRLKey = GetAsyncKeyState(VK_CONTROL);
 	bool running = false;
 
 	if (ShiftKey)
@@ -19,9 +21,13 @@ void Renderer::getInput(float dt)
 		this->camera->moveCamera(-this->camera->getForward() * dt, running);
 	if (DKey)
 		this->camera->moveCamera(this->camera->getRight() * dt, running);
+	if (SpaceKey)
+		this->camera->moveCamera({0, dt, 0}, running);
+	if (LCTRLKey)
+		this->camera->moveCamera({ 0, -dt, 0 }, running);
 }
 
-Renderer::Renderer(HWND& wndHandle, int width, int height)
+Renderer::Renderer(HWND& wndHandle, float width, float height)
 {
 	this->width = width;
 	this->height = height;
@@ -73,8 +79,8 @@ Renderer::Renderer(HWND& wndHandle, int width, int height)
 	this->clearColor[3] = 1;
 
 	D3D11_VIEWPORT vp;
-	vp.Width = (float)width;
-	vp.Height = (float)height;
+	vp.Width = width;
+	vp.Height = height;
 	vp.MinDepth = 0.0f;
 	vp.MaxDepth = 1.0f;
 	vp.TopLeftX = 0;

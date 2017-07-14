@@ -1,16 +1,17 @@
 #include "../Headers/Camera.hpp"
-
-Camera::Camera(int width, int height)
+#include <iostream>
+Camera::Camera(float width, float height)
 {
-	this->position =	  { 0, 0, 0 };
-	this->rightVector =   { 1, 0, 0 };
-	this->upVector =	  { 0, 1, 0 };
-	this->forwardVector = { 0, 0, 1 };
+	std::cout << (float)width / (float)height;
+	this->position =	  { 0.f, 0.f, 0.f };
+	this->rightVector =   { 1.f, 0.f, 0.f };
+	this->upVector =	  { 0.f, 1.f, 0.f };
+	this->forwardVector = { 0.f, 0.f, 1.f };
 	this->speed = 1.f;
 	this->runSpeed = 2.f;
 
-	this->viewMatrix = XMMatrixLookAtLH(this->position, this->position + this->forwardVector, this->upVector);
-	this->projectionMatrix = XMMatrixPerspectiveLH(3.141592f * 0.45f, (float)width / (float)height, 0.1f, 100.f);
+	this->viewMatrix = XMMatrixLookAtLH(this->position, this->forwardVector + this->position, this->upVector);
+	this->projectionMatrix = XMMatrixPerspectiveFovLH(3.141592f * 0.5f, width / height, 0.1f, 100.f);
 	this->VPMatrix = this->viewMatrix * this->projectionMatrix;
 }
 

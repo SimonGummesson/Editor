@@ -20,7 +20,7 @@ void ColorPass::drawPass(ID3D11DeviceContext *deviceContext, DirectX::XMMATRIX& 
 		{
 			if (this->objectData[i]->getName() == this->objects[j]->getName())
 			{
-				this->updateBuffer(deviceContext, objects[j]->getWorldMatrix() * VPMatrix);
+				this->updateBuffer(deviceContext,objects[j]->getWorldMatrix() * VPMatrix);
 				if (objectData[i]->getIndexCount() == 0)
 				{
 					deviceContext->IASetIndexBuffer(nullptr, DXGI_FORMAT_R32_UINT, 0);

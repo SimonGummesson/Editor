@@ -21,7 +21,7 @@ Renderer * Editor::getRenderer()
 	return this->renderer;
 }
 
-Editor::Editor(HWND &wndHandle, int width, int height, float fps)
+Editor::Editor(HWND &wndHandle, float width, float height, float fps)
 {
 	this->lastTime = std::chrono::system_clock::now();
 	this->renderer = new Renderer(wndHandle, width, height);

@@ -27,7 +27,7 @@ public:
 	{
 		_mm_free(p);
 	}
-	Camera(int width, int height);
+	Camera(float width, float height);
 	~Camera();
 	void moveCamera(XMVECTOR translation, bool run);
 	void setViewMatrix(XMMATRIX& matrix);

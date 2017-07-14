@@ -6,11 +6,17 @@
 #include "SimpleMath.inl"
 #include "structs.hpp"
 
+using namespace DirectX;
+
 __declspec(align(16)) class Object
 {
 private:
 	std::string name;
-	DirectX::XMMATRIX worldMatrix;
+	XMMATRIX worldMatrix;
+	XMVECTOR translation;
+	XMVECTOR rotation;
+	XMVECTOR scaling;
+
 public:
 	void* operator new(size_t i)
 	{
@@ -23,9 +29,14 @@ public:
 	}
 	Object(std::string name);
 	~Object();
-	DirectX::XMMATRIX &getWorldMatrix();
-	void translate(DirectX::XMVECTOR translation);
-	void scale(DirectX::XMVECTOR translation);
+	XMMATRIX &getWorldMatrix();
+	void translate(XMVECTOR translation);
+	void setTranslation(XMVECTOR translation);
+	void rotate(XMVECTOR rotation);
+	void setRotation(XMVECTOR rotation);
+	void scale(XMVECTOR scale);
+	void setScale(XMVECTOR scale);
+	void updateWorldMatrix();
 	void update();
 	std::string getName();
 };

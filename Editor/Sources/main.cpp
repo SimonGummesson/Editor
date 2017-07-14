@@ -28,29 +28,32 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	
 	if (wndHandle)
 	{
-		Editor editor(wndHandle, 1280, 1024, 60); // width, height, fps
+		Editor editor(wndHandle, 1280.f, 1024.f, 60.f); // width, height, fps
 		// Create standard pass
 		ColorPass *colorPass = new ColorPass(editor.getRenderer()->getDevice());
 		colorPass->setVertexShaderAndLayout(editor.getRenderer()->getDevice(), L"Shaders/colorVertexShader.hlsl");
-		colorPass->setPixelShader(editor.getRenderer()->getDevice(), L"Shaders/colorPixelShader.hlsl");
 		colorPass->setVertexSizeAndOffset(sizeof(Vertex), 0);
+		colorPass->setPixelShader(editor.getRenderer()->getDevice(), L"Shaders/colorPixelShader.hlsl");
 
 		std::vector<Vertex> vertexes;
 		vertexes.push_back(Vertex({ -0.5f, -0.5f, 3.0f }, { 1.0f, 0.0f, 0.0f }));
 		vertexes.push_back(Vertex({ -0.5f, 0.5f, 3.0f }, { 0.0f, 0.0f, 1.0f }));
 		vertexes.push_back(Vertex({ 0.5f, -0.5f, 3.0f }, { 0.0f, 1.0f, 0.0f }));
-		vertexes.push_back(Vertex({ 0.5f, 0.5f, 3.0f }, { 0.0f, 0.0f, 1.0f }));
 
 		std::vector<unsigned int> indices;
-		ObjectData *quad = new ObjectData("quad", editor.getRenderer()->getDevice(), vertexes, indices, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+		ObjectData *quad = new ObjectData("quad", editor.getRenderer()->getDevice(), vertexes, indices, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 		Object *quadObject = new Object("quad");
 		Object *quadObject2 = new Object("quad");
 		
-		quadObject->translate({ 1.0f, 0.f, 0.f });
-		quadObject->scale({ 1.5f, 1.5f, 1.f });
-		quadObject2->translate({ -1.0f, 0.f, 0.f });
-		quadObject2->scale({ 1.5f, 1.5f, 1.f });
+		quadObject->translate({ -1.0f, 0.f, 0.f });
+		quadObject->scale({ 1.5f, 1.5f, 0.f });
+		quadObject->rotate({ 0,0,0 });
+		quadObject->updateWorldMatrix();
+		quadObject2->translate({ 1.0f, 0.f, 0.f });
+		quadObject2->scale({ 1.5f, 1.5f, 0.f });
+		quadObject2->rotate({0,0,3.14f });
+		quadObject2->updateWorldMatrix();
 
 		colorPass->addObjectData(quad);
 		colorPass->addObject(quadObject);
