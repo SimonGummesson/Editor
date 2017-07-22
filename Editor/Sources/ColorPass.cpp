@@ -16,23 +16,7 @@ void ColorPass::drawPass(ID3D11DeviceContext *deviceContext, DirectX::XMMATRIX& 
 	{
 		deviceContext->IASetVertexBuffers(0, 1, objectData[i]->getVertexBuffer(), &this->vertexSize, &this->offset);
 		deviceContext->IASetPrimitiveTopology(objectData[i]->getPrimitiveTopology());
-		for (unsigned int j = 0; j < this->objects.size(); j++)
-		{
-			if (this->objectData[i]->getName() == this->objects[j]->getName())
-			{
-				this->updateBuffer(deviceContext,objects[j]->getWorldMatrix() * VPMatrix);
-				if (objectData[i]->getIndexCount() == 0)
-				{
-					deviceContext->IASetIndexBuffer(nullptr, DXGI_FORMAT_R32_UINT, 0);
-					deviceContext->Draw(objectData[i]->getVertexCount(), 0);
-				}
-				else
-				{
-					deviceContext->IASetIndexBuffer(*objectData[i]->getIndexBuffer(), DXGI_FORMAT_R32_UINT, 0);
-					deviceContext->DrawIndexed(objectData[i]->getIndexCount(), 0, 0);
-				}
-			}
-		}
+		objectData[i]->Draw(deviceContext, VPMatrix, this->VSConstantBuffer);
 	}
 }
 
@@ -106,9 +90,19 @@ void ColorPass::setPixelShader(ID3D11Device * device, LPCWSTR path)
 	pPS->Release();
 }
 
-void ColorPass::addObject(Object *object)
+bool ColorPass::addObject(Object *object)
 {
-	this->objects.push_back(object);
+	for (unsigned int i = 0; i < this->objectData.size(); i++)
+	{
+		string name = object->getName();
+		if (objectData[i]->getName() == name)
+		{
+			this->objects.push_back(object);
+			this->objectData[i]->addOject(object);
+			return true;
+		}
+	}
+	return false;
 }
 
 void ColorPass::addObjectData(ObjectData * objectData)
@@ -128,7 +122,7 @@ void ColorPass::updateBuffer(ID3D11DeviceContext * deviceContext, DirectX::XMMAT
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	hr = deviceContext->Map(this->VSConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	if FAILED(hr)
-		cout << "Failed to disable gpu access to gConstantBuffer." << endl;
+		cout << "Failed to disable gpu access to constant buffer." << endl;
 	//	Update the constant buffer here.
 	VS_COLORPASS_CONSTANT_BUFFER* dataptr = (VS_COLORPASS_CONSTANT_BUFFER*)mappedResource.pData;
 	dataptr->WVPMatrix = XMMatrixTranspose(worldMatrix);

@@ -17,7 +17,7 @@ public:
 	void setVertexShaderAndLayout(ID3D11Device *device, LPCWSTR path);
 	void setVertexSizeAndOffset(UINT32 vertexSize, UINT32 offset);
 	void setPixelShader(ID3D11Device *device, LPCWSTR path);
-	void addObject(Object *object);
+	bool addObject(Object *object);
 	void addObjectData(ObjectData *objectdata);
 	void updateBuffer(ID3D11DeviceContext *deviceContext, DirectX::XMMATRIX &worldMatrix);
 	ColorPass(ID3D11Device * device);
