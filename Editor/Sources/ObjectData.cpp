@@ -78,7 +78,7 @@ void ObjectData::Draw(ID3D11DeviceContext * deviceContext, DirectX::XMMATRIX & V
 {
 	for (unsigned int i = 0; i < this->objects.size(); i++)
 	{
-		this->updateBuffer(deviceContext, objects[i]->getWorldMatrix() * VPMatrix, cbuffer);
+		this->updateBuffer(deviceContext, VPMatrix, objects[i]->getWorldMatrix(), cbuffer);
 		if (this->indexCount == 0)
 		{
 			deviceContext->IASetIndexBuffer(nullptr, DXGI_FORMAT_R32_UINT, 0);
@@ -92,7 +92,7 @@ void ObjectData::Draw(ID3D11DeviceContext * deviceContext, DirectX::XMMATRIX & V
 	}
 }
 
-void ObjectData::updateBuffer(ID3D11DeviceContext * deviceContext, DirectX::XMMATRIX & worldMatrix, ID3D11Buffer* cbuffer)
+void ObjectData::updateBuffer(ID3D11DeviceContext * deviceContext, DirectX::XMMATRIX & VPMatrix, DirectX::XMMATRIX & worldMatrix, ID3D11Buffer* cbuffer)
 {
 	HRESULT hr;
 	//	Disable GPU access to the constant buffer data.
@@ -101,8 +101,9 @@ void ObjectData::updateBuffer(ID3D11DeviceContext * deviceContext, DirectX::XMMA
 	if FAILED(hr)
 		std::cout << "Failed to disable gpu access to constant buffer." << std::endl;
 	//	Update the constant buffer here.
-	VS_COLORPASS_CONSTANT_BUFFER* dataptr = (VS_COLORPASS_CONSTANT_BUFFER*)mappedResource.pData;
-	dataptr->WVPMatrix = XMMatrixTranspose(worldMatrix);
+	GS_COLORPASS_CONSTANT_BUFFER* dataptr = (GS_COLORPASS_CONSTANT_BUFFER*)mappedResource.pData;
+	dataptr->WVPMatrix = XMMatrixTranspose(worldMatrix * VPMatrix);
+	dataptr->WorldMatrix = XMMatrixTranspose(worldMatrix);
 	//	Reenable GPU access to the constant buffer data.
 	deviceContext->Unmap(cbuffer, 0);
 }

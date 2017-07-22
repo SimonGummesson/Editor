@@ -19,7 +19,7 @@ public:
 	D3D_PRIMITIVE_TOPOLOGY getPrimitiveTopology();
 	void addOject(Object* object);
 	void Draw(ID3D11DeviceContext *deviceContext, DirectX::XMMATRIX& VPMatrix, ID3D11Buffer* cbuffer);
-	void updateBuffer(ID3D11DeviceContext *deviceContext, DirectX::XMMATRIX &worldMatrix, ID3D11Buffer* cbuffer);
+	void updateBuffer(ID3D11DeviceContext *deviceContext, DirectX::XMMATRIX &worldMatrix, DirectX::XMMATRIX & VPMatrix, ID3D11Buffer* cbuffer);
 	~ObjectData();
 private:
 	std::string name;

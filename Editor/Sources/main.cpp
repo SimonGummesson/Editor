@@ -34,6 +34,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		colorPass->setVertexShaderAndLayout(editor.getRenderer()->getDevice(), L"Shaders/colorVertexShader.hlsl");
 		colorPass->setVertexSizeAndOffset(sizeof(Vertex), 0);
 		colorPass->setPixelShader(editor.getRenderer()->getDevice(), L"Shaders/colorPixelShader.hlsl");
+		colorPass->setGeometryShader(editor.getRenderer()->getDevice(), L"Shaders/colorGeometryShader.hlsl");
 
 		std::vector<Vertex> vertexes;
 		vertexes.push_back(Vertex({ -0.5f, -0.5f, 3.0f }, { 1.0f, 0.0f, 0.0f }));

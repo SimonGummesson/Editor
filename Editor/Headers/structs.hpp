@@ -9,7 +9,8 @@ struct Vertex {
 
 	}
 };
-struct VS_COLORPASS_CONSTANT_BUFFER
+struct GS_COLORPASS_CONSTANT_BUFFER
 {
 	DirectX::XMMATRIX WVPMatrix;
+	DirectX::XMMATRIX WorldMatrix;
 };
