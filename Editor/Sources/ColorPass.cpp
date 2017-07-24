@@ -1,6 +1,6 @@
 #include "../Headers/ColorPass.hpp"
 
-void ColorPass::drawPass(ID3D11DeviceContext *deviceContext, DirectX::XMMATRIX& VPMatrix)
+void ColorPass::drawPass(ID3D11DeviceContext *deviceContext, DirectX::XMMATRIX& VPMatrix, DirectX::XMVECTOR cameraPos)
 {
 	deviceContext->VSSetShader(this->vertexShader, nullptr, 0);
 	deviceContext->HSSetShader(this->hullShader, nullptr, 0);
@@ -11,6 +11,10 @@ void ColorPass::drawPass(ID3D11DeviceContext *deviceContext, DirectX::XMMATRIX& 
 	deviceContext->IASetInputLayout(this->vertexLayout);
 
 	deviceContext->GSSetConstantBuffers(0, 1, &this->GSConstantBuffer);
+	deviceContext->PSSetConstantBuffers(0, 1, &this->PSConstantBuffer);
+	XMFLOAT3 pos;
+	XMStoreFloat3(&pos, cameraPos);
+	this->updatePSBuffer(deviceContext, pos);
 
 	for (unsigned int i = 0; i < this->objectData.size(); i++)
 	{
@@ -68,8 +72,9 @@ void ColorPass::setVertexSizeAndOffset(UINT32 vertexSize, UINT32 offset)
 void ColorPass::setPixelShader(ID3D11Device * device, LPCWSTR path)
 {
 	//create pixel shader
+	ID3DBlob* errorBlob = nullptr;
 	ID3DBlob* pPS = nullptr;
-	D3DCompileFromFile(
+	HRESULT hr = D3DCompileFromFile(
 		path,           // filename
 		nullptr,		// optional macros
 		nullptr,		// optional include files
@@ -78,15 +83,20 @@ void ColorPass::setPixelShader(ID3D11Device * device, LPCWSTR path)
 		0,				// shader compile options
 		0,				// effect compile options
 		&pPS,			// double pointer to ID3DBlob		
-		nullptr			// pointer for Error Blob messages.
+		&errorBlob		// pointer for Error Blob messages.
 						// how to use the Error blob, see here
 						// https://msdn.microsoft.com/en-us/library/windows/desktop/hh968107(v=vs.85).aspx
 	);
 
-	HRESULT hr = device->CreatePixelShader(pPS->GetBufferPointer(), pPS->GetBufferSize(), nullptr, &this->pixelShader);
-	if (FAILED(hr))
-		std::cout << "Failed to create pixel shader: " << path << std::endl;
-	// we do not need anymore this COM object, so we release it.
+	
+	if (errorBlob != nullptr)
+	{
+		OutputDebugStringA((char*)errorBlob->GetBufferPointer());
+		errorBlob->Release();
+	}
+
+	device->CreatePixelShader(pPS->GetBufferPointer(), pPS->GetBufferSize(), nullptr, &this->pixelShader);
+
 	pPS->Release();
 }
 
@@ -117,9 +127,7 @@ void ColorPass::setGeometryShader(ID3D11Device * device, LPCWSTR path)
 		}
 	}
 	device->CreateGeometryShader(pGS->GetBufferPointer(), pGS->GetBufferSize(), nullptr, &this->geometryShader);
-	/*if (FAILED(hr))
-		std::cout << "Failed to create geometry shader: " << path << std::endl;*/
-	// we do not need anymore this COM object, so we release it.
+	
 	pGS->Release();
 }
 
@@ -148,20 +156,23 @@ void ColorPass::addObjectData(ObjectData * objectData)
 	this->objectData.push_back(objectData);
 }
 
-void ColorPass::updateBuffer(ID3D11DeviceContext * deviceContext, DirectX::XMMATRIX &worldMatrix, DirectX::XMMATRIX &VPMatrix)
+void ColorPass::updatePSBuffer(ID3D11DeviceContext * deviceContext, XMFLOAT3 cameraPos)
 {
 	HRESULT hr;
 	//	Disable GPU access to the constant buffer data.
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
-	hr = deviceContext->Map(this->GSConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	hr = deviceContext->Map(this->PSConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	if FAILED(hr)
 		cout << "Failed to disable gpu access to constant buffer." << endl;
 	//	Update the constant buffer here.
-	GS_COLORPASS_CONSTANT_BUFFER* dataptr = (GS_COLORPASS_CONSTANT_BUFFER*)mappedResource.pData;
-	dataptr->WVPMatrix = XMMatrixTranspose(worldMatrix);
-	dataptr->WorldMatrix = XMMatrixTranspose(worldMatrix);
+	PS_COLORPASS_CONSTANT_BUFFER* dataptr = (PS_COLORPASS_CONSTANT_BUFFER*)mappedResource.pData;
+	dataptr->eyePos = cameraPos,
+	dataptr->F0 = 0.8f;
+	dataptr->k = 0.2f;
+	dataptr->lightPosition = { 0.f, 0.f, -1.f };
+	dataptr->roughnessValue = 0.3f;
 	//	Reenable GPU access to the constant buffer data.
-	deviceContext->Unmap(this->GSConstantBuffer, 0);
+	deviceContext->Unmap(this->PSConstantBuffer, 0);
 }
 
 ColorPass::ColorPass(ID3D11Device * device)
@@ -189,7 +200,22 @@ ColorPass::ColorPass(ID3D11Device * device)
 	HRESULT hr = device->CreateBuffer(&cbDesc, NULL, &this->GSConstantBuffer);
 
 	if (FAILED(hr))
-		std::cout << "Failed to create vertex shader constant buffer for color pass" << std::endl;
+		std::cout << "Failed to create geometry shader constant buffer for color pass" << std::endl;
+
+	//Pixel Shader buffer
+	D3D11_BUFFER_DESC PScbDesc;
+	PScbDesc.ByteWidth = sizeof(PS_COLORPASS_CONSTANT_BUFFER);
+	PScbDesc.Usage = D3D11_USAGE_DYNAMIC;
+	PScbDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	PScbDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	PScbDesc.MiscFlags = 0;
+	PScbDesc.StructureByteStride = 0;
+
+	// Create the buffer.
+	hr = device->CreateBuffer(&PScbDesc, NULL, &this->PSConstantBuffer);
+
+	if (FAILED(hr))
+		std::cout << "Failed to create pixel shader constant buffer for color pass" << std::endl;
 
 }
 
@@ -205,6 +231,7 @@ ColorPass::~ColorPass()
 	this->vertexShader->Release();
 
 	this->GSConstantBuffer->Release();
+	this->PSConstantBuffer->Release();
 
 	if (this->hullShader != nullptr)
 		this->hullShader->Release();

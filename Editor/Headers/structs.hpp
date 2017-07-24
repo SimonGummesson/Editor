@@ -14,3 +14,13 @@ struct GS_COLORPASS_CONSTANT_BUFFER
 	DirectX::XMMATRIX WVPMatrix;
 	DirectX::XMMATRIX WorldMatrix;
 };
+
+struct PS_COLORPASS_CONSTANT_BUFFER
+{
+	DirectX::XMFLOAT3 eyePos;
+	float roughnessValue ;
+	DirectX::XMFLOAT3 lightPosition;
+	float F0; // fresnel reflectance at normal incidence
+	float k; // fraction of diffuse reflection (specular reflection = 1 - k)
+	DirectX::XMFLOAT3 pad;
+};

@@ -27,7 +27,7 @@ void GS_main(triangle VS_OUT input[3] : SV_POSITION, inout TriangleStream< GS_OU
 	{
 		GS_OUT element;
 		element.WPos = mul(input[i].Pos, WorldMatrix);
-		element.Normal = mul(normal, WorldMatrix);
+		element.Normal = normal;
 		element.Pos = mul(float4(input[i].Pos, 1.0f), WVPMatrix);
 		element.Color = input[i].Color;
 		output.Append(element);

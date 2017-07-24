@@ -38,7 +38,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
 		std::vector<Vertex> vertexes;
 		vertexes.push_back(Vertex({ -0.5f, -0.5f, 3.0f }, { 1.0f, 0.0f, 0.0f }));
-		vertexes.push_back(Vertex({ -0.5f, 0.5f, 3.0f }, { 0.0f, 0.0f, 1.0f }));
+		vertexes.push_back(Vertex({ -0.5f, 0.5f, 3.0f }, { 0.0f, 1.0f, 0.0f }));
 		vertexes.push_back(Vertex({ 0.5f, -0.5f, 3.0f }, { 0.0f, 1.0f, 0.0f }));
 
 		std::vector<unsigned int> indices;
@@ -47,13 +47,13 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		Object *quadObject = new Object("quad");
 		Object *quadObject2 = new Object("quad");
 		
-		quadObject->translate({ -1.0f, 0.f, 0.f });
-		quadObject->scale({ 1.5f, 1.5f, 0.f });
-		quadObject->rotate({ 0,0,0 });
+		quadObject->translate({ 0.f, 0.f, 0.f });
+		quadObject->scale({ 10.5f, 10.5f, 0.f });
+		quadObject->rotate({ 0.f ,0.f , 3.14159265359f * 3.f / 2.f });
 		quadObject->updateWorldMatrix();
-		quadObject2->translate({ 1.0f, 0.f, 0.f });
-		quadObject2->scale({ 1.5f, 1.5f, 0.f });
-		quadObject2->rotate({0,0,3.14f });
+		quadObject2->translate({ 0.f, 0.f, 0.f });
+		quadObject2->scale({ 10.5f, 10.5f, 0.f });
+		quadObject2->rotate({0.f, 0.f, 3.14159265359f / 2.f });
 		quadObject2->updateWorldMatrix();
 
 		colorPass->addObjectData(quad);
