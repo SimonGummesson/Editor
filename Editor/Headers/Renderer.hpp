@@ -8,6 +8,10 @@
 
 #include "ColorPass.hpp"
 #include "Camera.hpp"
+#include "SimpleMath.h"
+#include "SimpleMath.inl"
+
+using namespace DirectX;
 
 class Renderer
 {
@@ -25,6 +29,7 @@ private:
 	std::string command;
 
 	void getInput(float dt);
+	POINT lastCursorPosition;
 public:
 	Renderer(HWND& wndHandle, float width, float height);
 	void drawFrame();

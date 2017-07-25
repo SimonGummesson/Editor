@@ -9,6 +9,7 @@ void Renderer::getInput(float dt)
 	SHORT ShiftKey = GetAsyncKeyState(VK_SHIFT);
 	SHORT SpaceKey = GetAsyncKeyState(VK_SPACE);
 	SHORT LCTRLKey = GetAsyncKeyState(VK_CONTROL);
+	SHORT LMouse = GetAsyncKeyState(VK_LBUTTON);
 	bool running = false;
 
 	if (ShiftKey)
@@ -25,6 +26,40 @@ void Renderer::getInput(float dt)
 		this->camera->moveCamera({0, dt, 0}, running);
 	if (LCTRLKey)
 		this->camera->moveCamera({ 0, -dt, 0 }, running);
+
+	if (LMouse)
+	{
+		ShowCursor(FALSE);
+		POINT currentMousePos;
+		GetCursorPos(&currentMousePos);
+
+		//Horizontal camera rotation
+		float deltaX = (float)currentMousePos.x - (float)this->lastCursorPosition.x;
+		if (deltaX != 0.f)
+		{
+			float sign = signbit(deltaX) ? -1.0f : 1.0f;
+			XMMATRIX rot = XMMatrixRotationY(sign * this->camera->rotationSpeed * dt);
+			this->camera->setRight(XMVector3Transform(this->camera->getRight(), rot));
+			this->camera->setForward(XMVector3Transform(this->camera->getForward(), rot));
+			this->camera->setUp(XMVector3Transform(this->camera->getUp(), rot));
+		}
+
+		//Vertical camera rotation
+		float deltaY = (float)currentMousePos.y - (float)this->lastCursorPosition.y;
+		if (deltaY != 0.f)
+		{
+			float sign = signbit(deltaY) ? -1.0f : 1.0f;
+			XMMATRIX rot = XMMatrixRotationAxis(this->camera->getRight(), sign * this->camera->rotationSpeed * dt);
+			this->camera->setUp(XMVector3Transform(this->camera->getUp(), rot));
+			this->camera->setForward(XMVector3Transform(this->camera->getForward(), rot));
+			this->camera->setRight(XMVector3Transform(this->camera->getRight(), rot));
+		}
+		this->lastCursorPosition = currentMousePos;
+	}
+	else
+		ShowCursor(TRUE);
+
+	this->camera->setViewMatrix(XMMatrixLookAtLH(this->camera->getPosition(), this->camera->getPosition() + this->camera->getForward(), this->camera->getUp()));
 }
 
 Renderer::Renderer(HWND& wndHandle, float width, float height)
@@ -87,7 +122,7 @@ Renderer::Renderer(HWND& wndHandle, float width, float height)
 	vp.TopLeftY = 0;
 	this->deviceContext->RSSetViewports(1, &vp);
 
-	this->camera = new Camera(this->width, this->height);
+	this->camera = new Camera(this->width, this->height, 1.75f, 1.f, 2.f);
 }
 
 void Renderer::drawFrame()
