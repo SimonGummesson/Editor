@@ -20,6 +20,7 @@ private:
 	ID3D11Device* device;
 	ID3D11DeviceContext* deviceContext;
 	ID3D11RenderTargetView* backBufferRTV;
+	ID3D11DepthStencilView* depthStencilView;
 	float width;
 	float height;
 	float clearColor[4];

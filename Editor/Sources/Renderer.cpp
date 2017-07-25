@@ -104,8 +104,39 @@ Renderer::Renderer(HWND& wndHandle, float width, float height)
 		this->device->CreateRenderTargetView(pBackBuffer, NULL, &this->backBufferRTV);
 		pBackBuffer->Release();
 
+		//Create texture for depth stencil
+		D3D11_TEXTURE2D_DESC descDepth;
+		ZeroMemory(&descDepth, sizeof(D3D11_TEXTURE2D_DESC));
+		descDepth.Width = (UINT)width;
+		descDepth.Height = (UINT)height;
+		descDepth.MipLevels = 1;
+		descDepth.ArraySize = 1;
+		descDepth.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+		descDepth.SampleDesc.Count = 4;
+		descDepth.SampleDesc.Quality = 0;
+		descDepth.Usage = D3D11_USAGE_DEFAULT;
+		descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+		descDepth.CPUAccessFlags = 0;
+		descDepth.MiscFlags = 0;
+
+		ID3D11Texture2D *pTexture = NULL;
+		device->CreateTexture2D(&descDepth, NULL, &pTexture);
+
+
+		// Create the depth stencil view
+		hr = device->CreateDepthStencilView(pTexture,	// Depth stencil texture
+			NULL,										// Depth stencil desc
+			&depthStencilView);							// [out] Depth stencil view
+
+		// Bind the depth stencil view
+		deviceContext->OMSetRenderTargets(1,	        // One rendertarget view
+			&this->backBufferRTV,						// Render target view, created earlier
+			depthStencilView);							// Depth stencil view for the render target
+
+
 		// set the render target as the back buffer
-		this->deviceContext->OMSetRenderTargets(1, &backBufferRTV, NULL);
+		this->deviceContext->OMSetRenderTargets(1, &backBufferRTV, depthStencilView);
+		pTexture->Release();
 	}
 
 	this->clearColor[0] = 0;
@@ -129,6 +160,8 @@ void Renderer::drawFrame()
 {
 	this->deviceContext->ClearRenderTargetView(this->backBufferRTV, this->clearColor);
 	
+	this->deviceContext->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+
 	this->colorPass->drawPass(this->deviceContext, this->camera->getVPMatrix(), this->camera->getPosition());
 
 	this->swapChain->Present(0, 0);
@@ -174,4 +207,5 @@ Renderer::~Renderer()
 	this->swapChain->Release();
 	this->device->Release();
 	this->deviceContext->Release();
+	this->depthStencilView->Release();
 }
