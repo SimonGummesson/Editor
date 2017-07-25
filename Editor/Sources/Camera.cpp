@@ -24,7 +24,6 @@ Camera::~Camera()
 void Camera::moveCamera(XMVECTOR translation, bool run)
 {
 	this->position += translation * (run ? this->runSpeed : this->speed);
-	this->setViewMatrix(XMMatrixLookAtLH(this->position, this->position + this->forwardVector, this->upVector));
 }
 
 void Camera::setViewMatrix(XMMATRIX& matrix)

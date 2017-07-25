@@ -122,7 +122,7 @@ Renderer::Renderer(HWND& wndHandle, float width, float height)
 	vp.TopLeftY = 0;
 	this->deviceContext->RSSetViewports(1, &vp);
 
-	this->camera = new Camera(this->width, this->height, 1.75f, 1.f, 2.f);
+	this->camera = new Camera(this->width, this->height, 1.75f, 10.f, 20.f);
 }
 
 void Renderer::drawFrame()
@@ -137,7 +137,7 @@ void Renderer::drawFrame()
 void Renderer::update(float dt)
 {
 	this->getInput(dt);
-	this->colorPass->update();
+	this->colorPass->update(dt);
 }
 
 void Renderer::setColorPass(ColorPass * colorPass)

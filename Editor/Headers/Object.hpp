@@ -10,7 +10,7 @@ using namespace DirectX;
 
 __declspec(align(16)) class Object
 {
-private:
+protected:
 	std::string name;
 	XMMATRIX worldMatrix;
 	XMVECTOR translation;
@@ -28,7 +28,7 @@ public:
 		_mm_free(p);
 	}
 	Object(std::string name);
-	~Object();
+	virtual ~Object();
 	XMMATRIX &getWorldMatrix();
 	void translate(XMVECTOR translation);
 	void setTranslation(XMVECTOR translation);
@@ -37,6 +37,6 @@ public:
 	void scale(XMVECTOR scale);
 	void setScale(XMVECTOR scale);
 	void updateWorldMatrix();
-	void update();
+	virtual void update(float dt) = 0;
 	std::string getName();
 };

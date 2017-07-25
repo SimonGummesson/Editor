@@ -11,7 +11,6 @@ Object::Object(std::string name)
 
 Object::~Object()
 {
-
 }
 
 XMMATRIX &Object::getWorldMatrix()
@@ -52,11 +51,6 @@ void Object::setScale(XMVECTOR scale)
 void Object::updateWorldMatrix()
 {
 	this->worldMatrix = XMMatrixScalingFromVector(this->scaling) * XMMatrixRotationRollPitchYawFromVector(this->rotation) * XMMatrixTranslationFromVector(this->translation);
-}
-
-void Object::update()
-{
-
 }
 
 std::string Object::getName()

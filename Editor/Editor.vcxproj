@@ -147,12 +147,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Sources\Camera.cpp" />
+    <ClCompile Include="Sources\HeightMap.cpp" />
     <ClCompile Include="Sources\Object.cpp" />
     <ClCompile Include="Sources\ColorPass.cpp" />
     <ClCompile Include="Sources\ObjectData.cpp" />
     <ClCompile Include="Sources\Renderer.cpp" />
     <ClCompile Include="Sources\Editor.cpp" />
     <ClCompile Include="Sources\main.cpp" />
+    <ClCompile Include="Sources\TestObject.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\colorGeometryShader.hlsl">
@@ -173,12 +175,14 @@
   <ItemGroup>
     <ClInclude Include="Headers\Camera.hpp" />
     <ClInclude Include="Headers\Editor.hpp" />
+    <ClInclude Include="Headers\HeightMap.hpp" />
     <ClInclude Include="Headers\Object.hpp" />
     <ClInclude Include="Headers\ColorPass.hpp" />
     <ClInclude Include="Headers\ObjectData.hpp" />
     <ClInclude Include="Headers\Renderer.hpp" />
     <ClInclude Include="Headers\SimpleMath.h" />
     <ClInclude Include="Headers\structs.hpp" />
+    <ClInclude Include="Headers\TestObject.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Headers\SimpleMath.inl" />

@@ -13,7 +13,7 @@ class ColorPass
 {
 public:
 	void drawPass(ID3D11DeviceContext *deviceContext, DirectX::XMMATRIX& VPMatrix, DirectX::XMVECTOR cameraPos);
-	void update();
+	void update(float dt);
 	void setVertexShaderAndLayout(ID3D11Device *device, LPCWSTR path);
 	void setVertexSizeAndOffset(UINT32 vertexSize, UINT32 offset);
 	void setPixelShader(ID3D11Device *device, LPCWSTR path);

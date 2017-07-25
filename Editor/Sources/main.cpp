@@ -9,8 +9,9 @@
 #include "../Headers/Editor.hpp"
 #include "../Headers/ColorPass.hpp"
 #include "../Headers/Object.hpp"
+#include "../Headers/TestObject.hpp"
 #include "../Headers/structs.hpp"
-
+#include "../Headers/HeightMap.hpp"
 
 
 HWND InitWindow(HINSTANCE hInstance);
@@ -44,8 +45,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		std::vector<unsigned int> indices;
 		ObjectData *quad = new ObjectData("quad", editor.getRenderer()->getDevice(), vertexes, indices, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-		Object *quadObject = new Object("quad");
-		Object *quadObject2 = new Object("quad");
+		Object *quadObject = new TestObject("quad");
+		Object *quadObject2 = new TestObject("quad");
 		
 		quadObject->translate({ 0.f, 0.f, 0.f });
 		quadObject->scale({ 10.5f, 10.5f, 0.f });
@@ -56,9 +57,26 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		quadObject2->rotate({0.f, 0.f, 3.14159265359f / 2.f });
 		quadObject2->updateWorldMatrix();
 
+
+		std::vector<Vertex> heightMapVertexes;
+		heightMapVertexes.push_back(Vertex({ -0.5f, -20.f,  -0.5f }, { 0.f, 1.f, 0.f }));
+		heightMapVertexes.push_back(Vertex({ -0.5f, -20.f,  0.5f }, { 0.f, 1.f, 0.f }));
+		heightMapVertexes.push_back(Vertex({  0.5f, -20.f,  -0.5f }, { 0.f, 1.f, 0.f }));
+		heightMapVertexes.push_back(Vertex({  0.5f, -20.f,  0.5f }, { 0.f, 1.f, 0.f }));
+
+		ObjectData *heightMapData = new ObjectData("heightMap", editor.getRenderer()->getDevice(), heightMapVertexes, indices, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+		Object *HeightMapObject = new HeightMap("heightMap");
+
+		HeightMapObject->scale({ 10.f, 0.f, 10.f});
+		HeightMapObject->updateWorldMatrix();
+
 		colorPass->addObjectData(quad);
 		colorPass->addObject(quadObject);
 		colorPass->addObject(quadObject2);
+
+		colorPass->addObjectData(heightMapData);
+		colorPass->addObject(HeightMapObject);
+		
 		editor.getRenderer()->setColorPass(colorPass);
 		ShowWindow(wndHandle, nCmdShow);
 

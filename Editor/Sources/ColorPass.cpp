@@ -24,10 +24,10 @@ void ColorPass::drawPass(ID3D11DeviceContext *deviceContext, DirectX::XMMATRIX& 
 	}
 }
 
-void ColorPass::update()
+void ColorPass::update(float dt)
 {
 	for (unsigned int i = 0; i < objects.size(); i++)
-		objects[i]->update();
+		objects[i]->update(dt);
 }
 
 void ColorPass::setVertexShaderAndLayout(ID3D11Device * device, LPCWSTR path)
@@ -158,10 +158,9 @@ void ColorPass::addObjectData(ObjectData * objectData)
 
 void ColorPass::updatePSBuffer(ID3D11DeviceContext * deviceContext, XMFLOAT3 cameraPos)
 {
-	HRESULT hr;
 	//	Disable GPU access to the constant buffer data.
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
-	hr = deviceContext->Map(this->PSConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	HRESULT hr = deviceContext->Map(this->PSConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	if FAILED(hr)
 		cout << "Failed to disable gpu access to constant buffer." << endl;
 	//	Update the constant buffer here.
@@ -169,7 +168,7 @@ void ColorPass::updatePSBuffer(ID3D11DeviceContext * deviceContext, XMFLOAT3 cam
 	dataptr->eyePos = cameraPos,
 	dataptr->F0 = 0.8f;
 	dataptr->k = 0.2f;
-	dataptr->lightPosition = { 0.f, 0.f, -1.f };
+	dataptr->lightPosition = { 0.f, 100.f, 0.f };
 	dataptr->roughnessValue = 0.3f;
 	//	Reenable GPU access to the constant buffer data.
 	deviceContext->Unmap(this->PSConstantBuffer, 0);
