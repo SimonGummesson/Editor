@@ -12,7 +12,7 @@ Camera::Camera(float width, float height, float rotationSpeed, float walkSpeed, 
 	this->forwardVector = { 0.f, 0.f, 1.f };
 
 	this->viewMatrix = XMMatrixLookAtLH(this->position, this->forwardVector + this->position, this->upVector);
-	this->projectionMatrix = XMMatrixPerspectiveFovLH(3.141592f * 0.5f, width / height, 0.1f, 100.f);
+	this->projectionMatrix = XMMatrixPerspectiveFovLH(3.141592f * 0.5f, width / height, 0.1f, 1000.f);
 	this->VPMatrix = this->viewMatrix * this->projectionMatrix;
 }
 

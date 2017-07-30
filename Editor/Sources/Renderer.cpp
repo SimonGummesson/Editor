@@ -139,10 +139,10 @@ Renderer::Renderer(HWND& wndHandle, float width, float height)
 		pTexture->Release();
 	}
 
-	this->clearColor[0] = 0;
-	this->clearColor[1] = 0;
-	this->clearColor[2] = 0;
-	this->clearColor[3] = 1;
+	this->clearColor[0] = 0.f;
+	this->clearColor[1] = 0.f;
+	this->clearColor[2] = 0.05f;
+	this->clearColor[3] = 1.f;
 
 	D3D11_VIEWPORT vp;
 	vp.Width = width;

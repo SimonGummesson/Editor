@@ -19,6 +19,7 @@ LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
 {
+	CoInitializeEx(0, COINIT_MULTITHREADED); //I need this for WICTextureLoader, don't ask why............
 	AllocConsole();
 	freopen("conin$", "r", stdin);
 	freopen("conout$", "w", stdout);
@@ -32,15 +33,19 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		Editor editor(wndHandle, 1280.f, 1024.f, 60.f); // width, height, fps
 		// Create standard pass
 		ColorPass *colorPass = new ColorPass(editor.getRenderer()->getDevice());
-		colorPass->setVertexShaderAndLayout(editor.getRenderer()->getDevice(), L"Shaders/colorVertexShader.hlsl");
-		colorPass->setVertexSizeAndOffset(sizeof(Vertex), 0);
-		colorPass->setPixelShader(editor.getRenderer()->getDevice(), L"Shaders/colorPixelShader.hlsl");
-		colorPass->setGeometryShader(editor.getRenderer()->getDevice(), L"Shaders/colorGeometryShader.hlsl");
+		colorPass->setColorVertexShaderAndLayout(editor.getRenderer()->getDevice(), L"Shaders/Color Shaders/colorVertexShader.hlsl");
+		colorPass->setColorVertexSizeAndOffset(sizeof(VertexColor), 0);
+		colorPass->setColorPixelShader(editor.getRenderer()->getDevice(), L"Shaders/Color Shaders/colorPixelShader.hlsl");
+		colorPass->setColorGeometryShader(editor.getRenderer()->getDevice(), L"Shaders/Color Shaders/colorGeometryShader.hlsl");
 
-		std::vector<Vertex> vertexes;
-		vertexes.push_back(Vertex({ -0.5f, -0.5f, 3.0f }, { 1.0f, 0.0f, 0.0f }));
-		vertexes.push_back(Vertex({ -0.5f, 0.5f, 3.0f }, { 0.0f, 1.0f, 0.0f }));
-		vertexes.push_back(Vertex({ 0.5f, -0.5f, 3.0f }, { 0.0f, 1.0f, 0.0f }));
+		colorPass->setTextureVertexShaderAndLayout(editor.getRenderer()->getDevice(), L"Shaders/Texture Shaders/textureVertexShader.hlsl");
+		colorPass->setTextureVertexSizeAndOffset(sizeof(VertexUV), 0);
+		colorPass->setTexturePixelShader(editor.getRenderer()->getDevice(), L"Shaders/Texture Shaders/texturePixelShader.hlsl");
+
+		std::vector<VertexColor> vertexes;
+		vertexes.push_back(VertexColor({ -0.5f, -0.5f, 3.0f }, { 1.0f, 0.0f, 0.0f }));
+		vertexes.push_back(VertexColor({ -0.5f, 0.5f, 3.0f }, { 0.0f, 1.0f, 0.0f }));
+		vertexes.push_back(VertexColor({ 0.5f, -0.5f, 3.0f }, { 0.0f, 1.0f, 0.0f }));
 
 		std::vector<unsigned int> indices;
 		ObjectData *quad = new ObjectData("quad", editor.getRenderer()->getDevice(), vertexes, indices, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -58,17 +63,23 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		quadObject2->updateWorldMatrix();
 
 
-		std::vector<Vertex> heightMapVertexes;
-		heightMapVertexes.push_back(Vertex({ -0.5f, -20.f,  -0.5f }, { 0.f, 1.f, 0.f }));
-		heightMapVertexes.push_back(Vertex({ -0.5f, -20.f,  0.5f }, { 0.f, 1.f, 0.f }));
-		heightMapVertexes.push_back(Vertex({  0.5f, -20.f,  -0.5f }, { 0.f, 1.f, 0.f }));
-		heightMapVertexes.push_back(Vertex({  0.5f, -20.f,  0.5f }, { 0.f, 1.f, 0.f }));
+		std::vector<VertexColor> heightMapVertexes;
+		heightMapVertexes.push_back(VertexColor({ -0.5f, -20.f,  -0.5f }, { 0.f, 1.f, 0.f }));
+		heightMapVertexes.push_back(VertexColor({ -0.5f, -20.f,  0.5f }, { 0.f, 1.f, 0.f }));
+		heightMapVertexes.push_back(VertexColor({  0.5f, -20.f,  -0.5f }, { 0.f, 1.f, 0.f }));
+		heightMapVertexes.push_back(VertexColor({  0.5f, -20.f,  0.5f }, { 0.f, 1.f, 0.f }));
 
 		ObjectData *heightMapData = new ObjectData("heightMap", editor.getRenderer()->getDevice(), heightMapVertexes, indices, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 		Object *HeightMapObject = new HeightMap("heightMap");
 
-		HeightMapObject->scale({ 10.f, 0.f, 10.f});
+		HeightMapObject->scale({ 100.f, 0.f, 100.f});
 		HeightMapObject->updateWorldMatrix();
+
+		ObjectData *box = new ObjectData("box", "Resources/Crate.obj",editor.getRenderer()->getDevice());
+		Object *boxObject = new TestObject("box");
+
+		colorPass->addObjectData(box);
+		colorPass->addObject(boxObject);
 
 		colorPass->addObjectData(quad);
 		colorPass->addObject(quadObject);

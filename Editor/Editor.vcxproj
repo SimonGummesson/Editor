@@ -155,21 +155,30 @@
     <ClCompile Include="Sources\Editor.cpp" />
     <ClCompile Include="Sources\main.cpp" />
     <ClCompile Include="Sources\TestObject.cpp" />
+    <ClCompile Include="Sources\WICTextureLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Shaders\colorGeometryShader.hlsl">
+    <FxCompile Include="Shaders\Color Shaders\colorGeometryShader.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="Shaders\colorPixelShader.hlsl">
+    <FxCompile Include="Shaders\Color Shaders\colorPixelShader.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="Shaders\colorVertexShader.hlsl">
+    <FxCompile Include="Shaders\Color Shaders\colorVertexShader.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="Shaders\Texture Shaders\texturePixelShader.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="Shaders\Texture Shaders\textureVertexShader.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
@@ -183,12 +192,21 @@
     <ClInclude Include="Headers\SimpleMath.h" />
     <ClInclude Include="Headers\structs.hpp" />
     <ClInclude Include="Headers\TestObject.hpp" />
+    <ClInclude Include="Headers\WICTextureLoader.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Headers\SimpleMath.inl" />
+    <None Include="Resources\Crate.mtl" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="Resources\Crate.jpg" />
     <Image Include="UML.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Object Include="Resources\Crate.obj">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </Object>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
