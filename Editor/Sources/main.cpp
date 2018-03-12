@@ -55,7 +55,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		
 		quadObject->translate({ 0.f, 0.f, 0.f });
 		quadObject->scale({ 10.5f, 10.5f, 0.f });
-		quadObject->rotate({ 0.f ,0.f , 3.14159265359f * 3.f / 2.f });
+		quadObject->rotate({ 0.f, 0.f, 3.14159265359f * 3.f / 2.f });
 		quadObject->updateWorldMatrix();
 		quadObject2->translate({ 0.f, 0.f, 0.f });
 		quadObject2->scale({ 10.5f, 10.5f, 0.f });
@@ -65,11 +65,12 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
 		std::vector<VertexColor> heightMapVertexes;
 		heightMapVertexes.push_back(VertexColor({ -0.5f, -20.f,  -0.5f }, { 0.f, 1.f, 0.f }));
-		heightMapVertexes.push_back(VertexColor({ -0.5f, -20.f,  0.5f }, { 0.f, 1.f, 0.f }));
+		heightMapVertexes.push_back(VertexColor({ -0.5f, -20.f,   0.5f }, { 0.f, 1.f, 0.f }));
 		heightMapVertexes.push_back(VertexColor({  0.5f, -20.f,  -0.5f }, { 0.f, 1.f, 0.f }));
-		heightMapVertexes.push_back(VertexColor({  0.5f, -20.f,  0.5f }, { 0.f, 1.f, 0.f }));
+		heightMapVertexes.push_back(VertexColor({  0.5f, -20.f,   0.5f }, { 0.f, 1.f, 0.f }));
 
 		ObjectData *heightMapData = new ObjectData("heightMap", editor.getRenderer()->getDevice(), heightMapVertexes, indices, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+		heightMapData->lightData.ambientColor = { 0.3f, 0.3f, 0.3f };
 		Object *HeightMapObject = new HeightMap("heightMap");
 
 		HeightMapObject->scale({ 100.f, 0.f, 100.f});
@@ -78,6 +79,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		ObjectData *box = new ObjectData("box", "Resources/Crate.obj",editor.getRenderer()->getDevice());
 		Object *boxObject = new TestObject("box");
 
+		boxObject->translate({0.f, 5.f, 0.f});
 		colorPass->addObjectData(box);
 		colorPass->addObject(boxObject);
 

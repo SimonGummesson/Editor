@@ -8,6 +8,15 @@ cbuffer data : register(b0)
 	float k; // fraction of diffuse reflection (specular reflection = 1 - k)
 };
 
+cbuffer lightData : register(b1)
+{
+	float3 ambientColor;
+	float pad1;
+	float3 diffuseColor;
+	float pad2;
+	float3 specularColor;
+	float specularPower;
+};
 
 struct GS_OUT
 {
@@ -57,6 +66,6 @@ float4 PS_main(GS_OUT input) : SV_Target
 		specular = (fresnel * geoAtt * roughness) / (NdotV * NdotL * 3.14f);
 	}
 
-	float3 finalValue = input.Color * NdotL * (k + specular * (1.0f - k));
+	float3 finalValue = input.Color * ambientColor * NdotL * diffuseColor * (k + specular * (1.0f - k)) * specularColor;
 	return float4(finalValue, 1.0f);
 };

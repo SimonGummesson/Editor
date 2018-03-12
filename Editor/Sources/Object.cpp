@@ -50,7 +50,7 @@ void Object::setScale(XMVECTOR scale)
 
 void Object::updateWorldMatrix()
 {
-	this->worldMatrix = XMMatrixScalingFromVector(this->scaling) * XMMatrixRotationRollPitchYawFromVector(this->rotation) * XMMatrixTranslationFromVector(this->translation);
+	this->worldMatrix = XMMatrixScalingFromVector(this->scaling) * XMMatrixRotationQuaternion(XMQuaternionRotationRollPitchYawFromVector(this->rotation)) * XMMatrixTranslationFromVector(this->translation);
 }
 
 std::string Object::getName()

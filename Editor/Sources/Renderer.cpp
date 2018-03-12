@@ -10,8 +10,10 @@ void Renderer::getInput(float dt)
 	SHORT SpaceKey = GetAsyncKeyState(VK_SPACE);
 	SHORT LCTRLKey = GetAsyncKeyState(VK_CONTROL);
 	SHORT LMouse = GetAsyncKeyState(VK_LBUTTON);
+	SHORT RKey = GetAsyncKeyState('R');
+	
 	bool running = false;
-
+	
 	if (ShiftKey)
 		running = true;
 	if (WKey)
@@ -60,6 +62,15 @@ void Renderer::getInput(float dt)
 		ShowCursor(TRUE);
 
 	this->camera->setViewMatrix(XMMatrixLookAtLH(this->camera->getPosition(), this->camera->getPosition() + this->camera->getForward(), this->camera->getUp()));
+
+	if (RKey)
+	{
+		cout << ">> ";
+		string command;
+		getline(std::cin, command);
+		cout << command << endl;
+		GetCursorPos(&this->lastCursorPosition);
+	}
 }
 
 Renderer::Renderer(HWND& wndHandle, float width, float height)

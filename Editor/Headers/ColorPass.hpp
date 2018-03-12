@@ -26,6 +26,7 @@ public:
 	bool addObject(Object *object);
 	void addObjectData(ObjectData *objectdata);
 	void updatePSBuffer(ID3D11DeviceContext *deviceContext, XMFLOAT3 cameraPos);
+	void updatePSLightBuffer(ID3D11DeviceContext *deviceContext, materialLightData data);
 	ColorPass(ID3D11Device * device);
 	~ColorPass();
 private:
@@ -38,8 +39,10 @@ private:
 	UINT32 colorOffset;
 	ID3D11GeometryShader *colorGeometryShader;
 	ID3D11PixelShader *colorPixelShader;
+
 	ID3D11Buffer* GSConstantBuffer;
 	ID3D11Buffer* PSConstantBuffer;
+	ID3D11Buffer* PSLightDataConstantBuffer;
 
 	// Variables for objects using texture
 	vector<ObjectData*> objectDataTexture;

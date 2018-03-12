@@ -13,11 +13,13 @@ void ColorPass::drawPass(ID3D11DeviceContext *deviceContext, DirectX::XMMATRIX& 
 
 	deviceContext->GSSetConstantBuffers(0, 1, &this->GSConstantBuffer);
 	deviceContext->PSSetConstantBuffers(0, 1, &this->PSConstantBuffer);
+	deviceContext->PSSetConstantBuffers(1, 1, &this->PSLightDataConstantBuffer);
 
 	this->updatePSBuffer(deviceContext, pos);
 
 	for (unsigned int i = 0; i < this->objectDataColor.size(); i++)
 	{
+		updatePSLightBuffer(deviceContext, this->objectDataColor[i]->lightData);
 		deviceContext->IASetVertexBuffers(0, 1, objectDataColor[i]->getVertexBuffer(), &this->colorVertexSize, &this->colorOffset);
 		deviceContext->IASetPrimitiveTopology(objectDataColor[i]->getPrimitiveTopology());
 		objectDataColor[i]->Draw(deviceContext, VPMatrix, this->GSConstantBuffer);
@@ -32,11 +34,13 @@ void ColorPass::drawPass(ID3D11DeviceContext *deviceContext, DirectX::XMMATRIX& 
 
 	deviceContext->VSSetConstantBuffers(0, 1, &this->GSConstantBuffer);
 	deviceContext->PSSetConstantBuffers(0, 1, &this->PSConstantBuffer);
-	
+	deviceContext->PSSetConstantBuffers(1, 1, &this->PSLightDataConstantBuffer);
+
 	this->updatePSBuffer(deviceContext, pos);
 
 	for (unsigned int i = 0; i < this->objectDataTexture.size(); i++)
 	{
+		updatePSLightBuffer(deviceContext, this->objectDataTexture[i]->lightData);
 		deviceContext->PSSetShaderResources(0, 1, objectDataTexture[i]->getTextureView());
 		deviceContext->IASetVertexBuffers(0, 1, objectDataTexture[i]->getVertexBuffer(), &this->textureVertexSize, &this->textureOffset);
 		deviceContext->IASetPrimitiveTopology(objectDataTexture[i]->getPrimitiveTopology());
@@ -296,6 +300,22 @@ void ColorPass::updatePSBuffer(ID3D11DeviceContext * deviceContext, XMFLOAT3 cam
 	deviceContext->Unmap(this->PSConstantBuffer, 0);
 }
 
+void ColorPass::updatePSLightBuffer(ID3D11DeviceContext * deviceContext, materialLightData data)
+{
+	//	Disable GPU access to the constant buffer data.
+	D3D11_MAPPED_SUBRESOURCE mappedResource;
+	HRESULT hr = deviceContext->Map(this->PSLightDataConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	if FAILED(hr)
+		cout << "Failed to disable gpu access to constant buffer." << endl;
+	//	Update the constant buffer here.
+	materialLightData* dataptr = (materialLightData*)mappedResource.pData;
+	dataptr->ambientColor = data.ambientColor;
+	dataptr->diffuseColor = data.diffuseColor;
+	dataptr->specularColor = data.specularColor;
+	//	Reenable GPU access to the constant buffer data.
+	deviceContext->Unmap(this->PSLightDataConstantBuffer, 0);
+}
+
 ColorPass::ColorPass(ID3D11Device * device)
 {
 	this->colorVertexSize = 6;	// default value
@@ -344,6 +364,13 @@ ColorPass::ColorPass(ID3D11Device * device)
 	if (FAILED(hr))
 		std::cout << "Failed to create pixel shader constant buffer for color pass" << std::endl;
 
+	PScbDesc.ByteWidth = sizeof(materialLightData);
+
+	// Create the buffer.
+	hr = device->CreateBuffer(&PScbDesc, NULL, &this->PSLightDataConstantBuffer);
+
+	if (FAILED(hr))
+		std::cout << "Failed to create pixel shader constant buffer for light data" << std::endl;
 }
 
 ColorPass::~ColorPass()
@@ -368,5 +395,6 @@ ColorPass::~ColorPass()
 
 	this->GSConstantBuffer->Release();
 	this->PSConstantBuffer->Release();
+	this->PSLightDataConstantBuffer->Release();
 	
 }
