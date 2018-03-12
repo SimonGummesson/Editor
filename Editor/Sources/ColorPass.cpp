@@ -1,9 +1,7 @@
 #include "../Headers/ColorPass.hpp"
 
-void ColorPass::drawPass(ID3D11DeviceContext *deviceContext, DirectX::XMMATRIX& VPMatrix, DirectX::XMVECTOR cameraPos)
+void ColorPass::drawPass(ID3D11DeviceContext *deviceContext, Matrix VPMatrix, Vector3 cameraPos)
 {
-	XMFLOAT3 pos;
-	XMStoreFloat3(&pos, cameraPos);
 	// draw all objects using color
 	deviceContext->VSSetShader(this->colorVertexShader, nullptr, 0);
 	deviceContext->GSSetShader(this->colorGeometryShader, nullptr, 0);
@@ -15,7 +13,7 @@ void ColorPass::drawPass(ID3D11DeviceContext *deviceContext, DirectX::XMMATRIX& 
 	deviceContext->PSSetConstantBuffers(0, 1, &this->PSConstantBuffer);
 	deviceContext->PSSetConstantBuffers(1, 1, &this->PSLightDataConstantBuffer);
 
-	this->updatePSBuffer(deviceContext, pos);
+	this->updatePSBuffer(deviceContext, cameraPos);
 
 	for (unsigned int i = 0; i < this->objectDataColor.size(); i++)
 	{
@@ -36,7 +34,7 @@ void ColorPass::drawPass(ID3D11DeviceContext *deviceContext, DirectX::XMMATRIX& 
 	deviceContext->PSSetConstantBuffers(0, 1, &this->PSConstantBuffer);
 	deviceContext->PSSetConstantBuffers(1, 1, &this->PSLightDataConstantBuffer);
 
-	this->updatePSBuffer(deviceContext, pos);
+	this->updatePSBuffer(deviceContext, cameraPos);
 
 	for (unsigned int i = 0; i < this->objectDataTexture.size(); i++)
 	{
@@ -281,7 +279,7 @@ void ColorPass::addObjectData(ObjectData * objectData)
 	}
 }
 
-void ColorPass::updatePSBuffer(ID3D11DeviceContext * deviceContext, XMFLOAT3 cameraPos)
+void ColorPass::updatePSBuffer(ID3D11DeviceContext * deviceContext, Vector3 cameraPos)
 {
 	//	Disable GPU access to the constant buffer data.
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
@@ -290,11 +288,11 @@ void ColorPass::updatePSBuffer(ID3D11DeviceContext * deviceContext, XMFLOAT3 cam
 		cout << "Failed to disable gpu access to constant buffer." << endl;
 	//	Update the constant buffer here.
 	PS_COLORPASS_CONSTANT_BUFFER* dataptr = (PS_COLORPASS_CONSTANT_BUFFER*)mappedResource.pData;
-	dataptr->eyePos = cameraPos,
-	dataptr->roughnessValue = 0.3f,
-	dataptr->lightPosition = { 0.f, 100.f, 0.f };
+	dataptr->eyePos = cameraPos;
+	dataptr->roughnessValue = 0.3f;
+	dataptr->lightPosition = Vector3( 0.f, 100.f, 0.f );
 	dataptr->F0 = 0.8f;
-	dataptr->eyeForward = { 1.0f, 1.0f, 1.0f };
+	dataptr->eyeForward = Vector3(1.0f, 1.0f, 1.0f);
 	dataptr->k = 0.2f;
 	//	Reenable GPU access to the constant buffer data.
 	deviceContext->Unmap(this->PSConstantBuffer, 0);

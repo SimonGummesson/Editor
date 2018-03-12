@@ -3,54 +3,54 @@
 Object::Object(std::string name)
 {
 	this->name = name;
-	this->worldMatrix = XMMatrixIdentity();
-	this->translation = { 0, 0, 0 };
-	this->rotation = { 0, 0, 0 };
-	this->scaling = { 1, 1, 1 };
+	this->worldMatrix = DirectX::XMMatrixIdentity();
+	this->translation = Vector3(0, 0, 0);
+	this->rotation = Vector3(0, 0, 0);
+	this->scaling = Vector3(1, 1, 1);
 }
 
 Object::~Object()
 {
 }
 
-XMMATRIX &Object::getWorldMatrix()
+Matrix Object::getWorldMatrix()
 {
 	return this->worldMatrix;
 }
 
-void Object::translate(DirectX::XMVECTOR translation)
+void Object::translate(Vector3 translation)
 {
 	this->translation += translation;
 }
 
-void Object::setTranslation(XMVECTOR translation)
+void Object::setTranslation(Vector3 translation)
 {
 	this->translation = translation;
 }
 
-void Object::rotate(XMVECTOR rotation)
+void Object::rotate(Vector3 rotation)
 {
 	this->rotation += rotation;
 }
 
-void Object::setRotation(XMVECTOR rotation)
+void Object::setRotation(Vector3 rotation)
 {
 	this->rotation = rotation;
 }
 
-void Object::scale(XMVECTOR scale)
+void Object::scale(Vector3 scale)
 {
 	this->scaling += scale;
 }
 
-void Object::setScale(XMVECTOR scale)
+void Object::setScale(Vector3 scale)
 {
 	this->scaling = scale;
 }
 
 void Object::updateWorldMatrix()
 {
-	this->worldMatrix = XMMatrixScalingFromVector(this->scaling) * XMMatrixRotationQuaternion(XMQuaternionRotationRollPitchYawFromVector(this->rotation)) * XMMatrixTranslationFromVector(this->translation);
+	this->worldMatrix = DirectX::XMMatrixScalingFromVector(this->scaling) * DirectX::XMMatrixRotationQuaternion(XMQuaternionRotationRollPitchYawFromVector(this->rotation)) * XMMatrixTranslationFromVector(this->translation);
 }
 
 std::string Object::getName()

@@ -26,11 +26,11 @@ public:
 	void setRight(Vector3 vector);
 	void setForward(Vector3 vector);
 	void setUp(Vector3 vector);
-	Matrix getViewMatrix();
-	Matrix getProjectionMatrix();
-	Matrix getVPMatrix();
-	Vector3 getForward();
-	Vector3 getPosition();
-	Vector3 getRight();
-	Vector3 getUp();
+	XMMATRIX &getViewMatrix();
+	XMMATRIX &getProjectionMatrix();
+	XMMATRIX &getVPMatrix();
+	XMVECTOR &getForward();
+	XMVECTOR &getPosition();
+	XMVECTOR &getRight();
+	XMVECTOR &getUp();
 };

@@ -9,9 +9,8 @@
 #include "ColorPass.hpp"
 #include "Camera.hpp"
 #include "SimpleMath.h"
-#include "SimpleMath.inl"
 
-using namespace DirectX;
+using namespace DirectX::SimpleMath;
 
 class Renderer
 {

@@ -197,7 +197,6 @@
     <ClInclude Include="Headers\WICTextureLoader.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Headers\SimpleMath.inl" />
     <None Include="Resources\Crate.mtl" />
   </ItemGroup>
   <ItemGroup>

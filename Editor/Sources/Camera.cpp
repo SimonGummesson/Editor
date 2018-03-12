@@ -6,13 +6,13 @@ Camera::Camera(float width, float height, float rotationSpeed, float walkSpeed, 
 	this->speed = walkSpeed;
 	this->runSpeed = runSpeed;
 
-	this->position =	  { 0.f, 0.f, 0.f };
-	this->rightVector =   { 1.f, 0.f, 0.f };
-	this->upVector =	  { 0.f, 1.f, 0.f };
-	this->forwardVector = { 0.f, 0.f, 1.f };
+	this->position = Vector3(0.f, 0.f, 0.f);
+	this->rightVector = Vector3(1.f, 0.f, 0.f);
+	this->upVector = Vector3(0.f, 1.f, 0.f);
+	this->forwardVector = Vector3(0.f, 0.f, 1.f);
 
-	this->viewMatrix = XMMatrixLookAtLH(this->position, this->forwardVector + this->position, this->upVector);
-	this->projectionMatrix = XMMatrixPerspectiveFovLH(3.141592f * 0.5f, width / height, 0.1f, 1000.f);
+	this->viewMatrix = DirectX::XMMatrixLookAtLH(this->position, this->forwardVector + this->position, this->upVector);
+	this->projectionMatrix = DirectX::XMMatrixPerspectiveFovLH(3.141592f * 0.5f, width / height, 0.1f, 1000.f);
 	this->VPMatrix = this->viewMatrix * this->projectionMatrix;
 }
 
@@ -21,69 +21,69 @@ Camera::~Camera()
 
 }
 
-void Camera::moveCamera(XMVECTOR translation, bool run)
+void Camera::moveCamera(Vector3 translation, bool run)
 {
 	this->position += translation * (run ? this->runSpeed : this->speed);
 }
 
-void Camera::setViewMatrix(XMMATRIX& matrix)
+void Camera::setViewMatrix(Matrix matrix)
 {
 	this->viewMatrix = matrix;
 	this->VPMatrix = this->viewMatrix * this->projectionMatrix;
 }
 
-void Camera::setProjectionMatrix(XMMATRIX& matrix)
+void Camera::setProjectionMatrix(Matrix matrix)
 {
 	this->projectionMatrix = matrix;
 	this->VPMatrix = this->viewMatrix * this->projectionMatrix;
 }
 
-void Camera::setRight(XMVECTOR & vector)
+void Camera::setRight(Vector3 vector)
 {
 	this->rightVector = vector;
 }
 
-void Camera::setForward(XMVECTOR & vector)
+void Camera::setForward(Vector3 vector)
 {
 	this->forwardVector = vector;
 }
 
-void Camera::setUp(XMVECTOR & vector)
+void Camera::setUp(Vector3 vector)
 {
 	this->upVector = vector;
 }
 
-XMMATRIX & Camera::getViewMatrix()
+Matrix Camera::getViewMatrix()
 {
 	return this->viewMatrix;
 }
 
-XMMATRIX & Camera::getProjectionMatrix()
+Matrix Camera::getProjectionMatrix()
 {
 	return this->projectionMatrix;
 }
 
-XMMATRIX & Camera::getVPMatrix()
+Matrix Camera::getVPMatrix()
 {
 	return this->VPMatrix;
 }
 
-XMVECTOR & Camera::getForward()
+Vector3 Camera::getForward()
 {
 	return this->forwardVector;
 }
 
-XMVECTOR & Camera::getPosition()
+Vector3 Camera::getPosition()
 {
 	return this->position;
 }
 
-XMVECTOR & Camera::getRight()
+Vector3 Camera::getRight()
 {
 	return this->rightVector;
 }
 
-XMVECTOR & Camera::getUp()
+Vector3 Camera::getUp()
 {
 	return this->upVector;
 }

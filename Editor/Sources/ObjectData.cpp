@@ -46,10 +46,10 @@ ObjectData::ObjectData(string name, string fileName, ID3D11Device * device)
 	this->name = name;
 	this->primitiveTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
-	vector<XMFLOAT3>crateVertexList(0);
-	vector<XMFLOAT2>crateUvList(0);
-	vector<XMFLOAT3>crateNormalList(0);
-	vector<XMINT3>crateIndexList(0); // vertex, texture, normal
+	vector<Vector3>crateVertexList(0);
+	vector<Vector2>crateUvList(0);
+	vector<Vector3>crateNormalList(0);
+	vector<Vector3>crateIndexList(0); // vertex, texture, normal // integers here
 	string mtlFilename = "";
 
 	vector<VertexUV>crateVertexes(0);
@@ -65,8 +65,8 @@ ObjectData::ObjectData(string name, string fileName, ID3D11Device * device)
 			check = objFile.get();
 			if (check == 'v')
 			{
-				XMFLOAT3 xyz;
-				XMFLOAT2 UV;
+				Vector3 xyz;
+				Vector2 UV;
 				check = objFile.get();
 				if (check == ' ') //Vertex extraction
 				{
@@ -115,7 +115,7 @@ ObjectData::ObjectData(string name, string fileName, ID3D11Device * device)
 				check = objFile.get();
 				for (int i = 0; i < 3; i++)
 				{
-					XMINT3 indexes;
+					Vector3 indexes;
 					for (int j = 0; j < 3; j++)
 					{
 						check = objFile.get();
@@ -279,7 +279,7 @@ ObjectData::ObjectData(string name, string fileName, ID3D11Device * device)
 			for (unsigned int i = 0; i < mapKD.length(); ++i)
 				wmapKD += wchar_t(mapKD[i]);
 
-			hr = CreateWICTextureFromFile(device, wmapKD.c_str(), &this->texture, &this->textureView);
+			hr = DirectX::CreateWICTextureFromFile(device, wmapKD.c_str(), &this->texture, &this->textureView);
 		}
 		cout << "Loaded obj file: " << fileName << endl;
 	}
@@ -325,7 +325,7 @@ void ObjectData::addOject(Object * object)
 	this->objects.push_back(object);
 }
 
-void ObjectData::Draw(ID3D11DeviceContext * deviceContext, DirectX::XMMATRIX & VPMatrix, ID3D11Buffer* cbuffer)
+void ObjectData::Draw(ID3D11DeviceContext * deviceContext, Matrix VPMatrix, ID3D11Buffer* cbuffer)
 {
 	for (unsigned int i = 0; i < this->objects.size(); i++)
 	{
@@ -343,7 +343,7 @@ void ObjectData::Draw(ID3D11DeviceContext * deviceContext, DirectX::XMMATRIX & V
 	}
 }
 
-void ObjectData::updateBuffer(ID3D11DeviceContext * deviceContext, DirectX::XMMATRIX & VPMatrix, DirectX::XMMATRIX & worldMatrix, ID3D11Buffer* cbuffer)
+void ObjectData::updateBuffer(ID3D11DeviceContext * deviceContext, Matrix VPMatrix, Matrix worldMatrix, ID3D11Buffer* cbuffer)
 {
 	HRESULT hr;
 	//	Disable GPU access to the constant buffer data.

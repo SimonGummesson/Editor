@@ -3,39 +3,29 @@
 #include <iostream>
 #include <string>
 #include "SimpleMath.h"
-#include "SimpleMath.inl"
 #include "structs.hpp"
 
-using namespace DirectX;
+using namespace DirectX::SimpleMath;
 
-__declspec(align(16)) class Object
+class Object
 {
 protected:
 	std::string name;
-	XMMATRIX worldMatrix;
-	XMVECTOR translation;
-	XMVECTOR rotation;
-	XMVECTOR scaling;
+	Matrix worldMatrix;
+	Vector3 translation;
+	Vector3 rotation;
+	Vector3 scaling;
 
 public:
-	void* operator new(size_t i)
-	{
-		return _mm_malloc(i, 16);
-	}
-
-	void operator delete(void* p)
-	{
-		_mm_free(p);
-	}
 	Object(std::string name);
 	virtual ~Object();
-	XMMATRIX &getWorldMatrix();
-	void translate(XMVECTOR translation);
-	void setTranslation(XMVECTOR translation);
-	void rotate(XMVECTOR rotation);
-	void setRotation(XMVECTOR rotation);
-	void scale(XMVECTOR scale);
-	void setScale(XMVECTOR scale);
+	Matrix getWorldMatrix();
+	void translate(Vector3 translation);
+	void setTranslation(Vector3 translation);
+	void rotate(Vector3 rotation);
+	void setRotation(Vector3 rotation);
+	void scale(Vector3 scale);
+	void setScale(Vector3 scale);
 	void updateWorldMatrix();
 	virtual void update(float dt) = 0;
 	std::string getName();

@@ -40,10 +40,10 @@ void Renderer::getInput(float dt)
 		if (deltaX != 0.f)
 		{
 			float sign = signbit(deltaX) ? -1.0f : 1.0f;
-			XMMATRIX rot = XMMatrixRotationY(sign * this->camera->rotationSpeed * dt);
-			this->camera->setRight(XMVector3Transform(this->camera->getRight(), rot));
-			this->camera->setForward(XMVector3Transform(this->camera->getForward(), rot));
-			this->camera->setUp(XMVector3Transform(this->camera->getUp(), rot));
+			Matrix rot = DirectX::XMMatrixRotationY(sign * this->camera->rotationSpeed * dt);
+			this->camera->setRight(Vector3::Transform(this->camera->getRight(), rot));
+			this->camera->setForward(Vector3::Transform(this->camera->getForward(), rot));
+			this->camera->setUp(Vector3::Transform(this->camera->getUp(), rot));
 		}
 
 		//Vertical camera rotation
@@ -51,17 +51,17 @@ void Renderer::getInput(float dt)
 		if (deltaY != 0.f)
 		{
 			float sign = signbit(deltaY) ? -1.0f : 1.0f;
-			XMMATRIX rot = XMMatrixRotationAxis(this->camera->getRight(), sign * this->camera->rotationSpeed * dt);
-			this->camera->setUp(XMVector3Transform(this->camera->getUp(), rot));
-			this->camera->setForward(XMVector3Transform(this->camera->getForward(), rot));
-			this->camera->setRight(XMVector3Transform(this->camera->getRight(), rot));
+			Matrix rot = DirectX::XMMatrixRotationAxis(this->camera->getRight(), sign * this->camera->rotationSpeed * dt);
+			this->camera->setUp(Vector3::Transform(this->camera->getUp(), rot));
+			this->camera->setForward(Vector3::Transform(this->camera->getForward(), rot));
+			this->camera->setRight(Vector3::Transform(this->camera->getRight(), rot));
 		}
 		this->lastCursorPosition = currentMousePos;
 	}
 	else
 		ShowCursor(TRUE);
 
-	this->camera->setViewMatrix(XMMatrixLookAtLH(this->camera->getPosition(), this->camera->getPosition() + this->camera->getForward(), this->camera->getUp()));
+	this->camera->setViewMatrix(DirectX::XMMatrixLookAtLH(this->camera->getPosition(), this->camera->getPosition() + this->camera->getForward(), this->camera->getUp()));
 
 	if (RKey)
 	{

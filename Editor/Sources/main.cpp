@@ -70,7 +70,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		heightMapVertexes.push_back(VertexColor({  0.5f, -20.f,   0.5f }, { 0.f, 1.f, 0.f }));
 
 		ObjectData *heightMapData = new ObjectData("heightMap", editor.getRenderer()->getDevice(), heightMapVertexes, indices, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-		heightMapData->lightData.ambientColor = { 0.3f, 0.3f, 0.3f };
+		heightMapData->lightData.ambientColor = Vector3(0.3f, 0.3f, 0.3f);
 		Object *HeightMapObject = new HeightMap("heightMap");
 
 		HeightMapObject->scale({ 100.f, 0.f, 100.f});

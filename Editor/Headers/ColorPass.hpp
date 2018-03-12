@@ -8,11 +8,12 @@
 #include "ObjectData.hpp"
 #include "structs.hpp"
 using namespace std;
+using namespace DirectX::SimpleMath;
 
 class ColorPass
 {
 public:
-	void drawPass(ID3D11DeviceContext *deviceContext, DirectX::XMMATRIX& VPMatrix, DirectX::XMVECTOR cameraPos);
+	void drawPass(ID3D11DeviceContext *deviceContext, Matrix VPMatrix, Vector3 cameraPos);
 	void update(float dt);
 	void setColorVertexShaderAndLayout(ID3D11Device *device, LPCWSTR path);
 	void setColorVertexSizeAndOffset(UINT32 vertexSize, UINT32 offset);
@@ -25,7 +26,7 @@ public:
 
 	bool addObject(Object *object);
 	void addObjectData(ObjectData *objectdata);
-	void updatePSBuffer(ID3D11DeviceContext *deviceContext, XMFLOAT3 cameraPos);
+	void updatePSBuffer(ID3D11DeviceContext *deviceContext, Vector3 cameraPos);
 	void updatePSLightBuffer(ID3D11DeviceContext *deviceContext, materialLightData data);
 	ColorPass(ID3D11Device * device);
 	~ColorPass();
