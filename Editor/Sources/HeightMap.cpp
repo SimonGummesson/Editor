@@ -18,6 +18,13 @@ void HeightMap::update(float dt)
 
 float HeightMap::getIntersection(Vector3 pos)
 {
+	// Transfer position into heightmaps model space
+	pos = pos - translation;
+	Matrix rot = DirectX::XMMatrixRotationQuaternion(XMQuaternionRotationRollPitchYawFromVector(-rotation));
+	pos = DirectX::XMVector3TransformCoord(pos, rot);
+	pos = pos / scaling;
+
+	// Do calculation
 	if (pos.x < 0.f || pos.x > width * quadWidth || pos.z < 0.f || pos.z > height * quadHeight)
 		return -1.f;
 	int xPos, zPos;

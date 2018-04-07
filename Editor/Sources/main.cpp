@@ -78,7 +78,9 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		HeightMap *HeightMapObject = new HeightMap("heightMap", heightMapVertexes, Vector2(1.f, 1.f));
 		HeightMapObject->setQuadDimensions(1.f, 1.f);
 		HeightMapObject->setDimensions(100, 100);
-		//HeightMapObject->scale({ 100.f, 0.f, 100.f});
+		HeightMapObject->scale({ 0.5f, 0.5f, 0.5f});
+		HeightMapObject->translate({ -50.f, 0.f, -50.f });
+		/*HeightMapObject->rotate({ 0.f, 3.14f, 0.f });*/
 		HeightMapObject->updateWorldMatrix();
 
 		camera->setHeightMap(HeightMapObject);
