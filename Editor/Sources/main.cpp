@@ -19,7 +19,7 @@
 HWND InitWindow(HINSTANCE hInstance);
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 
-void initiateheightMap(string filename, std::vector<VertexColor>& heightMapVertexes, std::vector<unsigned int>& heightMapIndices, float spacing, float heightScaling);
+void initiateheightMap(string filename, std::vector<VertexColor>& heightMapVertexes, std::vector<unsigned int>& heightMapIndices, float spacingX, float spacingZ, float heightScaling, int& heightmapWidth, int& heightmapHeight);
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
 {
@@ -71,13 +71,16 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
 		std::vector<VertexColor> heightMapVertexes;
 		std::vector<unsigned int> heightMapIndices;
-		initiateheightMap("Resources/heightmap.png", heightMapVertexes, heightMapIndices, 1.f, 5.f);
+		int heightMapWidth, heightMapHeight;
+		float spacingX = 1.f;
+		float spacingZ = 1.f;
+		initiateheightMap("Resources/heightmap.png", heightMapVertexes, heightMapIndices, spacingX, spacingZ, 5.f, heightMapWidth, heightMapHeight);
 
 		ObjectData *heightMapData = new ObjectData("heightMap", editor.getRenderer()->getDevice(), heightMapVertexes, heightMapIndices, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 		heightMapData->lightData.ambientColor = Vector3(0.3f, 0.3f, 0.3f);
 		HeightMap *HeightMapObject = new HeightMap("heightMap", heightMapVertexes, Vector2(1.f, 1.f));
-		HeightMapObject->setQuadDimensions(1.f, 1.f);
-		HeightMapObject->setDimensions(100, 100);
+		HeightMapObject->setQuadDimensions(spacingX, spacingZ);
+		HeightMapObject->setDimensions(heightMapWidth, heightMapHeight);
 		HeightMapObject->scale({ 0.5f, 0.5f, 0.5f});
 		HeightMapObject->translate({ -50.f, 0.f, -50.f });
 		/*HeightMapObject->rotate({ 0.f, 3.14f, 0.f });*/
@@ -159,20 +162,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	return DefWindowProc(hWnd, message, wParam, lParam);
 }
 
-void initiateheightMap(string filename, std::vector<VertexColor>& heightMapVertexes, std::vector<unsigned int>& heightMapIndices, float spacing, float heightScaling)
+void initiateheightMap(string filename, std::vector<VertexColor>& heightMapVertexes, std::vector<unsigned int>& heightMapIndices, float spacingX, float spacingZ, float heightScaling, int& heightmapWidth, int& heightmapHeight)
 {
 	int bpp;
-	int bitmapWidth, bitmapHeight;
-	float* rgb = stbi_loadf(filename.c_str(), &bitmapWidth, &bitmapHeight, &bpp, STBI_grey);
+	float* rgb = stbi_loadf(filename.c_str(), &heightmapWidth, &heightmapHeight, &bpp, STBI_grey);
 	
 	//Build vertex data
-	for (int z = 0; z < bitmapHeight; z++)
+	for (int z = 0; z < heightmapHeight; z++)
 	{
-		for (int x = 0; x < bitmapWidth; x++)
+		for (int x = 0; x < heightmapWidth; x++)
 		{
 			VertexColor v0;
 
-			v0.position = Vector3(x * spacing, rgb[z * bitmapWidth + x] * heightScaling, z * spacing);
+			v0.position = Vector3(x * spacingX, rgb[z * heightmapWidth + x] * heightScaling, z * spacingZ);
 			v0.color = Vector3(0.f, 1.f, 0.f);
 
 			heightMapVertexes.push_back(v0);
@@ -181,15 +183,15 @@ void initiateheightMap(string filename, std::vector<VertexColor>& heightMapVerte
 	free(rgb);
 
 	//Build index buffer data
-	for (int z = 0; z < bitmapHeight - 1; z++)
+	for (int z = 0; z < heightmapHeight - 1; z++)
 	{
-		for (int x = 0; x < bitmapWidth; x++)
+		for (int x = 0; x < heightmapWidth; x++)
 		{
-			heightMapIndices.push_back(z * bitmapWidth + x);
-			heightMapIndices.push_back((z + 1) * bitmapWidth + x);
+			heightMapIndices.push_back(z * heightmapWidth + x);
+			heightMapIndices.push_back((z + 1) * heightmapWidth + x);
 		}
 
 		heightMapIndices.push_back(heightMapIndices[heightMapIndices.size() - 1]);
-		heightMapIndices.push_back((z + 2) * bitmapWidth);
+		heightMapIndices.push_back((z + 2) * heightmapWidth);
 	}
 }
