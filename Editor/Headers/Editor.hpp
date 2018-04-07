@@ -2,13 +2,14 @@
 #include "../Headers/Renderer.hpp"
 #include <chrono>
 #include <ctime>
-
+#include "Camera.hpp"
 class Editor
 {
 public:
 	float fps;
 	void update();
 	Renderer* getRenderer();
+	void setRendererCamera(Camera* camera);
 	Editor(HWND &wndHandle, float width, float height, float fps);
 	~Editor();
 private:

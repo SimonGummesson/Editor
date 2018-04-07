@@ -29,12 +29,15 @@ private:
 	std::string command;
 
 	void getInput(float dt);
-	POINT lastCursorPosition;
+
+	//input variables
+	InputStatus inputs;
 public:
 	Renderer(HWND& wndHandle, float width, float height);
 	void drawFrame();
 	void update(float dt);
 	void setColorPass(ColorPass *colorPass);
+	void setCamera(Camera* camera);
 	IDXGISwapChain* getSwapChain();
 	ID3D11Device* getDevice();
 	ID3D11DeviceContext* getDeviceContext();

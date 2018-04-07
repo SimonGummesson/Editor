@@ -10,7 +10,7 @@ void Editor::update()
 	this->elapsedTime += dt;
 	if (this->elapsedTime >= this->fps)
 	{	
-		cout << 1 / elapsedTime << endl;
+		//cout << 1 / elapsedTime << endl;
 		this->renderer->update(elapsedTime);
 		this->renderer->drawFrame();
 		this->elapsedTime = 0.f;
@@ -20,6 +20,11 @@ void Editor::update()
 Renderer * Editor::getRenderer()
 {
 	return this->renderer;
+}
+
+void Editor::setRendererCamera(Camera * camera)
+{
+	renderer->setCamera(camera);
 }
 
 Editor::Editor(HWND &wndHandle, float width, float height, float fps)

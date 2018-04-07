@@ -5,7 +5,7 @@
 #include <iostream>
 #pragma comment (lib, "d3d11.lib")
 #pragma comment (lib, "d3dcompiler.lib")
-
+#pragma comment (lib, "SDL2.lib")
 #include "../Headers/Editor.hpp"
 #include "../Headers/ColorPass.hpp"
 #include "../Headers/Object.hpp"
@@ -13,9 +13,13 @@
 #include "../Headers/structs.hpp"
 #include "../Headers/HeightMap.hpp"
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "../Headers/stb_image.h"
 
 HWND InitWindow(HINSTANCE hInstance);
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
+
+void initiateheightMap(string filename, std::vector<VertexColor>& heightMapVertexes, std::vector<unsigned int>& heightMapIndices, float spacing, float heightScaling);
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
 {
@@ -31,6 +35,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	if (wndHandle)
 	{
 		Editor editor(wndHandle, 1280.f, 1024.f, 60.f); // width, height, fps
+		Camera* camera = new Camera(1280.f, 1024.f, 1.75f, 10.f, 20.f, 5.f);
+		editor.setRendererCamera(camera);
 		// Create standard pass
 		ColorPass *colorPass = new ColorPass(editor.getRenderer()->getDevice());
 		colorPass->setColorVertexShaderAndLayout(editor.getRenderer()->getDevice(), L"Shaders/Color Shaders/colorVertexShader.hlsl");
@@ -64,18 +70,18 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
 
 		std::vector<VertexColor> heightMapVertexes;
-		heightMapVertexes.push_back(VertexColor({ -0.5f, -20.f,  -0.5f }, { 0.f, 1.f, 0.f }));
-		heightMapVertexes.push_back(VertexColor({ -0.5f, -20.f,   0.5f }, { 0.f, 1.f, 0.f }));
-		heightMapVertexes.push_back(VertexColor({  0.5f, -20.f,  -0.5f }, { 0.f, 1.f, 0.f }));
-		heightMapVertexes.push_back(VertexColor({  0.5f, -20.f,   0.5f }, { 0.f, 1.f, 0.f }));
+		std::vector<unsigned int> heightMapIndices;
+		initiateheightMap("Resources/heightmap.png", heightMapVertexes, heightMapIndices, 1.f, 5.f);
 
-		ObjectData *heightMapData = new ObjectData("heightMap", editor.getRenderer()->getDevice(), heightMapVertexes, indices, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+		ObjectData *heightMapData = new ObjectData("heightMap", editor.getRenderer()->getDevice(), heightMapVertexes, heightMapIndices, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 		heightMapData->lightData.ambientColor = Vector3(0.3f, 0.3f, 0.3f);
-		Object *HeightMapObject = new HeightMap("heightMap");
-
-		HeightMapObject->scale({ 100.f, 0.f, 100.f});
+		HeightMap *HeightMapObject = new HeightMap("heightMap", heightMapVertexes, Vector2(1.f, 1.f));
+		HeightMapObject->setQuadDimensions(1.f, 1.f);
+		HeightMapObject->setDimensions(100, 100);
+		//HeightMapObject->scale({ 100.f, 0.f, 100.f});
 		HeightMapObject->updateWorldMatrix();
 
+		camera->setHeightMap(HeightMapObject);
 		ObjectData *box = new ObjectData("box", "Resources/Crate.obj",editor.getRenderer()->getDevice());
 		Object *boxObject = new TestObject("box");
 
@@ -149,4 +155,39 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	}
 
 	return DefWindowProc(hWnd, message, wParam, lParam);
+}
+
+void initiateheightMap(string filename, std::vector<VertexColor>& heightMapVertexes, std::vector<unsigned int>& heightMapIndices, float spacing, float heightScaling)
+{
+	int bpp;
+	int bitmapWidth, bitmapHeight;
+	float* rgb = stbi_loadf(filename.c_str(), &bitmapWidth, &bitmapHeight, &bpp, STBI_grey);
+	
+	//Build vertex data
+	for (int z = 0; z < bitmapHeight; z++)
+	{
+		for (int x = 0; x < bitmapWidth; x++)
+		{
+			VertexColor v0;
+
+			v0.position = Vector3(x * spacing, rgb[z * bitmapWidth + x] * heightScaling, z * spacing);
+			v0.color = Vector3(0.f, 1.f, 0.f);
+
+			heightMapVertexes.push_back(v0);
+		}
+	}
+	free(rgb);
+
+	//Build index buffer data
+	for (int z = 0; z < bitmapHeight - 1; z++)
+	{
+		for (int x = 0; x < bitmapWidth; x++)
+		{
+			heightMapIndices.push_back(z * bitmapWidth + x);
+			heightMapIndices.push_back((z + 1) * bitmapWidth + x);
+		}
+
+		heightMapIndices.push_back(heightMapIndices[heightMapIndices.size() - 1]);
+		heightMapIndices.push_back((z + 2) * bitmapWidth);
+	}
 }

@@ -2,10 +2,20 @@
 #include "SimpleMath.h"
 using namespace DirectX::SimpleMath;
 
+struct InputStatus {
+	SHORT WKey, AKey, SKey, DKey;
+	SHORT ShiftKey, SpaceKey, LCTRLKey;
+	SHORT LMouse;
+};
+
 struct VertexColor {
 	Vector3 position;
 	Vector3 color;
 	VertexColor(Vector3 pos, Vector3 color) : position(pos), color(color)
+	{
+
+	}
+	VertexColor()
 	{
 
 	}

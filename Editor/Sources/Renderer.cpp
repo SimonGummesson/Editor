@@ -2,75 +2,14 @@
 #include <iostream>
 void Renderer::getInput(float dt)
 {
-	SHORT WKey = GetAsyncKeyState('W');
-	SHORT AKey = GetAsyncKeyState('A');
-	SHORT SKey = GetAsyncKeyState('S');
-	SHORT DKey = GetAsyncKeyState('D');
-	SHORT ShiftKey = GetAsyncKeyState(VK_SHIFT);
-	SHORT SpaceKey = GetAsyncKeyState(VK_SPACE);
-	SHORT LCTRLKey = GetAsyncKeyState(VK_CONTROL);
-	SHORT LMouse = GetAsyncKeyState(VK_LBUTTON);
-	SHORT RKey = GetAsyncKeyState('R');
-	
-	bool running = false;
-	
-	if (ShiftKey)
-		running = true;
-	if (WKey)
-		this->camera->moveCamera(this->camera->getForward() * dt, running);
-	if (AKey)
-		this->camera->moveCamera(-this->camera->getRight() * dt, running);
-	if (SKey)
-		this->camera->moveCamera(-this->camera->getForward() * dt, running);
-	if (DKey)
-		this->camera->moveCamera(this->camera->getRight() * dt, running);
-	if (SpaceKey)
-		this->camera->moveCamera({0, dt, 0}, running);
-	if (LCTRLKey)
-		this->camera->moveCamera({ 0, -dt, 0 }, running);
-
-	if (LMouse)
-	{
-		ShowCursor(FALSE);
-		POINT currentMousePos;
-		GetCursorPos(&currentMousePos);
-
-		//Horizontal camera rotation
-		float deltaX = (float)currentMousePos.x - (float)this->lastCursorPosition.x;
-		if (deltaX != 0.f)
-		{
-			float sign = signbit(deltaX) ? -1.0f : 1.0f;
-			Matrix rot = DirectX::XMMatrixRotationY(sign * this->camera->rotationSpeed * dt);
-			this->camera->setRight(Vector3::Transform(this->camera->getRight(), rot));
-			this->camera->setForward(Vector3::Transform(this->camera->getForward(), rot));
-			this->camera->setUp(Vector3::Transform(this->camera->getUp(), rot));
-		}
-
-		//Vertical camera rotation
-		float deltaY = (float)currentMousePos.y - (float)this->lastCursorPosition.y;
-		if (deltaY != 0.f)
-		{
-			float sign = signbit(deltaY) ? -1.0f : 1.0f;
-			Matrix rot = DirectX::XMMatrixRotationAxis(this->camera->getRight(), sign * this->camera->rotationSpeed * dt);
-			this->camera->setUp(Vector3::Transform(this->camera->getUp(), rot));
-			this->camera->setForward(Vector3::Transform(this->camera->getForward(), rot));
-			this->camera->setRight(Vector3::Transform(this->camera->getRight(), rot));
-		}
-		this->lastCursorPosition = currentMousePos;
-	}
-	else
-		ShowCursor(TRUE);
-
-	this->camera->setViewMatrix(DirectX::XMMatrixLookAtLH(this->camera->getPosition(), this->camera->getPosition() + this->camera->getForward(), this->camera->getUp()));
-
-	if (RKey)
-	{
-		cout << ">> ";
-		string command;
-		getline(std::cin, command);
-		cout << command << endl;
-		GetCursorPos(&this->lastCursorPosition);
-	}
+	inputs.WKey = GetAsyncKeyState('W');
+	inputs.AKey = GetAsyncKeyState('A');
+	inputs.SKey = GetAsyncKeyState('S');
+	inputs.DKey = GetAsyncKeyState('D');
+	inputs.ShiftKey = GetAsyncKeyState(VK_SHIFT);
+	inputs.SpaceKey = GetAsyncKeyState(VK_SPACE);
+	inputs.LCTRLKey = GetAsyncKeyState(VK_CONTROL);
+	inputs.LMouse = GetAsyncKeyState(VK_LBUTTON);
 }
 
 Renderer::Renderer(HWND& wndHandle, float width, float height)
@@ -163,8 +102,6 @@ Renderer::Renderer(HWND& wndHandle, float width, float height)
 	vp.TopLeftX = 0;
 	vp.TopLeftY = 0;
 	this->deviceContext->RSSetViewports(1, &vp);
-
-	this->camera = new Camera(this->width, this->height, 1.75f, 10.f, 20.f);
 }
 
 void Renderer::drawFrame()
@@ -180,13 +117,19 @@ void Renderer::drawFrame()
 
 void Renderer::update(float dt)
 {
-	this->getInput(dt);
-	this->colorPass->update(dt);
+	getInput(dt);
+	camera->update(inputs, dt);
+	colorPass->update(dt);
 }
 
 void Renderer::setColorPass(ColorPass * colorPass)
 {
 	this->colorPass = colorPass;
+}
+
+void Renderer::setCamera(Camera * camera)
+{
+	this->camera = camera;
 }
 
 IDXGISwapChain * Renderer::getSwapChain()

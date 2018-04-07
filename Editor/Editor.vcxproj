@@ -71,12 +71,16 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>C:\Users\SIMON\Editor\SDL\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\SIMON\Editor\SDL\lib\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
+    <IncludePath>C:\Users\SIMON\Editor\SDL\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\SIMON\Editor\SDL\lib\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -93,6 +97,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -192,6 +197,7 @@
     <ClInclude Include="Headers\ObjectData.hpp" />
     <ClInclude Include="Headers\Renderer.hpp" />
     <ClInclude Include="Headers\SimpleMath.h" />
+    <ClInclude Include="Headers\stb_image.h" />
     <ClInclude Include="Headers\structs.hpp" />
     <ClInclude Include="Headers\TestObject.hpp" />
     <ClInclude Include="Headers\WICTextureLoader.h" />
