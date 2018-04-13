@@ -156,9 +156,9 @@ ObjectData::ObjectData(string name, string fileName, ID3D11Device * device)
 		{
 			VertexUV vertex;
 			// Need to add a -1 for each index because counting in obj format starts at 1
-			vertex.position = crateVertexList[crateIndexList[i].x - 1];
-			vertex.UV = crateUvList[crateIndexList[i].y - 1];
-			vertex.normal = crateNormalList[crateIndexList[i].z - 1];
+			vertex.position = crateVertexList[(int)(crateIndexList[i].x) - 1];
+			vertex.UV = crateUvList[(int)(crateIndexList[i].y) - 1];
+			vertex.normal = crateNormalList[(int)(crateIndexList[i].z) - 1];
 
 			crateVertexes.push_back(vertex);
 		}

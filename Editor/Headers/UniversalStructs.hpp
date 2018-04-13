@@ -26,7 +26,7 @@ enum LightType { POINT_LIGHT, DIRECTIONAL_LIGHT };
 struct Light
 {
 	LightType type;
-	float misc1, misc2, misc3; // for point lights it hold a, b and range of the point light
+	float attA, attB, maxDist; // for point lights only
 	float4 diffuseColor;
 	float4 specularColor;
 	union
@@ -50,6 +50,10 @@ struct Light
 			return *this;
 		// reuse storage when possible
 		type = other.type;
+		attA = other.attA;
+		attB = other.attB;
+		maxDist = other.maxDist;
+
 		diffuseColor = other.diffuseColor;
 		specularColor = other.specularColor;
 		
@@ -62,7 +66,7 @@ struct Light
 
 	bool operator==(const Light& other)
 	{
-		if (type == other.type && diffuseColor == other.diffuseColor && specularColor == other.specularColor)
+		if (type == other.type && diffuseColor == other.diffuseColor && specularColor == other.specularColor && attA == other.attA && attB == other.attB && maxDist == other.maxDist)
 		{
 			if (POINT_LIGHT == type && position == other.position)
 				return true;

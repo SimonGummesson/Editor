@@ -28,8 +28,8 @@ float HeightMap::getIntersection(Vector3 pos)
 	if (pos.x < 0.f || pos.x > width * quadWidth || pos.z < 0.f || pos.z > height * quadHeight)
 		return -1.f;
 	int xPos, zPos;
-	xPos = floor(pos.x / quadWidth);
-	zPos = floor(pos.z / quadHeight);
+	xPos = (int)floor(pos.x / quadWidth);
+	zPos = (int)floor(pos.z / quadHeight);
 
  	Vector3 v0 = vertexData[zPos * width + xPos].position;
 	Vector3 v1 = vertexData[(zPos + 1) * width + xPos].position;
