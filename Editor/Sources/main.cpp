@@ -49,25 +49,25 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		colorPass->setTexturePixelShader(editor.getRenderer()->getDevice(), L"Shaders/Texture Shaders/texturePixelShader.hlsl");
 
 		Light light = Light(POINT_LIGHT);
-		light.misc1 = 0.f;
-		light.misc2 = 0.01f;
-		light.misc3 = 5.f;
+		light.attA = 0.f;
+		light.attB = 0.01f;
+		light.maxDist = 5.f;
 		light.diffuseColor = float4(1.f, 1.f, 1.f, 1.f);
 		light.specularColor = float4(1.f, 1.f, 1.f, 1.f);
 		light.position = float4(0.f, 10.f, 0.f, 0.f);
 
 		Light light2 = Light(POINT_LIGHT);
-		light2.misc1 = 0.f;
-		light2.misc2 = 0.01f;
-		light2.misc3 = 5.f;
+		light2.attA = 0.f;
+		light2.attB = 0.01f;
+		light2.maxDist = 5.f;
 		light2.diffuseColor = float4(1.f, 0.f, 0.f, 1.f);
 		light2.specularColor = float4(1.f, 0.f, 0.f, 1.f);
 		light2.position = float4(10.f, 5.f, 0.f, 0.f);
 
 		Light light3 = Light(POINT_LIGHT);
-		light3.misc1 = 0.f;
-		light3.misc2 = 0.01f;
-		light3.misc3 = 5.f;
+		light3.attA = 0.f;
+		light3.attB = 0.01f;
+		light3.maxDist = 5.f;
 		light3.diffuseColor = float4(0.f, 0.f, 1.f, 1.f);
 		light3.specularColor = float4(0.f, 0.f, 1.f, 1.f);
 		light3.position = float4(-10.f, 5.f, 0.f, 0.f);

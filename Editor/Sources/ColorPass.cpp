@@ -329,7 +329,7 @@ void ColorPass::addLight(Light light, string name)
 
 void ColorPass::removeLight(Light light)
 {
-	for (int i = 0; i < lights.size(); i++)
+	for (size_t i = 0; i < lights.size(); i++)
 		if (light == lights[i])
 			lights.erase(lights.begin() + i);
 }
@@ -452,54 +452,54 @@ void ColorPass::updateLightBuffer(ID3D11DeviceContext * deviceContext)
 	size_t bufferSize = sizeof(Light) * lights.size() + 2 * sizeof(byte4UInt);
 	byte4UInt* lightInformation = (byte4UInt*)malloc(bufferSize);
 	lightInformation[0].x = lights.size();
-	lightInformation[0].y = 0.f;
-	lightInformation[0].z = 0.f;
-	lightInformation[0].w = 0.f;
+	lightInformation[0].y = 0;
+	lightInformation[0].z = 0;
+	lightInformation[0].w = 0;
 
 	lightInformation[1].x = *reinterpret_cast<UINT*> (&ambientLight.x);
 	lightInformation[1].y = *reinterpret_cast<UINT*> (&ambientLight.y);
 	lightInformation[1].z = *reinterpret_cast<UINT*> (&ambientLight.z);
-	lightInformation[1].w = 0.f;
-	for (int i = 0; i < lights.size(); i++)
+	lightInformation[1].w = 0;
+	for (size_t i = 0; i < lights.size(); i++)
 	{
 		if (POINT_LIGHT == lights[i].type)
 			lightInformation[2 + i * 4].x = 0;
 		else if (DIRECTIONAL_LIGHT == lights[i].type)
 			lightInformation[2 + i * 4].x = 1;
-		lightInformation[2 + i * 4].y = *reinterpret_cast<UINT*> (&lights[i].misc1);
-		lightInformation[2 + i * 4].z = *reinterpret_cast<UINT*> (&lights[i].misc2);
-		lightInformation[2 + i * 4].w = *reinterpret_cast<UINT*> (&lights[i].misc3);
+		lightInformation[2 + i * 4].y = *reinterpret_cast<UINT*> (&lights[i].attA);
+		lightInformation[2 + i * 4].z = *reinterpret_cast<UINT*> (&lights[i].attB);
+		lightInformation[2 + i * 4].w = *reinterpret_cast<UINT*> (&lights[i].maxDist);
 
 		lightInformation[2 + i * 4 + 1].x = *reinterpret_cast<UINT*> (&lights[i].diffuseColor.x);
 		lightInformation[2 + i * 4 + 1].y = *reinterpret_cast<UINT*> (&lights[i].diffuseColor.y);
 		lightInformation[2 + i * 4 + 1].z = *reinterpret_cast<UINT*> (&lights[i].diffuseColor.z);
-		lightInformation[2 + i * 4 + 1].w = 0.f;
+		lightInformation[2 + i * 4 + 1].w = 0;
 
 		lightInformation[2 + i * 4 + 2].x = *reinterpret_cast<UINT*> (&lights[i].specularColor.x);
 		lightInformation[2 + i * 4 + 2].y = *reinterpret_cast<UINT*> (&lights[i].specularColor.y);
 		lightInformation[2 + i * 4 + 2].z = *reinterpret_cast<UINT*> (&lights[i].specularColor.z);
-		lightInformation[2 + i * 4 + 2].w = 0.f;
+		lightInformation[2 + i * 4 + 2].w = 0;
 
 		if (POINT_LIGHT == lights[i].type)
 		{
 			lightInformation[2 + i * 4 + 3].x = *reinterpret_cast<UINT*> (&lights[i].position.x);
 			lightInformation[2 + i * 4 + 3].y = *reinterpret_cast<UINT*> (&lights[i].position.y);
 			lightInformation[2 + i * 4 + 3].z = *reinterpret_cast<UINT*> (&lights[i].position.z);
-			lightInformation[2 + i * 4 + 3].w = 0.f;
+			lightInformation[2 + i * 4 + 3].w = 0;
 		}
 		else if (DIRECTIONAL_LIGHT == lights[i].type)
 		{
 			lightInformation[2 + i * 4 + 3].x = *reinterpret_cast<UINT*> (&lights[i].direction.x);
 			lightInformation[2 + i * 4 + 3].y = *reinterpret_cast<UINT*> (&lights[i].direction.y);
 			lightInformation[2 + i * 4 + 3].z = *reinterpret_cast<UINT*> (&lights[i].direction.z);
-			lightInformation[2 + i * 4 + 3].w = 0.f;
+			lightInformation[2 + i * 4 + 3].w = 0;
 		}
 	}
 
 	//upload to GPU
 	byte4UInt* dataptr = (byte4UInt*)mappedResource.pData;
 	memcpy(dataptr, lightInformation, bufferSize);
-	for (int i = 0; i < 4 * lights.size() + 2; i++)
+	for (size_t i = 0; i < 4 * lights.size() + 2; i++)
 		cout << "( " << dataptr[i].x << ", " << dataptr[i].y << ", " << dataptr[i].z << ", " << dataptr[i].w << ")" << endl;
 	//	Reenable GPU access to the constant buffer data.
 	deviceContext->Unmap(this->lightBuffer, 0);
