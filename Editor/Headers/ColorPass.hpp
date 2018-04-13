@@ -3,10 +3,13 @@
 #include <d3dcompiler.h>
 #include <vector>
 #include <iostream>
+#include <map>
 
 #include "Object.hpp"
 #include "ObjectData.hpp"
 #include "structs.hpp"
+#include "UniversalStructs.hpp"
+
 using namespace std;
 using namespace DirectX::SimpleMath;
 
@@ -28,6 +31,11 @@ public:
 	void addObjectData(ObjectData *objectdata);
 	void updatePSBuffer(ID3D11DeviceContext *deviceContext, Vector3 cameraPos);
 	void updatePSLightBuffer(ID3D11DeviceContext *deviceContext, materialLightData data);
+
+	void setAmbientLight(Vector3 ambient);
+	void addLight(Light light, string name);
+	void removeLight(Light light);
+	void updateLightBuffer(ID3D11DeviceContext * deviceContext);
 	ColorPass(ID3D11Device * device);
 	~ColorPass();
 private:
@@ -52,4 +60,10 @@ private:
 	UINT32 textureVertexSize;
 	UINT32 textureOffset;
 	ID3D11PixelShader *texturePixelShader;
+
+	//light members
+	ID3D11Buffer* lightBuffer;
+	ID3D11ShaderResourceView* lightSRV;
+	vector<Light> lights;
+	Vector3 ambientLight;
 };

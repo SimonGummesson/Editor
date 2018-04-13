@@ -27,7 +27,7 @@ VS_OUT VS_main(VS_IN input)
 
 	output.Pos = mul(float4(input.Pos, 1.f), WVPMatrix);
 	output.Tex = input.Tex;
-    output.Normal = mul(float4(input.Normal, 1.f), WorldMatrix);
+    output.Normal = mul(float4(input.Normal, 0.f), WorldMatrix);
     output.WPos = mul(float4(input.Pos, 1.f), WorldMatrix);
 
 	return output;

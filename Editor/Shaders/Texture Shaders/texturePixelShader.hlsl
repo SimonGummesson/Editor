@@ -1,4 +1,5 @@
-Texture2D objectTexture : register(t0);
+ByteAddressBuffer lightDataByte : register(t0);
+Texture2D objectTexture : register(t1);
 SamplerState Sampler;
 
 cbuffer data : register(b0)
@@ -32,43 +33,30 @@ struct VS_OUT
 float4 PS_main(VS_OUT input) : SV_Target
 {
 	float3 normal = normalize(input.Normal);
-	float3 lightDirection = normalize(lightPosition - input.WPos);
-	// do the lighting calculation for each fragment.
-	float NdotL = max(dot(normal, lightDirection), 0.0f);
+    
+    float3 finalColor = asfloat(lightDataByte.Load3(16)) * ambientColor; // Ambient
+    for (int i = 0; i < asint(lightDataByte.Load(0)); i++)
+    {
+        float3 lightDirection;
+        int type = asint(lightDataByte.Load(32 + i * 4 * 16));
+        float attenuation = 1.f;
+        if (type == 0) // point light
+        {
+            lightDirection = normalize(asfloat(lightDataByte.Load3(32 + i * 4 * 16 + 16 * 3)) - input.WPos);
+            float4 attData = asfloat(lightDataByte.Load4(32 + i * 4 * 16));
+            attData.x = length(asfloat(lightDataByte.Load3(32 + i * 4 * 16 + 16 * 3)) - input.WPos);
+            attenuation = 1.f / (1.f + attData.y * attData.x + attData.z * pow(attData.x, 2));
+        }
+	    else if (type == 1) // directional light
+            lightDirection = -normalize(asfloat(lightDataByte.Load3(32 + i * 4 * 16 + 16 * 3)));
 
-	float specular = 0.0f;
-	if (NdotL > 0.0f)
-	{
-		float3 eyeDir = normalize(eyePos - input.WPos);
+        float NdotL = max(dot(normal, lightDirection), 0.f);
 
-		// calculate intermediary values
-		float3 halfVector = normalize(lightDirection + eyeDir);
-		float NdotH = max(dot(normal, halfVector), 0.0f);
-		float NdotV = max(dot(normal, eyeDir), 0.0f); // note: this could also be NdotL, which is the same value
-		float VdotH = max(dot(eyeDir, halfVector), 0.0f);
-		float mSquared = roughnessValue * roughnessValue;
+        float specular = 0.f /*pow(dot(normalize(eyePos - input.WPos), reflect(lightDirection, normal)), specularPower)*/;
 
-		// geometric attenuation
-		float NH2 = 2.0f * NdotH;
-		float g1 = (NH2 * NdotV) / VdotH;
-		float g2 = (NH2 * NdotL) / VdotH;
-		float geoAtt = min(1.0f, min(g1, g2));
-
-		// roughness (or: microfacet distribution function)
-		// beckmann distribution function
-		float r1 = 1.0f / (4.0f * mSquared * pow(NdotH, 4.0f));
-		float r2 = (NdotH * NdotH - 1.0f) / (mSquared * NdotH * NdotH);
-		float roughness = r1 * exp(r2);
-
-		// fresnel
-		// Schlick approximation
-		float fresnel = pow(1.0f - VdotH, 5.0f);
-		fresnel *= (1.0f - F0);
-		fresnel += F0;
-
-		specular = (fresnel * geoAtt * roughness) / (NdotV * NdotL * 3.14f);
-	}
-
-	float3 finalValue = objectTexture.Sample(Sampler, input.Tex).xyz * ambientColor * NdotL * diffuseColor * (k + specular * (1.0f - k)) * specularColor;
-	return float4(finalValue, 1.0f);
+        finalColor += (NdotL * asfloat(lightDataByte.Load3(32 + i * 4 * 16 + 16 * 1)) * diffuseColor
+            + specular * asfloat(lightDataByte.Load3(32 + i * 4 * 16 + 16 * 2)) * specularColor)
+            * objectTexture.Sample(Sampler, input.Tex).xyz * attenuation;
+    }
+	return float4(finalColor, 1.0f);
 };

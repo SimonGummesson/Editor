@@ -200,6 +200,7 @@
     <ClInclude Include="Headers\stb_image.h" />
     <ClInclude Include="Headers\structs.hpp" />
     <ClInclude Include="Headers\TestObject.hpp" />
+    <ClInclude Include="Headers\UniversalStructs.hpp" />
     <ClInclude Include="Headers\WICTextureLoader.h" />
   </ItemGroup>
   <ItemGroup>
