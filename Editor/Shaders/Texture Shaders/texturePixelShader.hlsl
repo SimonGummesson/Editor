@@ -4,12 +4,7 @@ SamplerState Sampler;
 
 cbuffer data : register(b0)
 {
-	float3 eyePos;
-	float roughnessValue; // 0 : smooth, 1: rough
-	float3 lightPosition;
-	float F0; // fresnel reflectance at normal incidence
-	float3 pad;
-	float k; // fraction of diffuse reflection (specular reflection = 1 - k)
+    float4 eyePos;
 };
 
 cbuffer lightData : register(b1)

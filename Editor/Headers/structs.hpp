@@ -38,16 +38,6 @@ struct GS_COLORPASS_CONSTANT_BUFFER
 	Matrix WorldMatrix;
 };
 
-struct PS_COLORPASS_CONSTANT_BUFFER
-{
-	Vector3 eyePos;
-	float roughnessValue ;
-	Vector3 lightPosition;
-	float F0; // fresnel reflectance at normal incidence
-	Vector3 eyeForward;
-	float k; // fraction of diffuse reflection (specular reflection = 1 - k)
-};
-
 struct materialLightData
 {
 	Vector3 ambientColor;

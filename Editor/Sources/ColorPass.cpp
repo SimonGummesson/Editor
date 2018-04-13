@@ -2,7 +2,7 @@
 
 void ColorPass::drawPass(ID3D11DeviceContext *deviceContext, Matrix VPMatrix, Vector3 cameraPos)
 {
-	// bind lights
+	// bind light
 	deviceContext->PSSetShaderResources(0, 1, &lightSRV);
 	// draw all objects using color
 	deviceContext->VSSetShader(this->colorVertexShader, nullptr, 0);
@@ -289,13 +289,8 @@ void ColorPass::updatePSBuffer(ID3D11DeviceContext * deviceContext, Vector3 came
 	if FAILED(hr)
 		cout << "Failed to disable gpu access to constant buffer." << endl;
 	//	Update the constant buffer here.
-	PS_COLORPASS_CONSTANT_BUFFER* dataptr = (PS_COLORPASS_CONSTANT_BUFFER*)mappedResource.pData;
-	dataptr->eyePos = cameraPos;
-	dataptr->roughnessValue = 0.3f;
-	dataptr->lightPosition = Vector3( 0.f, 100.f, 0.f );
-	dataptr->F0 = 0.8f;
-	dataptr->eyeForward = Vector3(1.0f, 1.0f, 1.0f);
-	dataptr->k = 0.2f;
+	Vector4* dataptr = (Vector4*)mappedResource.pData;
+	*dataptr = Vector4(cameraPos.x, cameraPos.y, cameraPos.z, 1.f);
 	//	Reenable GPU access to the constant buffer data.
 	deviceContext->Unmap(this->PSConstantBuffer, 0);
 }
@@ -369,7 +364,7 @@ ColorPass::ColorPass(ID3D11Device * device)
 
 	//Pixel Shader buffer
 	D3D11_BUFFER_DESC PScbDesc;
-	PScbDesc.ByteWidth = sizeof(PS_COLORPASS_CONSTANT_BUFFER);
+	PScbDesc.ByteWidth = sizeof(Vector4);
 	PScbDesc.Usage = D3D11_USAGE_DYNAMIC;
 	PScbDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	PScbDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
