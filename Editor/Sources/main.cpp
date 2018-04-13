@@ -39,14 +39,14 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		editor.setRendererCamera(camera);
 		// Create standard pass
 		ColorPass *colorPass = new ColorPass(editor.getRenderer()->getDevice());
-		colorPass->setColorVertexShaderAndLayout(editor.getRenderer()->getDevice(), L"Shaders/Color Shaders/colorVertexShader.hlsl");
+		colorPass->setColorVertexShaderAndLayout(editor.getRenderer()->getDevice(), L"Shaders/Color pass/Color Shaders/colorVertexShader.hlsl");
 		colorPass->setColorVertexSizeAndOffset(sizeof(VertexColor), 0);
-		colorPass->setColorPixelShader(editor.getRenderer()->getDevice(), L"Shaders/Color Shaders/colorPixelShader.hlsl");
-		colorPass->setColorGeometryShader(editor.getRenderer()->getDevice(), L"Shaders/Color Shaders/colorGeometryShader.hlsl");
+		colorPass->setColorPixelShader(editor.getRenderer()->getDevice(), L"Shaders/Color pass/Color Shaders/colorPixelShader.hlsl");
+		colorPass->setColorGeometryShader(editor.getRenderer()->getDevice(), L"Shaders/Color pass/Color Shaders/colorGeometryShader.hlsl");
 
-		colorPass->setTextureVertexShaderAndLayout(editor.getRenderer()->getDevice(), L"Shaders/Texture Shaders/textureVertexShader.hlsl");
+		colorPass->setTextureVertexShaderAndLayout(editor.getRenderer()->getDevice(), L"Shaders/Color pass/Texture Shaders/textureVertexShader.hlsl");
 		colorPass->setTextureVertexSizeAndOffset(sizeof(VertexUV), 0);
-		colorPass->setTexturePixelShader(editor.getRenderer()->getDevice(), L"Shaders/Texture Shaders/texturePixelShader.hlsl");
+		colorPass->setTexturePixelShader(editor.getRenderer()->getDevice(), L"Shaders/Color pass/Texture Shaders/texturePixelShader.hlsl");
 
 		Light light = Light(POINT_LIGHT);
 		light.attA = 0.f;
