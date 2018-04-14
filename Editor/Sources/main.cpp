@@ -8,6 +8,7 @@
 #pragma comment (lib, "SDL2.lib")
 #include "../Headers/Editor.hpp"
 #include "../Headers/ColorPass.hpp"
+#include "../Headers/texturePass.hpp"
 #include "../Headers/Object.hpp"
 #include "../Headers/TestObject.hpp"
 #include "../Headers/structs.hpp"
@@ -38,15 +39,25 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		Camera* camera = new Camera(1280.f, 1024.f, 1.75f, 10.f, 20.f, 5.f);
 		editor.setRendererCamera(camera);
 		// Create standard pass
-		ColorPass *colorPass = new ColorPass(editor.getRenderer()->getDevice());
-		colorPass->setColorVertexShaderAndLayout(editor.getRenderer()->getDevice(), L"Shaders/Color pass/Color Shaders/colorVertexShader.hlsl");
-		colorPass->setColorVertexSizeAndOffset(sizeof(VertexColor), 0);
-		colorPass->setColorPixelShader(editor.getRenderer()->getDevice(), L"Shaders/Color pass/Color Shaders/colorPixelShader.hlsl");
-		colorPass->setColorGeometryShader(editor.getRenderer()->getDevice(), L"Shaders/Color pass/Color Shaders/colorGeometryShader.hlsl");
+		ColorPass* colorPass = new ColorPass(editor.getRenderer()->getDevice(), editor.getRenderer()->getDeviceContext(), camera->getWPMatrixPointer(), camera->getPositionPointer());
+		D3D11_INPUT_ELEMENT_DESC colorInputDesc[] = {
+			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		};
+		colorPass->setVertexShaderAndLayout(editor.getRenderer()->getDevice(), colorInputDesc, ARRAYSIZE(colorInputDesc),L"Shaders/Color pass/Color Shaders/colorVertexShader.hlsl");
+		colorPass->setVertexSizeAndOffset(sizeof(VertexColor), 0);
+		colorPass->setPixelShader(editor.getRenderer()->getDevice(), L"Shaders/Color pass/Color Shaders/colorPixelShader.hlsl");
+		colorPass->setGeometryShader(editor.getRenderer()->getDevice(), L"Shaders/Color pass/Color Shaders/colorGeometryShader.hlsl");
 
-		colorPass->setTextureVertexShaderAndLayout(editor.getRenderer()->getDevice(), L"Shaders/Color pass/Texture Shaders/textureVertexShader.hlsl");
-		colorPass->setTextureVertexSizeAndOffset(sizeof(VertexUV), 0);
-		colorPass->setTexturePixelShader(editor.getRenderer()->getDevice(), L"Shaders/Color pass/Texture Shaders/texturePixelShader.hlsl");
+		TexturePass* texturePass = new TexturePass(editor.getRenderer()->getDevice(), editor.getRenderer()->getDeviceContext(), camera->getWPMatrixPointer(), camera->getPositionPointer());
+		D3D11_INPUT_ELEMENT_DESC textureInputDesc[] = {
+			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 20, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		};
+		texturePass->setVertexShaderAndLayout(editor.getRenderer()->getDevice(), textureInputDesc, ARRAYSIZE(textureInputDesc), L"Shaders/Color pass/Texture Shaders/textureVertexShader.hlsl");
+		texturePass->setVertexSizeAndOffset(sizeof(VertexUV), 0);
+		texturePass->setPixelShader(editor.getRenderer()->getDevice(), L"Shaders/Color pass/Texture Shaders/texturePixelShader.hlsl");
 
 		Light light = Light(POINT_LIGHT);
 		light.attA = 0.f;
@@ -83,6 +94,13 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		colorPass->addLight(light4, "Sun");
 		colorPass->setAmbientLight(Vector3(0.05f, 0.05f, 0.05f));
 		colorPass->updateLightBuffer(editor.getRenderer()->getDeviceContext());
+
+		texturePass->addLight(light, "Point Light");
+		texturePass->addLight(light2, "Red Point Light");
+		texturePass->addLight(light3, "Blue Point Light");
+		texturePass->addLight(light4, "Sun");
+		texturePass->setAmbientLight(Vector3(0.05f, 0.05f, 0.05f));
+		texturePass->updateLightBuffer(editor.getRenderer()->getDeviceContext());
 
 		std::vector<VertexColor> vertexes;
 		vertexes.push_back(VertexColor({ -0.5f, -0.5f, 3.0f }, { 1.0f, 0.0f, 0.0f }));
@@ -127,8 +145,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		Object *boxObject = new TestObject("box");
 
 		boxObject->translate({0.f, 5.f, 0.f});
-		colorPass->addObjectData(box);
-		colorPass->addObject(boxObject);
+		texturePass->addObjectData(box);
+		texturePass->addObject(boxObject);
 
 		colorPass->addObjectData(quad);
 		colorPass->addObject(quadObject);
@@ -137,7 +155,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		colorPass->addObjectData(heightMapData);
 		colorPass->addObject(HeightMapObject);
 		
-		editor.getRenderer()->setColorPass(colorPass);
+		editor.getRenderer()->addPass(colorPass);
+		editor.getRenderer()->addPass(texturePass);
 		ShowWindow(wndHandle, nCmdShow);
 
 		while (WM_QUIT != msg.message)

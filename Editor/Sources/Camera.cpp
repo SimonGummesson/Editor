@@ -171,3 +171,13 @@ Vector3 Camera::getUp()
 {
 	return this->upVector;
 }
+
+Vector3 * Camera::getPositionPointer()
+{
+	return &position;
+}
+
+Matrix * Camera::getWPMatrixPointer()
+{
+	return &VPMatrix;
+}

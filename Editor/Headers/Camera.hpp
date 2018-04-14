@@ -45,4 +45,6 @@ public:
 	Vector3 getPosition();
 	Vector3 getRight();
 	Vector3 getUp();
+	Vector3* getPositionPointer();
+	Matrix* getWPMatrixPointer();
 };

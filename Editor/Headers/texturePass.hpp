@@ -14,7 +14,7 @@
 using namespace std;
 using namespace DirectX::SimpleMath;
 
-class ColorPass : public Pass
+class TexturePass : public Pass
 {
 public:
 	virtual void drawPass();
@@ -29,13 +29,9 @@ public:
 	void addLight(Light light, string name);
 	void removeLight(Light light);
 	void updateLightBuffer(ID3D11DeviceContext * deviceContext);
-	ColorPass(ID3D11Device * device, ID3D11DeviceContext* deviceContext, Matrix* cameraVPMatrix, Vector3* cameraPos);
-	~ColorPass();
-
-	void setVPPointer(Matrix* cameraVPMatrix);
-	void setCameraPosPointer(Vector3* cameraPos);
+	TexturePass(ID3D11Device * device, ID3D11DeviceContext* deviceContext, Matrix* cameraVPMatrix, Vector3* cameraPos);
+	~TexturePass();
 private:
-	
 	Matrix* cameraVPMatrix;
 	Vector3* cameraPos;
 

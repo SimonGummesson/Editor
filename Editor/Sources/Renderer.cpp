@@ -110,7 +110,8 @@ void Renderer::drawFrame()
 	
 	this->deviceContext->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 
-	this->colorPass->drawPass(this->deviceContext, this->camera->getVPMatrix(), this->camera->getPosition());
+	for (size_t i = 0; i < passes.size(); i++)
+		passes[i]->drawPass();
 
 	this->swapChain->Present(0, 0);
 }
@@ -119,12 +120,13 @@ void Renderer::update(float dt)
 {
 	getInput(dt);
 	camera->update(inputs, dt);
-	colorPass->update(dt);
+	for (size_t i = 0; i < passes.size(); i++)
+		passes[i]->update(dt);
 }
 
-void Renderer::setColorPass(ColorPass * colorPass)
+void Renderer::addPass(Pass * pass)
 {
-	this->colorPass = colorPass;
+	passes.push_back(pass);
 }
 
 void Renderer::setCamera(Camera * camera)
@@ -154,7 +156,8 @@ ID3D11RenderTargetView * Renderer::getBackBufferRTV()
 
 Renderer::~Renderer()
 {
-	delete this->colorPass;
+	for (size_t i = 0; i < passes.size(); i++)
+		delete passes[i];
 	delete this->camera;
 	
 	this->backBufferRTV->Release();

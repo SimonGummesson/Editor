@@ -6,7 +6,9 @@
 #include <chrono>
 #include <ctime>
 
+#include "Pass.hpp"
 #include "ColorPass.hpp"
+#include "texturePass.hpp"
 #include "Camera.hpp"
 #include "SimpleMath.h"
 
@@ -24,7 +26,7 @@ private:
 	float height;
 	float clearColor[4];
 
-	ColorPass *colorPass;
+	vector<Pass*> passes;
 	Camera* camera;
 	std::string command;
 
@@ -36,7 +38,7 @@ public:
 	Renderer(HWND& wndHandle, float width, float height);
 	void drawFrame();
 	void update(float dt);
-	void setColorPass(ColorPass *colorPass);
+	void addPass(Pass *colorPass);
 	void setCamera(Camera* camera);
 	IDXGISwapChain* getSwapChain();
 	ID3D11Device* getDevice();

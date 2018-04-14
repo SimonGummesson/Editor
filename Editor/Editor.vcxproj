@@ -156,10 +156,13 @@
     <ClCompile Include="Sources\Object.cpp" />
     <ClCompile Include="Sources\ColorPass.cpp" />
     <ClCompile Include="Sources\ObjectData.cpp" />
+    <ClCompile Include="Sources\Pass.cpp" />
     <ClCompile Include="Sources\Renderer.cpp" />
     <ClCompile Include="Sources\Editor.cpp" />
     <ClCompile Include="Sources\main.cpp" />
+    <ClCompile Include="Sources\skyBoxPass.cpp" />
     <ClCompile Include="Sources\TestObject.cpp" />
+    <ClCompile Include="Sources\texturePass.cpp" />
     <ClCompile Include="Sources\WICTextureLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -187,6 +190,12 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </FxCompile>
+    <FxCompile Include="Shaders\Sky box pass\skyBoxPixelShader.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="Shaders\Sky box pass\skyBoxVertexShader.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\Camera.hpp" />
@@ -195,11 +204,14 @@
     <ClInclude Include="Headers\Object.hpp" />
     <ClInclude Include="Headers\ColorPass.hpp" />
     <ClInclude Include="Headers\ObjectData.hpp" />
+    <ClInclude Include="Headers\Pass.hpp" />
     <ClInclude Include="Headers\Renderer.hpp" />
     <ClInclude Include="Headers\SimpleMath.h" />
+    <ClInclude Include="Headers\SkyBoxPass.hpp" />
     <ClInclude Include="Headers\stb_image.h" />
     <ClInclude Include="Headers\structs.hpp" />
     <ClInclude Include="Headers\TestObject.hpp" />
+    <ClInclude Include="Headers\texturePass.hpp" />
     <ClInclude Include="Headers\UniversalStructs.hpp" />
     <ClInclude Include="Headers\WICTextureLoader.h" />
   </ItemGroup>

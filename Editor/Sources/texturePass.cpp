@@ -1,17 +1,17 @@
-#include "../Headers/ColorPass.hpp"
+#include "../Headers/texturePass.hpp"
 
-void ColorPass::drawPass()
+void TexturePass::drawPass()
 {
 	// bind light
 	deviceContext->PSSetShaderResources(0, 1, &lightSRV);
 
 	deviceContext->VSSetShader(vertexShader, nullptr, 0);
-	deviceContext->GSSetShader(geometryShader, nullptr, 0);
+	deviceContext->GSSetShader(nullptr, nullptr, 0);
 	deviceContext->PSSetShader(pixelShader, nullptr, 0);
 
 	deviceContext->IASetInputLayout(vertexLayout);
 
-	deviceContext->GSSetConstantBuffers(0, 1, &GSConstantBuffer);
+	deviceContext->VSSetConstantBuffers(0, 1, &GSConstantBuffer);
 	deviceContext->PSSetConstantBuffers(0, 1, &PSConstantBuffer);
 	deviceContext->PSSetConstantBuffers(1, 1, &PSLightDataConstantBuffer);
 
@@ -20,34 +20,35 @@ void ColorPass::drawPass()
 	for (unsigned int i = 0; i < objectData.size(); i++)
 	{
 		updatePSLightBuffer(deviceContext, objectData[i]->lightData);
+		deviceContext->PSSetShaderResources(1, 1, objectData[i]->getTextureView());
 		deviceContext->IASetVertexBuffers(0, 1, objectData[i]->getVertexBuffer(), &vertexSize, &vertexOffset);
 		deviceContext->IASetPrimitiveTopology(objectData[i]->getPrimitiveTopology());
-		objectData[i]->Draw(deviceContext, *cameraVPMatrix, this->GSConstantBuffer);
+		objectData[i]->Draw(deviceContext, *cameraVPMatrix, GSConstantBuffer);
 	}
 }
 
-void ColorPass::update(float dt)
+void TexturePass::update(float dt)
 {
 	for (unsigned int i = 0; i < objects.size(); i++)
 		objects[i]->update(dt);
 }
 
-bool ColorPass::addObject(Object *object)
+bool TexturePass::addObject(Object *object)
 {
-	for (unsigned int i = 0; i < this->objectData.size(); i++)
+	for (unsigned int i = 0; i < objectData.size(); i++)
 	{
 		string name = object->getName();
 		if (objectData[i]->getName() == name)
 		{
-			this->objects.push_back(object);
-			this->objectData[i]->addOject(object);
+			objects.push_back(object);
+			objectData[i]->addOject(object);
 			return true;
 		}
 	}
 	return false;
 }
 
-void ColorPass::addObjectData(ObjectData * objectData)
+void TexturePass::addObjectData(ObjectData * objectData)
 {
 	for (unsigned int i = 0; i < this->objectData.size(); i++)
 	{
@@ -57,7 +58,7 @@ void ColorPass::addObjectData(ObjectData * objectData)
 	this->objectData.push_back(objectData);
 }
 
-void ColorPass::updatePSBuffer(ID3D11DeviceContext * deviceContext, Vector3 cameraPos)
+void TexturePass::updatePSBuffer(ID3D11DeviceContext * deviceContext, Vector3 cameraPos)
 {
 	//	Disable GPU access to the constant buffer data.
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
@@ -71,7 +72,7 @@ void ColorPass::updatePSBuffer(ID3D11DeviceContext * deviceContext, Vector3 came
 	deviceContext->Unmap(this->PSConstantBuffer, 0);
 }
 
-void ColorPass::updatePSLightBuffer(ID3D11DeviceContext * deviceContext, materialLightData data)
+void TexturePass::updatePSLightBuffer(ID3D11DeviceContext * deviceContext, materialLightData data)
 {
 	//	Disable GPU access to the constant buffer data.
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
@@ -88,24 +89,24 @@ void ColorPass::updatePSLightBuffer(ID3D11DeviceContext * deviceContext, materia
 	deviceContext->Unmap(this->PSLightDataConstantBuffer, 0);
 }
 
-void ColorPass::setAmbientLight(Vector3 ambient)
+void TexturePass::setAmbientLight(Vector3 ambient)
 {
 	ambientLight = ambient;
 }
 
-void ColorPass::addLight(Light light, string name)
+void TexturePass::addLight(Light light, string name)
 {
 	lights.push_back(light);
 }
 
-void ColorPass::removeLight(Light light)
+void TexturePass::removeLight(Light light)
 {
 	for (size_t i = 0; i < lights.size(); i++)
 		if (light == lights[i])
 			lights.erase(lights.begin() + i);
 }
 
-ColorPass::ColorPass(ID3D11Device * device, ID3D11DeviceContext* deviceContext, Matrix* cameraVPMatrix, Vector3* cameraPos)
+TexturePass::TexturePass(ID3D11Device * device, ID3D11DeviceContext* deviceContext, Matrix* cameraVPMatrix, Vector3* cameraPos)
 {
 	this->deviceContext = deviceContext;
 	this->cameraVPMatrix = cameraVPMatrix;
@@ -160,7 +161,7 @@ ColorPass::ColorPass(ID3D11Device * device, ID3D11DeviceContext* deviceContext, 
 	lightBufferDesc.StructureByteStride = 0;
 
 	hr = device->CreateBuffer(&lightBufferDesc, nullptr, &lightBuffer);
-	
+
 	D3D11_BUFFEREX_SRV buffer;
 	buffer.FirstElement = 0;
 	buffer.Flags = D3D11_BUFFEREX_SRV_FLAG_RAW;
@@ -174,7 +175,7 @@ ColorPass::ColorPass(ID3D11Device * device, ID3D11DeviceContext* deviceContext, 
 	hr = device->CreateShaderResourceView(lightBuffer, &srvDesc, &lightSRV);
 }
 
-ColorPass::~ColorPass()
+TexturePass::~TexturePass()
 {
 	for (unsigned int i = 0; i < objects.size(); i++)
 		delete objects[i];
@@ -185,27 +186,17 @@ ColorPass::~ColorPass()
 	this->GSConstantBuffer->Release();
 	this->PSConstantBuffer->Release();
 	this->PSLightDataConstantBuffer->Release();
-	
+
 	this->lightBuffer->Release();
 	this->lightSRV->Release();
 }
 
-void ColorPass::setVPPointer(Matrix * cameraVPMatrix)
-{
-	this->cameraVPMatrix = cameraVPMatrix;
-}
-
-void ColorPass::setCameraPosPointer(Vector3 * cameraPos)
-{
-	this->cameraPos = cameraPos;
-}
-
-void ColorPass::updateLightBuffer(ID3D11DeviceContext * deviceContext)
+void TexturePass::updateLightBuffer(ID3D11DeviceContext * deviceContext)
 {
 	//	Disable GPU access to the constant buffer data.
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	HRESULT hr = deviceContext->Map(lightBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-	
+
 	// Create array with light information
 	size_t bufferSize = sizeof(Light) * lights.size() + 2 * sizeof(byte4UInt);
 	byte4UInt* lightInformation = (byte4UInt*)malloc(bufferSize);
