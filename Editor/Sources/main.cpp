@@ -9,6 +9,7 @@
 #include "../Headers/Editor.hpp"
 #include "../Headers/ColorPass.hpp"
 #include "../Headers/texturePass.hpp"
+#include "../Headers/SkyBoxPass.hpp"
 #include "../Headers/Object.hpp"
 #include "../Headers/TestObject.hpp"
 #include "../Headers/structs.hpp"
@@ -38,7 +39,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		Editor editor(wndHandle, 1280.f, 1024.f, 60.f); // width, height, fps
 		Camera* camera = new Camera(1280.f, 1024.f, 1.75f, 10.f, 20.f, 5.f);
 		editor.setRendererCamera(camera);
-		// Create standard pass
+
+		// Create standard pass for color objects
 		ColorPass* colorPass = new ColorPass(editor.getRenderer()->getDevice(), editor.getRenderer()->getDeviceContext(), camera->getWPMatrixPointer(), camera->getPositionPointer());
 		D3D11_INPUT_ELEMENT_DESC colorInputDesc[] = {
 			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
@@ -49,6 +51,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		colorPass->setPixelShader(editor.getRenderer()->getDevice(), L"Shaders/Color pass/Color Shaders/colorPixelShader.hlsl");
 		colorPass->setGeometryShader(editor.getRenderer()->getDevice(), L"Shaders/Color pass/Color Shaders/colorGeometryShader.hlsl");
 
+		// Create standard pass for texture objects
 		TexturePass* texturePass = new TexturePass(editor.getRenderer()->getDevice(), editor.getRenderer()->getDeviceContext(), camera->getWPMatrixPointer(), camera->getPositionPointer());
 		D3D11_INPUT_ELEMENT_DESC textureInputDesc[] = {
 			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
@@ -113,11 +116,11 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		Object *quadObject = new TestObject("quad");
 		Object *quadObject2 = new TestObject("quad");
 		
-		quadObject->translate({ 0.f, 20.f, 0.f });
+		quadObject->setTranslation({ 0.f, 20.f, 0.f });
 		quadObject->scale({ 10.5f, 10.5f, 0.f });
 		quadObject->rotate({ 0.f, 0.f, 3.14159265359f * 3.f / 2.f });
 		quadObject->updateWorldMatrix();
-		quadObject2->translate({ 0.f, 20.f, 0.f });
+		quadObject2->setTranslation({ 0.f, 20.f, 0.f });
 		quadObject2->scale({ 10.5f, 10.5f, 0.f });
 		quadObject2->rotate({0.f, 0.f, 3.14159265359f / 2.f });
 		quadObject2->updateWorldMatrix();
@@ -144,7 +147,18 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		ObjectData *box = new ObjectData("box", "Resources/Crate.obj",editor.getRenderer()->getDevice());
 		Object *boxObject = new TestObject("box");
 
-		boxObject->translate({0.f, 5.f, 0.f});
+		SkyBoxPass* skyBoxPass = new SkyBoxPass(editor.getRenderer()->getDevice(), editor.getRenderer()->getDeviceContext(), 1.f, camera->getWPMatrixPointer(), camera->getPositionPointer());
+		skyBoxPass->setCubeMap("Resources/skybox", ".png");
+		D3D11_INPUT_ELEMENT_DESC skyboxInputDesc[] = {
+			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 20, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		};
+		skyBoxPass->setVertexShaderAndLayout(editor.getRenderer()->getDevice(), skyboxInputDesc, ARRAYSIZE(skyboxInputDesc), L"Shaders/Sky box pass/skyBoxVertexShader.hlsl");
+		skyBoxPass->setVertexSizeAndOffset(sizeof(VertexUV), 0);
+		skyBoxPass->setPixelShader(editor.getRenderer()->getDevice(), L"Shaders/Sky box pass/skyBoxPixelShader.hlsl");
+
+		boxObject->setTranslation({0.f, 5.f, 0.f});
 		texturePass->addObjectData(box);
 		texturePass->addObject(boxObject);
 
@@ -157,6 +171,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		
 		editor.getRenderer()->addPass(colorPass);
 		editor.getRenderer()->addPass(texturePass);
+		editor.getRenderer()->addPass(skyBoxPass);
 		ShowWindow(wndHandle, nCmdShow);
 
 		while (WM_QUIT != msg.message)

@@ -29,24 +29,32 @@ Pass::~Pass()
 void Pass::setVertexShaderAndLayout(ID3D11Device * device, D3D11_INPUT_ELEMENT_DESC* inputElementDesc, UINT numInputElements, LPCWSTR path)
 {
 	// Create vertex shader
+	ID3DBlob* errorBlob = nullptr;
 	ID3DBlob* pVS = nullptr;
-	D3DCompileFromFile(
+	HRESULT hr = D3DCompileFromFile(
 		path,           // filename
 		nullptr,		// optional macros
 		nullptr,		// optional include files
 		"VS_main",		// entry point
-		"vs_4_0",		// shader model (target)
+		"vs_5_0",		// shader model (target)
 		0,				// shader compile options
 		0,				// effect compile options
 		&pVS,			// double pointer to ID3DBlob		
-		nullptr			// pointer for Error Blob messages.
+		&errorBlob		// pointer for Error Blob messages.
 						// how to use the Error blob, see here
 						// https://msdn.microsoft.com/en-us/library/windows/desktop/hh968107(v=vs.85).aspx
 	);
 
-	HRESULT hr = device->CreateVertexShader(pVS->GetBufferPointer(), pVS->GetBufferSize(), nullptr, &vertexShader);
 	if (FAILED(hr))
-		std::cout << "Failed to create vertex shader: " << path << std::endl;
+	{
+		if (errorBlob != nullptr)
+		{
+			OutputDebugStringA((char*)errorBlob->GetBufferPointer());
+			errorBlob->Release();
+		}
+	}
+
+	hr = device->CreateVertexShader(pVS->GetBufferPointer(), pVS->GetBufferSize(), nullptr, &vertexShader);
 
 	// Create input layout
 	/*D3D11_INPUT_ELEMENT_DESC inputDesc[] = {
@@ -76,7 +84,7 @@ void Pass::setGeometryShader(ID3D11Device * device, LPCWSTR path)
 		nullptr,		// optional macros
 		nullptr,		// optional include files
 		"GS_main",		// entry point
-		"gs_4_0",		// shader model (target)
+		"gs_5_0",		// shader model (target)
 		0,				// shader compile options
 		0,				// effect compile options
 		&pGS,			// double pointer to ID3DBlob		
@@ -107,7 +115,7 @@ void Pass::setPixelShader(ID3D11Device * device, LPCWSTR path)
 		nullptr,		// optional macros
 		nullptr,		// optional include files
 		"PS_main",		// entry point
-		"ps_4_0",		// shader model (target)
+		"ps_5_0",		// shader model (target)
 		0,				// shader compile options
 		0,				// effect compile options
 		&pPS,			// double pointer to ID3DBlob		

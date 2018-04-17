@@ -17,6 +17,7 @@ class ObjectData
 {
 public:
 	ObjectData(string name, ID3D11Device* device, vector<VertexColor> vertexes, vector<unsigned int> indices, D3D_PRIMITIVE_TOPOLOGY primitiveTopology);
+	ObjectData(string name, ID3D11Device* device, vector<VertexUV> vertexes, vector<unsigned int> indices, D3D_PRIMITIVE_TOPOLOGY primitiveTopology);
 	ObjectData(string name, string fileName, ID3D11Device* device);
 	materialLightData lightData;
 	string getName();

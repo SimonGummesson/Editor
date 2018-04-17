@@ -113,7 +113,7 @@ ColorPass::ColorPass(ID3D11Device * device, ID3D11DeviceContext* deviceContext, 
 
 	// Fill in a buffer description.
 	D3D11_BUFFER_DESC cbDesc;
-	cbDesc.ByteWidth = sizeof(GS_COLORPASS_CONSTANT_BUFFER);
+	cbDesc.ByteWidth = sizeof(WVP_BUFFER);
 	cbDesc.Usage = D3D11_USAGE_DYNAMIC;
 	cbDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	cbDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;

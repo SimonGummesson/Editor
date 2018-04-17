@@ -40,6 +40,46 @@ ObjectData::ObjectData(string name, ID3D11Device* device, vector<VertexColor> ve
 		cout << "Failed to create vertex buffer!" << endl;
 }
 
+ObjectData::ObjectData(string name, ID3D11Device* device, vector<VertexUV> vertexes, std::vector<unsigned int> indices, D3D_PRIMITIVE_TOPOLOGY primitiveTopology)
+{
+	this->isTexture = false;
+	this->name = name;
+	this->primitiveTopology = primitiveTopology;
+
+	this->indexCount = (unsigned int)indices.size();
+	this->vertexCount = (unsigned int)vertexes.size();
+
+	HRESULT hr;
+	if (this->indexCount != 0)
+	{
+		D3D11_BUFFER_DESC indexBufferDesc;
+		ZeroMemory(&indexBufferDesc, sizeof(indexBufferDesc));
+
+		indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+		indexBufferDesc.ByteWidth = sizeof(unsigned int) * (UINT)indices.size();
+		indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+		indexBufferDesc.CPUAccessFlags = 0;
+		indexBufferDesc.MiscFlags = 0;
+
+		D3D11_SUBRESOURCE_DATA iinitData;
+		iinitData.pSysMem = indices.data();
+		hr = device->CreateBuffer(&indexBufferDesc, &iinitData, &this->indexBuffer);
+		if (FAILED(hr))
+			cout << "Failed to create index buffer!" << endl;
+	}
+	D3D11_BUFFER_DESC bufferDesc;
+	memset(&bufferDesc, 0, sizeof(bufferDesc));
+	bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	bufferDesc.ByteWidth = (2 * sizeof(DirectX::XMFLOAT3) + sizeof(DirectX::XMFLOAT2)) * (UINT)vertexes.size();
+
+	D3D11_SUBRESOURCE_DATA data;
+	data.pSysMem = vertexes.data();
+	hr = device->CreateBuffer(&bufferDesc, &data, &this->vertexBuffer);
+	if (FAILED(hr))
+		cout << "Failed to create vertex buffer!" << endl;
+}
+
 ObjectData::ObjectData(string name, string fileName, ID3D11Device * device)
 {
 	this->isTexture = true;
@@ -352,7 +392,7 @@ void ObjectData::updateBuffer(ID3D11DeviceContext * deviceContext, Matrix VPMatr
 	if FAILED(hr)
 		cout << "Failed to disable gpu access to constant buffer." << endl;
 	//	Update the constant buffer here.
-	GS_COLORPASS_CONSTANT_BUFFER* dataptr = (GS_COLORPASS_CONSTANT_BUFFER*)mappedResource.pData;
+	WVP_BUFFER* dataptr = (WVP_BUFFER*)mappedResource.pData;
 	dataptr->WVPMatrix = XMMatrixTranspose(worldMatrix * VPMatrix);
 	dataptr->WorldMatrix = XMMatrixTranspose(worldMatrix);
 	//	Reenable GPU access to the constant buffer data.

@@ -160,7 +160,9 @@
     <ClCompile Include="Sources\Renderer.cpp" />
     <ClCompile Include="Sources\Editor.cpp" />
     <ClCompile Include="Sources\main.cpp" />
+    <ClCompile Include="Sources\SkyBoxObject.cpp" />
     <ClCompile Include="Sources\skyBoxPass.cpp" />
+    <ClCompile Include="Sources\StaticObject.cpp" />
     <ClCompile Include="Sources\TestObject.cpp" />
     <ClCompile Include="Sources\texturePass.cpp" />
     <ClCompile Include="Sources\WICTextureLoader.cpp" />
@@ -207,7 +209,9 @@
     <ClInclude Include="Headers\Pass.hpp" />
     <ClInclude Include="Headers\Renderer.hpp" />
     <ClInclude Include="Headers\SimpleMath.h" />
+    <ClInclude Include="Headers\SkyBoxObject.hpp" />
     <ClInclude Include="Headers\SkyBoxPass.hpp" />
+    <ClInclude Include="Headers\StaticObject.hpp" />
     <ClInclude Include="Headers\stb_image.h" />
     <ClInclude Include="Headers\structs.hpp" />
     <ClInclude Include="Headers\TestObject.hpp" />

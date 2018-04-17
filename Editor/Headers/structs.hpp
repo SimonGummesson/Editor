@@ -29,10 +29,23 @@ struct VertexUV {
 	{
 
 	}
+	VertexUV(float posX, float posY, float posZ, float UVu, float UVv, float normalX, float normalY, float normalZ)
+	{
+		position.x = posX;
+		position.y = posY;
+		position.z = posZ;
+
+		UV.x = UVu;
+		UV.y = UVv;
+
+		normal.x = normalX;
+		normal.y = normalY;
+		normal.z = normalZ;
+	}
 	VertexUV() { }
 };
 
-struct GS_COLORPASS_CONSTANT_BUFFER
+struct WVP_BUFFER
 {
 	Matrix WVPMatrix;
 	Matrix WorldMatrix;
