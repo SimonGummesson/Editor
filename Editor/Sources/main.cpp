@@ -5,7 +5,6 @@
 #include <iostream>
 #pragma comment (lib, "d3d11.lib")
 #pragma comment (lib, "d3dcompiler.lib")
-#pragma comment (lib, "SDL2.lib")
 #include "../Headers/Editor.hpp"
 #include "../Headers/ColorPass.hpp"
 #include "../Headers/texturePass.hpp"
