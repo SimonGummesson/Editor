@@ -29,6 +29,8 @@ Renderer::Renderer(HWND& wndHandle, float width, float height)
 	scd.OutputWindow = wndHandle;                           // the window to be used
 	scd.SampleDesc.Count = 1;                               // how many multisamples
 	scd.SampleDesc.Quality = 0;
+	scd.BufferDesc.Width = (UINT)width;
+	scd.BufferDesc.Height = (UINT)height;
 	scd.Windowed = TRUE;                                    // windowed/full-screen mode
 
 															// create a device, device context and swap chain using the information in the scd struct
