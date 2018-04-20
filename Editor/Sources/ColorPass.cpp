@@ -6,12 +6,11 @@ void ColorPass::drawPass()
 	deviceContext->PSSetShaderResources(0, 1, &lightSRV);
 
 	deviceContext->VSSetShader(vertexShader, nullptr, 0);
-	deviceContext->GSSetShader(geometryShader, nullptr, 0);
 	deviceContext->PSSetShader(pixelShader, nullptr, 0);
 
 	deviceContext->IASetInputLayout(vertexLayout);
 
-	deviceContext->GSSetConstantBuffers(0, 1, &GSConstantBuffer);
+	deviceContext->VSSetConstantBuffers(0, 1, &GSConstantBuffer);
 	deviceContext->PSSetConstantBuffers(0, 1, &PSConstantBuffer);
 	deviceContext->PSSetConstantBuffers(1, 1, &PSLightDataConstantBuffer);
 

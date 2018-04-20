@@ -17,7 +17,7 @@ protected:
 	
 	//ID3D11DomainShader* domainShader;
 
-	ID3D11GeometryShader* geometryShader;
+	//ID3D11GeometryShader* geometryShader;
 	
 	ID3D11PixelShader* pixelShader;
 public:
@@ -25,7 +25,7 @@ public:
 	virtual ~Pass();
 	void setVertexShaderAndLayout(ID3D11Device * device, D3D11_INPUT_ELEMENT_DESC* inputElementDesc, UINT numInputElements, LPCWSTR path);
 	void setVertexSizeAndOffset(UINT32 vertexSize, UINT32 offset);
-	void setGeometryShader(ID3D11Device * device, LPCWSTR path);
+	//void setGeometryShader(ID3D11Device * device, LPCWSTR path);
 	void setPixelShader(ID3D11Device * device, LPCWSTR path);
 
 	void setDeviceContext(ID3D11DeviceContext* deviceContext);

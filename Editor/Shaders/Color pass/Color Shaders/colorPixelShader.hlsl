@@ -14,15 +14,15 @@ cbuffer lightData : register(b1)
 	float specularPower;
 };
 
-struct GS_OUT
+struct VS_OUT
 {
-	float4 Pos : SV_POSITION;
-	float3 WPos : POSITION;
-	float3 Color : COLOR;
-	float3 Normal : NORMAL;
+    float4 Pos : SV_POSITION;
+    float3 WPos : POSITION;
+    float3 Color : COLOR;
+    float3 Normal : NORMAL;
 };
 
-float4 PS_main(GS_OUT input) : SV_Target
+float4 PS_main(VS_OUT input) : SV_Target
 {
 	float3 normal = normalize(input.Normal);
     float3 finalColor = asfloat(lightDataByte.Load3(16)) * ambientColor; // Ambient

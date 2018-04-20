@@ -9,8 +9,6 @@ Pass::Pass()
 	vertexLayout = nullptr;
 	vertexShader = nullptr;
 
-	geometryShader = nullptr;
-
 	pixelShader = nullptr;
 }
 
@@ -20,8 +18,6 @@ Pass::~Pass()
 		vertexLayout->Release();
 	if (vertexShader != nullptr)
 		vertexShader->Release();
-	if (geometryShader != nullptr)
-		geometryShader->Release();
 	if (pixelShader != nullptr)
 		pixelShader->Release();
 }
@@ -74,36 +70,36 @@ void Pass::setVertexSizeAndOffset(UINT32 vertexSize, UINT32 offset)
 	this->vertexOffset = offset;
 }
 
-void Pass::setGeometryShader(ID3D11Device * device, LPCWSTR path)
-{
-	//create geometry shader
-	ID3DBlob* errorBlob = nullptr;
-	ID3DBlob* pGS = nullptr;
-	HRESULT hr = D3DCompileFromFile(
-		path,           // filename
-		nullptr,		// optional macros
-		nullptr,		// optional include files
-		"GS_main",		// entry point
-		"gs_5_0",		// shader model (target)
-		0,				// shader compile options
-		0,				// effect compile options
-		&pGS,			// double pointer to ID3DBlob		
-		&errorBlob		// pointer for Error Blob messages.
-						// how to use the Error blob, see here
-						// https://msdn.microsoft.com/en-us/library/windows/desktop/hh968107(v=vs.85).aspx
-	);
-	if (FAILED(hr))
-	{
-		if (errorBlob != nullptr)
-		{
-			OutputDebugStringA((char*)errorBlob->GetBufferPointer());
-			errorBlob->Release();
-		}
-	}
-	device->CreateGeometryShader(pGS->GetBufferPointer(), pGS->GetBufferSize(), nullptr, &geometryShader);
-
-	pGS->Release();
-}
+//void Pass::setGeometryShader(ID3D11Device * device, LPCWSTR path)
+//{
+//	//create geometry shader
+//	ID3DBlob* errorBlob = nullptr;
+//	ID3DBlob* pGS = nullptr;
+//	HRESULT hr = D3DCompileFromFile(
+//		path,           // filename
+//		nullptr,		// optional macros
+//		nullptr,		// optional include files
+//		"GS_main",		// entry point
+//		"gs_5_0",		// shader model (target)
+//		0,				// shader compile options
+//		0,				// effect compile options
+//		&pGS,			// double pointer to ID3DBlob		
+//		&errorBlob		// pointer for Error Blob messages.
+//						// how to use the Error blob, see here
+//						// https://msdn.microsoft.com/en-us/library/windows/desktop/hh968107(v=vs.85).aspx
+//	);
+//	if (FAILED(hr))
+//	{
+//		if (errorBlob != nullptr)
+//		{
+//			OutputDebugStringA((char*)errorBlob->GetBufferPointer());
+//			errorBlob->Release();
+//		}
+//	}
+//	device->CreateGeometryShader(pGS->GetBufferPointer(), pGS->GetBufferSize(), nullptr, &geometryShader);
+//
+//	pGS->Release();
+//}
 
 void Pass::setPixelShader(ID3D11Device * device, LPCWSTR path)
 {

@@ -44,11 +44,11 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		D3D11_INPUT_ELEMENT_DESC colorInputDesc[] = {
 			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 			{ "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		};
 		colorPass->setVertexShaderAndLayout(editor.getRenderer()->getDevice(), colorInputDesc, ARRAYSIZE(colorInputDesc),L"Shaders/Color pass/Color Shaders/colorVertexShader.hlsl");
 		colorPass->setVertexSizeAndOffset(sizeof(VertexColor), 0);
 		colorPass->setPixelShader(editor.getRenderer()->getDevice(), L"Shaders/Color pass/Color Shaders/colorPixelShader.hlsl");
-		colorPass->setGeometryShader(editor.getRenderer()->getDevice(), L"Shaders/Color pass/Color Shaders/colorGeometryShader.hlsl");
 
 		// Create standard pass for texture objects
 		TexturePass* texturePass = new TexturePass(editor.getRenderer()->getDevice(), editor.getRenderer()->getDeviceContext(), camera->getWPMatrixPointer(), camera->getPositionPointer());
@@ -105,9 +105,9 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		texturePass->updateLightBuffer(editor.getRenderer()->getDeviceContext());
 
 		std::vector<VertexColor> vertexes;
-		vertexes.push_back(VertexColor({ -0.5f, -0.5f, 3.0f }, { 1.0f, 0.0f, 0.0f }));
-		vertexes.push_back(VertexColor({ -0.5f, 0.5f, 3.0f }, { 0.0f, 1.0f, 0.0f }));
-		vertexes.push_back(VertexColor({ 0.5f, -0.5f, 3.0f }, { 0.0f, 1.0f, 0.0f }));
+		vertexes.push_back(VertexColor({ -0.5f, -0.5f, 3.f }, { 1.f, 0.f, 0.f }, { 0.f, 0.f, -1.f }));
+		vertexes.push_back(VertexColor({ -0.5f,  0.5f, 3.f }, { 0.f, 1.f, 0.f }, { 0.f, 0.f, -1.f }));
+		vertexes.push_back(VertexColor({  0.5f, -0.5f, 3.f }, { 0.f, 1.f, 0.f }, { 0.f, 0.f, -1.f }));
 
 		std::vector<unsigned int> indices;
 		ObjectData *quad = new ObjectData("quad", editor.getRenderer()->getDevice(), vertexes, indices, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -236,7 +236,7 @@ void initiateheightMap(string filename, std::vector<VertexColor>& heightMapVerte
 	int bpp;
 	float* rgb = stbi_loadf(filename.c_str(), &heightmapWidth, &heightmapHeight, &bpp, STBI_grey);
 	
-	//Build vertex data
+	// Build vertex data
 	for (int z = 0; z < heightmapHeight; z++)
 	{
 		for (int x = 0; x < heightmapWidth; x++)
@@ -247,6 +247,51 @@ void initiateheightMap(string filename, std::vector<VertexColor>& heightMapVerte
 			v0.color = Vector3(0.25f, 1.f, 0.25f);
 
 			heightMapVertexes.push_back(v0);
+		}
+	}
+
+	// Calculate normals
+	Vector3 result(0.f, 0.f, 0.f);
+	Vector3 tmp;
+
+	for (int z = 0; z < heightmapHeight; z++)
+	{
+		for (int x = 0; x < heightmapWidth; x++)
+		{
+			if (z != heightmapHeight - 1) // up
+			{
+				if (x != 0) // up left
+				{
+					(heightMapVertexes[z * heightmapWidth + x - 1].position - heightMapVertexes[z * heightmapWidth + x].position).Cross( 
+						heightMapVertexes[(z + 1) * heightmapWidth + x].position - heightMapVertexes[z * heightmapWidth + x].position, tmp);
+					result += tmp;
+				}
+				if (x != heightmapWidth - 1) // up right
+				{
+					(heightMapVertexes[(z + 1) * heightmapWidth + x].position - heightMapVertexes[z * heightmapWidth + x].position).Cross(
+						heightMapVertexes[z * heightmapWidth + x + 1].position - heightMapVertexes[z * heightmapWidth + x].position, tmp);
+					result += tmp;
+				}
+			}
+			if (z != 0) // down
+			{
+				if (x != 0) // down left
+				{
+					(heightMapVertexes[(z - 1) * heightmapWidth + x].position - heightMapVertexes[z * heightmapWidth + x].position).Cross(
+						heightMapVertexes[z * heightmapWidth + x - 1].position - heightMapVertexes[z * heightmapWidth + x].position, tmp);
+					result += tmp;
+				}
+				if (x != heightmapWidth - 1) // down right
+				{
+					(heightMapVertexes[z * heightmapWidth + x + 1].position - heightMapVertexes[z * heightmapWidth + x].position).Cross(
+						heightMapVertexes[(z - 1) * heightmapWidth + x].position - heightMapVertexes[z * heightmapWidth + x].position, tmp);
+					result += tmp;
+				}
+			}
+
+			result.Normalize();
+			heightMapVertexes[z * heightmapWidth + x].normal = result;
+			result = Vector3(0.f, 0.f, 0.f);
 		}
 	}
 	free(rgb);

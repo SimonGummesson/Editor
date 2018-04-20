@@ -11,7 +11,8 @@ struct InputStatus {
 struct VertexColor {
 	Vector3 position;
 	Vector3 color;
-	VertexColor(Vector3 pos, Vector3 color) : position(pos), color(color)
+	Vector3 normal;
+	VertexColor(Vector3 pos, Vector3 color, Vector3 nor) : position(pos), color(color), normal(nor)
 	{
 
 	}
