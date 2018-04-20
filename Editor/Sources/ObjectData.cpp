@@ -2,15 +2,14 @@
 
 ObjectData::ObjectData(string name, ID3D11Device* device, vector<VertexColor> vertexes, std::vector<unsigned int> indices, D3D_PRIMITIVE_TOPOLOGY primitiveTopology)
 {
-	this->isTexture = false;
 	this->name = name;
 	this->primitiveTopology = primitiveTopology;
 
-	this->indexCount = (unsigned int)indices.size();
-	this->vertexCount = (unsigned int)vertexes.size();
+	indexCount = (unsigned int)indices.size();
+	vertexCount = (unsigned int)vertexes.size();
 
 	HRESULT hr;
-	if (this->indexCount != 0)
+	if (indexCount != 0)
 	{
 		D3D11_BUFFER_DESC indexBufferDesc;
 		ZeroMemory(&indexBufferDesc, sizeof(indexBufferDesc));
@@ -23,7 +22,7 @@ ObjectData::ObjectData(string name, ID3D11Device* device, vector<VertexColor> ve
 
 		D3D11_SUBRESOURCE_DATA iinitData;
 		iinitData.pSysMem = indices.data();
-		hr = device->CreateBuffer(&indexBufferDesc, &iinitData, &this->indexBuffer);
+		hr = device->CreateBuffer(&indexBufferDesc, &iinitData, &indexBuffer);
 		if (FAILED(hr))
 			cout << "Failed to create index buffer!" << endl;
 	}
@@ -35,22 +34,21 @@ ObjectData::ObjectData(string name, ID3D11Device* device, vector<VertexColor> ve
 
 	D3D11_SUBRESOURCE_DATA data;
 	data.pSysMem = vertexes.data();
-	hr = device->CreateBuffer(&bufferDesc, &data, &this->vertexBuffer);
+	hr = device->CreateBuffer(&bufferDesc, &data, &vertexBuffer);
 	if (FAILED(hr))
 		cout << "Failed to create vertex buffer!" << endl;
 }
 
 ObjectData::ObjectData(string name, ID3D11Device* device, vector<VertexUV> vertexes, std::vector<unsigned int> indices, D3D_PRIMITIVE_TOPOLOGY primitiveTopology)
 {
-	this->isTexture = false;
 	this->name = name;
 	this->primitiveTopology = primitiveTopology;
 
-	this->indexCount = (unsigned int)indices.size();
-	this->vertexCount = (unsigned int)vertexes.size();
+	indexCount = (unsigned int)indices.size();
+	vertexCount = (unsigned int)vertexes.size();
 
 	HRESULT hr;
-	if (this->indexCount != 0)
+	if (indexCount != 0)
 	{
 		D3D11_BUFFER_DESC indexBufferDesc;
 		ZeroMemory(&indexBufferDesc, sizeof(indexBufferDesc));
@@ -63,7 +61,7 @@ ObjectData::ObjectData(string name, ID3D11Device* device, vector<VertexUV> verte
 
 		D3D11_SUBRESOURCE_DATA iinitData;
 		iinitData.pSysMem = indices.data();
-		hr = device->CreateBuffer(&indexBufferDesc, &iinitData, &this->indexBuffer);
+		hr = device->CreateBuffer(&indexBufferDesc, &iinitData, &indexBuffer);
 		if (FAILED(hr))
 			cout << "Failed to create index buffer!" << endl;
 	}
@@ -75,14 +73,13 @@ ObjectData::ObjectData(string name, ID3D11Device* device, vector<VertexUV> verte
 
 	D3D11_SUBRESOURCE_DATA data;
 	data.pSysMem = vertexes.data();
-	hr = device->CreateBuffer(&bufferDesc, &data, &this->vertexBuffer);
+	hr = device->CreateBuffer(&bufferDesc, &data, &vertexBuffer);
 	if (FAILED(hr))
 		cout << "Failed to create vertex buffer!" << endl;
 }
 
 ObjectData::ObjectData(string name, string fileName, ID3D11Device * device)
 {
-	this->isTexture = true;
 	this->name = name;
 	this->primitiveTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
@@ -202,15 +199,15 @@ ObjectData::ObjectData(string name, string fileName, ID3D11Device * device)
 
 			crateVertexes.push_back(vertex);
 		}
-		this->indexCount = 0;
-		this->vertexCount = (unsigned int)crateVertexes.size();
+		indexCount = 0;
+		vertexCount = (unsigned int)crateVertexes.size();
 	}
 	else
 		cout << "Can't open obj file." << endl;
 
 	HRESULT hr;
 
-	if (this->indexCount != 0)
+	if (indexCount != 0)
 	{
 		D3D11_BUFFER_DESC indexBufferDesc;
 		ZeroMemory(&indexBufferDesc, sizeof(indexBufferDesc));
@@ -223,7 +220,7 @@ ObjectData::ObjectData(string name, string fileName, ID3D11Device * device)
 
 		D3D11_SUBRESOURCE_DATA iinitData;
 		iinitData.pSysMem = crateIndexList.data();
-		hr = device->CreateBuffer(&indexBufferDesc, &iinitData, &this->indexBuffer);
+		hr = device->CreateBuffer(&indexBufferDesc, &iinitData, &indexBuffer);
 		if (FAILED(hr))
 			cout << "Failed to create index buffer!" << endl;
 	}
@@ -237,7 +234,7 @@ ObjectData::ObjectData(string name, string fileName, ID3D11Device * device)
 
 	D3D11_SUBRESOURCE_DATA crateData;
 	crateData.pSysMem = crateVertexes.data();
-	hr = device->CreateBuffer(&crateBufferDesc, &crateData, &this->vertexBuffer);
+	hr = device->CreateBuffer(&crateBufferDesc, &crateData, &vertexBuffer);
 	if FAILED(hr)
 		cout << "Failed to create vertexshader constant buffer containing " << name << " vertices." << endl;
 
@@ -262,7 +259,7 @@ ObjectData::ObjectData(string name, string fileName, ID3D11Device * device)
 					{
 						mtlCheck = mtlFile.get(); //remove space before number
 						placeholder = ExtractNumber(mtlCheck, mtlFile);
-						stringstream(placeholder) >> this->lightData.specularPower;
+						stringstream(placeholder) >> lightData.specularPower;
 					}
 				}
 				else if (mtlCheck == 'K')
@@ -272,31 +269,31 @@ ObjectData::ObjectData(string name, string fileName, ID3D11Device * device)
 					{
 						mtlCheck = mtlFile.get(); //remove space before number
 						placeholder = ExtractNumber(mtlCheck, mtlFile);
-						stringstream(placeholder) >> this->lightData.ambientColor.x;
+						stringstream(placeholder) >> lightData.ambientColor.x;
 						placeholder = ExtractNumber(mtlCheck, mtlFile);
-						stringstream(placeholder) >> this->lightData.ambientColor.y;
+						stringstream(placeholder) >> lightData.ambientColor.y;
 						placeholder = ExtractNumber(mtlCheck, mtlFile);
-						stringstream(placeholder) >> this->lightData.ambientColor.z;
+						stringstream(placeholder) >> lightData.ambientColor.z;
 					}
 					else if (mtlCheck == 'd')
 					{
 						mtlCheck = mtlFile.get(); //remove space before number
 						placeholder = ExtractNumber(mtlCheck, mtlFile);
-						stringstream(placeholder) >> this->lightData.diffuseColor.x;
+						stringstream(placeholder) >> lightData.diffuseColor.x;
 						placeholder = ExtractNumber(mtlCheck, mtlFile);
-						stringstream(placeholder) >> this->lightData.diffuseColor.y;
+						stringstream(placeholder) >> lightData.diffuseColor.y;
 						placeholder = ExtractNumber(mtlCheck, mtlFile);
-						stringstream(placeholder) >> this->lightData.diffuseColor.z;
+						stringstream(placeholder) >> lightData.diffuseColor.z;
 					}
 					else if (mtlCheck == 's')
 					{
 						mtlCheck = mtlFile.get(); //remove space before number
 						placeholder = ExtractNumber(mtlCheck, mtlFile);
-						stringstream(placeholder) >> this->lightData.specularColor.x;
+						stringstream(placeholder) >> lightData.specularColor.x;
 						placeholder = ExtractNumber(mtlCheck, mtlFile);
-						stringstream(placeholder) >> this->lightData.specularColor.y;
+						stringstream(placeholder) >> lightData.specularColor.y;
 						placeholder = ExtractNumber(mtlCheck, mtlFile);
-						stringstream(placeholder) >> this->lightData.specularColor.z;
+						stringstream(placeholder) >> lightData.specularColor.z;
 					}
 				}
 				else if (mtlCheck == '#' || mtlCheck == 'n' || mtlCheck == 'i' || mtlCheck == 'd')
@@ -319,7 +316,7 @@ ObjectData::ObjectData(string name, string fileName, ID3D11Device * device)
 			for (unsigned int i = 0; i < mapKD.length(); ++i)
 				wmapKD += wchar_t(mapKD[i]);
 
-			hr = DirectX::CreateWICTextureFromFile(device, wmapKD.c_str(), &this->texture, &this->textureView);
+			hr = DirectX::CreateWICTextureFromFile(device, wmapKD.c_str(), &texture, &textureView);
 		}
 		cout << "Loaded obj file: " << fileName << endl;
 	}
@@ -327,58 +324,58 @@ ObjectData::ObjectData(string name, string fileName, ID3D11Device * device)
 
 string ObjectData::getName()
 {
-	return this->name;
+	return name;
 }
 
 ID3D11Buffer ** ObjectData::getVertexBuffer()
 {
-	return &this->vertexBuffer;
+	return &vertexBuffer;
 }
 
 ID3D11Buffer ** ObjectData::getIndexBuffer()
 {
-	return &this->indexBuffer;
+	return &indexBuffer;
 }
 
 ID3D11ShaderResourceView ** ObjectData::getTextureView()
 {
-	return &this->textureView;
+	return &textureView;
 }
 
 unsigned int ObjectData::getVertexCount()
 {
-	return this->vertexCount;
+	return vertexCount;
 }
 
 unsigned int ObjectData::getIndexCount()
 {
-	return this->indexCount;
+	return indexCount;
 }
 
 D3D_PRIMITIVE_TOPOLOGY ObjectData::getPrimitiveTopology()
 {
-	return this->primitiveTopology;
+	return primitiveTopology;
 }
 
 void ObjectData::addOject(Object * object)
 {
-	this->objects.push_back(object);
+	objects.push_back(object);
 }
 
 void ObjectData::Draw(ID3D11DeviceContext * deviceContext, Matrix VPMatrix, ID3D11Buffer* cbuffer)
 {
-	for (unsigned int i = 0; i < this->objects.size(); i++)
+	for (unsigned int i = 0; i < objects.size(); i++)
 	{
-		this->updateBuffer(deviceContext, VPMatrix, objects[i]->getWorldMatrix(), cbuffer);
-		if (this->indexCount == 0)
+		updateBuffer(deviceContext, VPMatrix, objects[i]->getWorldMatrix(), cbuffer);
+		if (indexCount == 0)
 		{
 			deviceContext->IASetIndexBuffer(nullptr, DXGI_FORMAT_R32_UINT, 0);
-			deviceContext->Draw(this->vertexCount, 0);
+			deviceContext->Draw(vertexCount, 0);
 		}
 		else
 		{
-			deviceContext->IASetIndexBuffer(this->indexBuffer, DXGI_FORMAT_R32_UINT, 0);
-			deviceContext->DrawIndexed(this->indexCount, 0, 0);
+			deviceContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
+			deviceContext->DrawIndexed(indexCount, 0, 0);
 		}
 	}
 }
@@ -399,22 +396,17 @@ void ObjectData::updateBuffer(ID3D11DeviceContext * deviceContext, Matrix VPMatr
 	deviceContext->Unmap(cbuffer, 0);
 }
 
-bool ObjectData::getType()
-{
-	return this->isTexture;
-}
-
 ObjectData::~ObjectData()
 {
-	this->vertexBuffer->Release();
-	if (this->indexCount != 0)
-		this->indexBuffer->Release();
+	vertexBuffer->Release();
+	if (indexCount != 0)
+		indexBuffer->Release();
 
-	if (this->texture != nullptr)
-		this->texture->Release();
+	if (texture != nullptr)
+		texture->Release();
 	
-	if (this->textureView != nullptr)
-		this->textureView->Release();
+	if (textureView != nullptr)
+		textureView->Release();
 }
 
 string ObjectData::ExtractNumber(char & check, ifstream & objFile)

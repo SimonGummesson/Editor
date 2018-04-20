@@ -42,19 +42,19 @@ Renderer::Renderer(HWND& wndHandle, float width, float height)
 		NULL,
 		D3D11_SDK_VERSION,
 		&scd,
-		&this->swapChain,
-		&this->device,
+		&swapChain,
+		&device,
 		NULL,
-		&this->deviceContext);
+		&deviceContext);
 
 	if (SUCCEEDED(hr))
 	{
 		// get the address of the back buffer
 		ID3D11Texture2D* pBackBuffer = nullptr;
-		this->swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBackBuffer);
+		swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBackBuffer);
 
 		// use the back buffer address to create the render target
-		this->device->CreateRenderTargetView(pBackBuffer, NULL, &this->backBufferRTV);
+		device->CreateRenderTargetView(pBackBuffer, NULL, &backBufferRTV);
 		pBackBuffer->Release();
 
 		//Create texture for depth stencil
@@ -83,40 +83,40 @@ Renderer::Renderer(HWND& wndHandle, float width, float height)
 
 		// Bind the depth stencil view
 		deviceContext->OMSetRenderTargets(1,	        // One rendertarget view
-			&this->backBufferRTV,						// Render target view, created earlier
+			&backBufferRTV,								// Render target view, created earlier
 			depthStencilView);							// Depth stencil view for the render target
 
 
 		// set the render target as the back buffer
-		this->deviceContext->OMSetRenderTargets(1, &backBufferRTV, depthStencilView);
+		deviceContext->OMSetRenderTargets(1, &backBufferRTV, depthStencilView);
 		pTexture->Release();
 	}
 
-	this->clearColor[0] = 0.f;
-	this->clearColor[1] = 0.f;
-	this->clearColor[2] = 0.05f;
-	this->clearColor[3] = 1.f;
+	clearColor[0] = 0.f;
+	clearColor[1] = 0.f;
+	clearColor[2] = 0.05f;
+	clearColor[3] = 1.f;
 
 	D3D11_VIEWPORT vp;
 	vp.Width = width;
 	vp.Height = height;
-	vp.MinDepth = 0.0f;
-	vp.MaxDepth = 1.0f;
-	vp.TopLeftX = 0;
-	vp.TopLeftY = 0;
-	this->deviceContext->RSSetViewports(1, &vp);
+	vp.MinDepth = 0.f;
+	vp.MaxDepth = 1.f;
+	vp.TopLeftX = 0.f;
+	vp.TopLeftY = 0.f;
+	deviceContext->RSSetViewports(1, &vp);
 }
 
 void Renderer::drawFrame()
 {
-	this->deviceContext->ClearRenderTargetView(this->backBufferRTV, this->clearColor);
+	deviceContext->ClearRenderTargetView(backBufferRTV, clearColor);
 	
-	this->deviceContext->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+	deviceContext->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH, 1.f, 0);
 
 	for (size_t i = 0; i < passes.size(); i++)
 		passes[i]->drawPass();
 
-	this->swapChain->Present(0, 0);
+	swapChain->Present(0, 0);
 }
 
 void Renderer::update(float dt)
@@ -139,33 +139,33 @@ void Renderer::setCamera(Camera * camera)
 
 IDXGISwapChain * Renderer::getSwapChain()
 {
-	return this->swapChain;
+	return swapChain;
 }
 
 ID3D11Device * Renderer::getDevice()
 {
-	return this->device;
+	return device;
 }
 
 ID3D11DeviceContext * Renderer::getDeviceContext()
 {
-	return this->deviceContext;
+	return deviceContext;
 }
 
 ID3D11RenderTargetView * Renderer::getBackBufferRTV()
 {
-	return this->backBufferRTV;
+	return backBufferRTV;
 }
 
 Renderer::~Renderer()
 {
 	for (size_t i = 0; i < passes.size(); i++)
 		delete passes[i];
-	delete this->camera;
+	delete camera;
 	
-	this->backBufferRTV->Release();
-	this->swapChain->Release();
-	this->device->Release();
-	this->deviceContext->Release();
-	this->depthStencilView->Release();
+	backBufferRTV->Release();
+	swapChain->Release();
+	device->Release();
+	deviceContext->Release();
+	depthStencilView->Release();
 }

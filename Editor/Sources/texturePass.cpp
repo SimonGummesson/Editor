@@ -11,11 +11,11 @@ void TexturePass::drawPass()
 
 	deviceContext->IASetInputLayout(vertexLayout);
 
-	deviceContext->VSSetConstantBuffers(0, 1, &GSConstantBuffer);
-	deviceContext->PSSetConstantBuffers(0, 1, &PSConstantBuffer);
-	deviceContext->PSSetConstantBuffers(1, 1, &PSLightDataConstantBuffer);
+	deviceContext->VSSetConstantBuffers(0, 1, &VSMatrixCBuffer);
+	deviceContext->PSSetConstantBuffers(0, 1, &PSCameraCBuffer);
+	deviceContext->PSSetConstantBuffers(1, 1, &PSLightDataCBuffer);
 
-	this->updatePSBuffer(deviceContext, *cameraPos);
+	updatePSBuffer(deviceContext, *cameraPos);
 
 	for (unsigned int i = 0; i < objectData.size(); i++)
 	{
@@ -23,7 +23,7 @@ void TexturePass::drawPass()
 		deviceContext->PSSetShaderResources(1, 1, objectData[i]->getTextureView());
 		deviceContext->IASetVertexBuffers(0, 1, objectData[i]->getVertexBuffer(), &vertexSize, &vertexOffset);
 		deviceContext->IASetPrimitiveTopology(objectData[i]->getPrimitiveTopology());
-		objectData[i]->Draw(deviceContext, *cameraVPMatrix, GSConstantBuffer);
+		objectData[i]->Draw(deviceContext, *cameraVPMatrix, VSMatrixCBuffer);
 	}
 }
 
@@ -62,21 +62,21 @@ void TexturePass::updatePSBuffer(ID3D11DeviceContext * deviceContext, Vector3 ca
 {
 	//	Disable GPU access to the constant buffer data.
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
-	HRESULT hr = deviceContext->Map(this->PSConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	HRESULT hr = deviceContext->Map(PSCameraCBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	if FAILED(hr)
 		cout << "Failed to disable gpu access to constant buffer." << endl;
 	//	Update the constant buffer here.
 	Vector4* dataptr = (Vector4*)mappedResource.pData;
 	*dataptr = Vector4(cameraPos.x, cameraPos.y, cameraPos.z, 1.f);
 	//	Reenable GPU access to the constant buffer data.
-	deviceContext->Unmap(this->PSConstantBuffer, 0);
+	deviceContext->Unmap(PSCameraCBuffer, 0);
 }
 
 void TexturePass::updatePSLightBuffer(ID3D11DeviceContext * deviceContext, materialLightData data)
 {
 	//	Disable GPU access to the constant buffer data.
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
-	HRESULT hr = deviceContext->Map(this->PSLightDataConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	HRESULT hr = deviceContext->Map(PSLightDataCBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	if FAILED(hr)
 		cout << "Failed to disable gpu access to constant buffer." << endl;
 	//	Update the constant buffer here.
@@ -86,7 +86,7 @@ void TexturePass::updatePSLightBuffer(ID3D11DeviceContext * deviceContext, mater
 	dataptr->specularColor = data.specularColor;
 	dataptr->specularPower = data.specularPower;
 	//	Reenable GPU access to the constant buffer data.
-	deviceContext->Unmap(this->PSLightDataConstantBuffer, 0);
+	deviceContext->Unmap(PSLightDataCBuffer, 0);
 }
 
 void TexturePass::setAmbientLight(Vector3 ambient)
@@ -122,7 +122,7 @@ TexturePass::TexturePass(ID3D11Device * device, ID3D11DeviceContext* deviceConte
 	cbDesc.StructureByteStride = 0;
 
 	// Create the buffer.
-	HRESULT hr = device->CreateBuffer(&cbDesc, NULL, &this->GSConstantBuffer);
+	HRESULT hr = device->CreateBuffer(&cbDesc, NULL, &VSMatrixCBuffer);
 
 	if (FAILED(hr))
 		std::cout << "Failed to create geometry shader constant buffer for color pass" << std::endl;
@@ -137,7 +137,7 @@ TexturePass::TexturePass(ID3D11Device * device, ID3D11DeviceContext* deviceConte
 	PScbDesc.StructureByteStride = 0;
 
 	// Create the buffer.
-	hr = device->CreateBuffer(&PScbDesc, NULL, &this->PSConstantBuffer);
+	hr = device->CreateBuffer(&PScbDesc, NULL, &PSCameraCBuffer);
 
 	if (FAILED(hr))
 		std::cout << "Failed to create pixel shader constant buffer for color pass" << std::endl;
@@ -145,7 +145,7 @@ TexturePass::TexturePass(ID3D11Device * device, ID3D11DeviceContext* deviceConte
 	PScbDesc.ByteWidth = sizeof(materialLightData);
 
 	// Create the buffer.
-	hr = device->CreateBuffer(&PScbDesc, NULL, &this->PSLightDataConstantBuffer);
+	hr = device->CreateBuffer(&PScbDesc, NULL, &PSLightDataCBuffer);
 
 	if (FAILED(hr))
 		std::cout << "Failed to create pixel shader constant buffer for light data" << std::endl;
@@ -183,12 +183,12 @@ TexturePass::~TexturePass()
 	for (unsigned int i = 0; i < objectData.size(); i++)
 		delete objectData[i];
 
-	this->GSConstantBuffer->Release();
-	this->PSConstantBuffer->Release();
-	this->PSLightDataConstantBuffer->Release();
+	VSMatrixCBuffer->Release();
+	PSCameraCBuffer->Release();
+	PSLightDataCBuffer->Release();
 
-	this->lightBuffer->Release();
-	this->lightSRV->Release();
+	lightBuffer->Release();
+	lightSRV->Release();
 }
 
 void TexturePass::updateLightBuffer(ID3D11DeviceContext * deviceContext)
@@ -251,6 +251,6 @@ void TexturePass::updateLightBuffer(ID3D11DeviceContext * deviceContext)
 	for (size_t i = 0; i < 4 * lights.size() + 2; i++)
 		cout << "( " << dataptr[i].x << ", " << dataptr[i].y << ", " << dataptr[i].z << ", " << dataptr[i].w << ")" << endl;
 	//	Reenable GPU access to the constant buffer data.
-	deviceContext->Unmap(this->lightBuffer, 0);
+	deviceContext->Unmap(lightBuffer, 0);
 	free(lightInformation);
 }

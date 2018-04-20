@@ -144,15 +144,6 @@ SkyBoxPass::SkyBoxPass(ID3D11Device * device, ID3D11DeviceContext* context, floa
 	vertexes.push_back({  1.f * dist, -1.f * dist, -1.f * dist, 1.f, 0.f,  0.f,  1.f,  0.f }); // 5
 	vertexes.push_back({ -1.f * dist, -1.f * dist, -1.f * dist, 0.f, 0.f,  0.f,  1.f,  0.f }); // 4
 
-	//{ -1.f * dist,  1.f * dist, -1.f * dist, 0, 0, 0, 0, -1 },		// vertex 0
-	//{  1.f * dist,  1.f * dist, -1.f * dist, 1, 0, 0, 0, -1 },		// vertex 1
-	//{ -1.f * dist, -1.f * dist, -1.f * dist, 0, 1, 0, 0, -1},		// 2
-	//{  1.f * dist, -1.f * dist, -1.f * dist, D3DCOLOR_XRGB(0, 255, 255), },  // 3
-	//{ -1.f * dist,  1.f * dist,  1.f * dist, D3DCOLOR_XRGB(0, 0, 255), },     // ...
-	//{  1.f * dist,  1.f * dist,  1.f * dist, D3DCOLOR_XRGB(255, 0, 0), },
-	//{ -1.f * dist, -1.f * dist,  1.f * dist, D3DCOLOR_XRGB(0, 255, 0), },
-	//{  1.f * dist, -1.f * dist,  1.f * dist, D3DCOLOR_XRGB(0, 255, 255), },
-
 	std::vector<unsigned int> indices;
 	skyBoxObjectData = new ObjectData("skyBox", device, vertexes, indices, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	cubeObject = new SkyBoxObject("skyBox", cameraPos);
@@ -197,7 +188,7 @@ SkyBoxPass::SkyBoxPass(ID3D11Device * device, ID3D11DeviceContext* context, floa
 	sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
 	sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
 	sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
-	sampDesc.MinLOD = 0;
+	sampDesc.MinLOD = 0.f;
 	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
 
 	hr = device->CreateSamplerState(&sampDesc, &skyMapSamplerState);

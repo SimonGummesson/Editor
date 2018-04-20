@@ -38,9 +38,9 @@ private:
 	vector<Object*> objects;
 	vector<ObjectData*> objectData;
 
-	ID3D11Buffer* GSConstantBuffer;
-	ID3D11Buffer* PSConstantBuffer;
-	ID3D11Buffer* PSLightDataConstantBuffer;
+	ID3D11Buffer* VSMatrixCBuffer;
+	ID3D11Buffer* PSCameraCBuffer;
+	ID3D11Buffer* PSLightDataCBuffer;
 
 	//light members
 	ID3D11Buffer* lightBuffer;

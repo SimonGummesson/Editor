@@ -3,10 +3,10 @@
 Object::Object(std::string name)
 {
 	this->name = name;
-	this->worldMatrix = DirectX::XMMatrixIdentity();
-	this->translation = Vector3(0, 0, 0);
-	this->rotation = Vector3(0, 0, 0);
-	this->scaling = Vector3(1, 1, 1);
+	worldMatrix = DirectX::XMMatrixIdentity();
+	translation = Vector3(0.f, 0.f, 0.f);
+	rotation = Vector3(0.f, 0.f, 0.f);
+	scaling = Vector3(1.f, 1.f, 1.f);
 }
 
 Object::~Object()
@@ -15,7 +15,7 @@ Object::~Object()
 
 Matrix Object::getWorldMatrix()
 {
-	return this->worldMatrix;
+	return worldMatrix;
 }
 
 void Object::translate(Vector3 translation)
@@ -40,21 +40,21 @@ void Object::setRotation(Vector3 rotation)
 
 void Object::scale(Vector3 scale)
 {
-	this->scaling += scale;
+	scaling += scale;
 }
 
 void Object::setScale(Vector3 scale)
 {
-	this->scaling = scale;
+	scaling = scale;
 }
 
 void Object::updateWorldMatrix()
 {
-	this->worldMatrix = DirectX::XMMatrixScalingFromVector(this->scaling) * DirectX::XMMatrixRotationQuaternion(XMQuaternionRotationRollPitchYawFromVector(this->rotation)) * XMMatrixTranslationFromVector(this->translation);
+	worldMatrix = DirectX::XMMatrixScalingFromVector(scaling) * DirectX::XMMatrixRotationQuaternion(XMQuaternionRotationRollPitchYawFromVector(rotation)) * XMMatrixTranslationFromVector(translation);
 }
 
 std::string Object::getName()
 {
-	return this->name;
+	return name;
 }
 

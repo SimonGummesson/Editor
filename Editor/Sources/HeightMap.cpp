@@ -58,11 +58,11 @@ float HeightMap::triangleIntersection(Vector3 v0, Vector3 v1, Vector3 v2, Vector
 		float f = 1.f / a;
 		Vector3 s = origin - v0;
 		float u = f*(s.Dot(q));
-		if (u >= 0)
+		if (u >= 0.f)
 		{
 			Vector3 r = s.Cross(edge0);
 			float v = f*(dir.Dot(r));
-			if (v >= 0 && u + v <= 1)
+			if (v >= 0.f && u + v <= 1.f)
 			{
 				float t = f*(edge1.Dot(r));
 				if (t > 0.001f)

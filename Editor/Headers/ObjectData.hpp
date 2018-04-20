@@ -31,10 +31,8 @@ public:
 	void addOject(Object* object);
 	void Draw(ID3D11DeviceContext *deviceContext, Matrix VPMatrix, ID3D11Buffer* cbuffer);
 	void updateBuffer(ID3D11DeviceContext *deviceContext, Matrix worldMatrix, Matrix VPMatrix, ID3D11Buffer* cbuffer);
-	bool getType();
 	~ObjectData();
 private:
-	bool isTexture;
 	string ExtractNumber(char &check, ifstream &objFile);
 	string name;
 	ID3D11Buffer* vertexBuffer;

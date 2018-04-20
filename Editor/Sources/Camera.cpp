@@ -3,19 +3,19 @@
 Camera::Camera(float width, float height, float rotationSpeed, float walkSpeed, float runSpeed, float cameraHeight)
 {
 	this->rotationSpeed = rotationSpeed;
-	this->speed = walkSpeed;
+	speed = walkSpeed;
 	this->runSpeed = runSpeed;
 
-	this->position = Vector3(0.f, 0.f, 0.f);
-	this->rightVector = Vector3(1.f, 0.f, 0.f);
-	this->upVector = Vector3(0.f, 1.f, 0.f);
-	this->forwardVector = Vector3(0.f, 0.f, 1.f);
+	position = Vector3(0.f, 0.f, 0.f);
+	rightVector = Vector3(1.f, 0.f, 0.f);
+	upVector = Vector3(0.f, 1.f, 0.f);
+	forwardVector = Vector3(0.f, 0.f, 1.f);
 
-	this->viewMatrix = DirectX::XMMatrixLookAtLH(this->position, this->forwardVector + this->position, this->upVector);
-	this->projectionMatrix = DirectX::XMMatrixPerspectiveFovLH(3.141592f * 0.5f, width / height, 0.1f, 1000.f);
-	this->VPMatrix = this->viewMatrix * this->projectionMatrix;
+	viewMatrix = DirectX::XMMatrixLookAtLH(position, forwardVector + position, upVector);
+	projectionMatrix = DirectX::XMMatrixPerspectiveFovLH(3.141592f * 0.5f, width / height, 0.1f, 1000.f);
+	VPMatrix = viewMatrix * projectionMatrix;
 
-	this->heightMap = nullptr;
+	heightMap = nullptr;
 
 	this->cameraHeight = cameraHeight;
 }
@@ -54,7 +54,7 @@ void Camera::update(InputStatus& inputs, float dt)
 		float deltaX = (float)currentMousePos.x - (float)lastCursorPosition.x;
 		if (deltaX != 0.f)
 		{
-			float sign = signbit(deltaX) ? -1.0f : 1.0f;
+			float sign = signbit(deltaX) ? -1.f : 1.f;
 			Matrix rot = DirectX::XMMatrixRotationY(sign * rotationSpeed * dt);
 			setRight(Vector3::Transform(getRight(), rot));
 			setForward(Vector3::Transform(getForward(), rot));
@@ -62,16 +62,16 @@ void Camera::update(InputStatus& inputs, float dt)
 		}
 
 		//Vertical camera rotation
-		float deltaY = (float)currentMousePos.y - (float)this->lastCursorPosition.y;
+		float deltaY = (float)currentMousePos.y - (float)lastCursorPosition.y;
 		if (deltaY != 0.f)
 		{
-			float sign = signbit(deltaY) ? -1.0f : 1.0f;
+			float sign = signbit(deltaY) ? -1.f : 1.f;
 			Matrix rot = DirectX::XMMatrixRotationAxis(getRight(), sign * rotationSpeed * dt);
 			setUp(Vector3::Transform(getUp(), rot));
 			setForward(Vector3::Transform(getForward(), rot));
 			setRight(Vector3::Transform(getRight(), rot));
 		}
-		this->lastCursorPosition = currentMousePos;
+		lastCursorPosition = currentMousePos;
 	}
 	else
 		ShowCursor(TRUE);
@@ -87,12 +87,12 @@ void Camera::update(InputStatus& inputs, float dt)
 
 void Camera::moveCamera(Vector3 translation, bool run)
 {
-	this->position += translation * (run ? this->runSpeed : this->speed);
+	this->position += translation * (run ? runSpeed : speed);
 }
 
 void Camera::translateCamera(Vector3 translation)
 {
-	this->position += translation;
+	position += translation;
 }
 
 void Camera::setPosition(Vector3 vector)
@@ -102,29 +102,29 @@ void Camera::setPosition(Vector3 vector)
 
 void Camera::setViewMatrix(Matrix matrix)
 {
-	this->viewMatrix = matrix;
-	this->VPMatrix = this->viewMatrix * this->projectionMatrix;
+	viewMatrix = matrix;
+	VPMatrix = viewMatrix * projectionMatrix;
 }
 
 void Camera::setProjectionMatrix(Matrix matrix)
 {
-	this->projectionMatrix = matrix;
-	this->VPMatrix = this->viewMatrix * this->projectionMatrix;
+	projectionMatrix = matrix;
+	VPMatrix = viewMatrix * projectionMatrix;
 }
 
 void Camera::setRight(Vector3 vector)
 {
-	this->rightVector = vector;
+	rightVector = vector;
 }
 
 void Camera::setForward(Vector3 vector)
 {
-	this->forwardVector = vector;
+	forwardVector = vector;
 }
 
 void Camera::setUp(Vector3 vector)
 {
-	this->upVector = vector;
+	upVector = vector;
 }
 
 void Camera::setHeightMap(HeightMap * heightMap)
@@ -139,37 +139,37 @@ void Camera::setHeight(float height)
 
 Matrix Camera::getViewMatrix()
 {
-	return this->viewMatrix;
+	return viewMatrix;
 }
 
 Matrix Camera::getProjectionMatrix()
 {
-	return this->projectionMatrix;
+	return projectionMatrix;
 }
 
 Matrix Camera::getVPMatrix()
 {
-	return this->VPMatrix;
+	return VPMatrix;
 }
 
 Vector3 Camera::getForward()
 {
-	return this->forwardVector;
+	return forwardVector;
 }
 
 Vector3 Camera::getPosition()
 {
-	return this->position;
+	return position;
 }
 
 Vector3 Camera::getRight()
 {
-	return this->rightVector;
+	return rightVector;
 }
 
 Vector3 Camera::getUp()
 {
-	return this->upVector;
+	return upVector;
 }
 
 Vector3 * Camera::getPositionPointer()
