@@ -44,7 +44,7 @@ float4 PS_main(GS_OUT input) : SV_Target
 
         float NdotL = max(dot(normal, lightDirection), 0.f);
 
-        float specular = 0.f /*pow(dot(normalize(eyePos - input.WPos), reflect(lightDirection, normal)), specularPower)*/;
+        float specular = pow(max(dot(normalize(eyePos.xyz - input.WPos), reflect(lightDirection, normal)), 0.f), specularPower);
 
         finalColor += (NdotL * asfloat(lightDataByte.Load3(32 + i * 4 * 16 + 16 * 1)) * diffuseColor
             + specular * asfloat(lightDataByte.Load3(32 + i * 4 * 16 + 16 * 2)) * specularColor)
