@@ -20,6 +20,7 @@ public:
 	Object(std::string name);
 	virtual ~Object();
 	Matrix getWorldMatrix();
+	Vector3 getTranslation();
 	void translate(Vector3 translation);
 	void setTranslation(Vector3 translation);
 	void rotate(Vector3 rotation);

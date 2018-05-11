@@ -21,6 +21,7 @@ private:
 	HeightMap* heightMap;
 
 	float cameraHeight;
+	bool mousePressed;
 public:
 	Camera(float width, float height, float rotationSpeed, float walkSpeed, float runSpeed, float cameraHeight);
 	~Camera();

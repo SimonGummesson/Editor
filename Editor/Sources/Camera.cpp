@@ -6,7 +6,7 @@ Camera::Camera(float width, float height, float rotationSpeed, float walkSpeed, 
 	speed = walkSpeed;
 	this->runSpeed = runSpeed;
 
-	position = Vector3(0.f, 0.f, 0.f);
+	position = Vector3(0.f, 0.f, 7.5f);
 	rightVector = Vector3(1.f, 0.f, 0.f);
 	upVector = Vector3(0.f, 1.f, 0.f);
 	forwardVector = Vector3(0.f, 0.f, 1.f);
@@ -18,6 +18,7 @@ Camera::Camera(float width, float height, float rotationSpeed, float walkSpeed, 
 	heightMap = nullptr;
 
 	this->cameraHeight = cameraHeight;
+	mousePressed = false;
 }
 
 Camera::~Camera()
@@ -46,35 +47,46 @@ void Camera::update(InputStatus& inputs, float dt)
 
 	if (inputs.LMouse)
 	{
-		ShowCursor(FALSE);
-		POINT currentMousePos;
-		GetCursorPos(&currentMousePos);
-
-		//Horizontal camera rotation
-		float deltaX = (float)currentMousePos.x - (float)lastCursorPosition.x;
-		if (deltaX != 0.f)
+		if (mousePressed == true)
 		{
-			float sign = signbit(deltaX) ? -1.f : 1.f;
-			Matrix rot = DirectX::XMMatrixRotationY(sign * rotationSpeed * dt);
+			ShowCursor(FALSE);
+			POINT currentMousePos;
+			GetCursorPos(&currentMousePos);
+
+			//Horizontal camera rotation
+			Matrix rot = DirectX::XMMatrixRotationY(((float)currentMousePos.x - 400.f) * rotationSpeed * dt);
 			setRight(Vector3::Transform(getRight(), rot));
 			setForward(Vector3::Transform(getForward(), rot));
 			setUp(Vector3::Transform(getUp(), rot));
-		}
 
-		//Vertical camera rotation
-		float deltaY = (float)currentMousePos.y - (float)lastCursorPosition.y;
-		if (deltaY != 0.f)
-		{
-			float sign = signbit(deltaY) ? -1.f : 1.f;
-			Matrix rot = DirectX::XMMatrixRotationAxis(getRight(), sign * rotationSpeed * dt);
-			setUp(Vector3::Transform(getUp(), rot));
+			//Vertical camera rotation
+			rot = DirectX::XMMatrixRotationAxis(getRight(), ((float)currentMousePos.y - 400.f) * rotationSpeed * dt);
+
+			if (Vector3(0.f, 1.f, 0.f).Dot(Vector3::Transform(getForward(), rot)) > 0.9f)
+			{
+				forwardVector = Vector3(0.f, 0.f, 1.f);
+				upVector = Vector3(0.f, 1.f, 0.f);
+				rot = DirectX::XMMatrixRotationAxis(getRight(), 3.14159265f * 0.45f);
+			}
+
 			setForward(Vector3::Transform(getForward(), rot));
+			setUp(Vector3::Transform(getUp(), rot));
 			setRight(Vector3::Transform(getRight(), rot));
+
+			SetCursorPos(400, 400);
 		}
-		lastCursorPosition = currentMousePos;
+		else
+		{
+			ShowCursor(FALSE);
+			SetCursorPos(400, 400);
+			mousePressed = true;
+		}
 	}
 	else
+	{
+		mousePressed = false;
 		ShowCursor(TRUE);
+	}
 
 	float distanceToGround = heightMap->getIntersection(position);
 	if (distanceToGround < cameraHeight && distanceToGround != -1.f)

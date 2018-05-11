@@ -18,6 +18,11 @@ Matrix Object::getWorldMatrix()
 	return worldMatrix;
 }
 
+Vector3 Object::getTranslation()
+{
+	return translation;
+}
+
 void Object::translate(Vector3 translation)
 {
 	this->translation += translation;

@@ -3,6 +3,8 @@
 #include <d3d11.h>
 #include <d3dcompiler.h>
 #include <iostream>
+
+#pragma comment (lib, "fmod_vc.lib")
 #pragma comment (lib, "d3d11.lib")
 #pragma comment (lib, "d3dcompiler.lib")
 #include "../Headers/Editor.hpp"
@@ -11,16 +13,22 @@
 #include "../Headers/SkyBoxPass.hpp"
 #include "../Headers/Object.hpp"
 #include "../Headers/TestObject.hpp"
+#include "../Headers/StaticObject.hpp"
 #include "../Headers/structs.hpp"
 #include "../Headers/HeightMap.hpp"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "../Headers/stb_image.h"
 
+#include "fmod_errors.h"
+#include "fmod.hpp"
+
+
 HWND InitWindow(HINSTANCE hInstance);
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 
 void initiateheightMap(string filename, std::vector<VertexColor>& heightMapVertexes, std::vector<unsigned int>& heightMapIndices, float spacingX, float spacingZ, float heightScaling, int& heightmapWidth, int& heightmapHeight);
+float soundAtt(float dist);
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
 {
@@ -36,7 +44,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	if (wndHandle)
 	{
 		Editor editor(wndHandle, 1280.f, 1024.f, 60.f); // width, height, fps
-		Camera* camera = new Camera(1280.f, 1024.f, 1.75f, 10.f, 20.f, 5.f);
+		Camera* camera = new Camera(1280.f, 1024.f, 0.35f, 10.f, 20.f, 5.f);
 		editor.setRendererCamera(camera);
 
 		// Create standard pass for color objects
@@ -146,6 +154,9 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		ObjectData *box = new ObjectData("box", "Resources/Crate.obj",editor.getRenderer()->getDevice());
 		Object *boxObject = new TestObject("box");
 
+		ObjectData *signalMachine = new ObjectData("signalMachine", "Resources/SignalMachine.obj", editor.getRenderer()->getDevice());
+		Object *signalMachineObject = new StaticObject("signalMachine");
+
 		SkyBoxPass* skyBoxPass = new SkyBoxPass(editor.getRenderer()->getDevice(), editor.getRenderer()->getDeviceContext(), 1.f, camera->getWPMatrixPointer(), camera->getPositionPointer());
 		skyBoxPass->setCubeMap("Resources/skybox", ".png");
 		D3D11_INPUT_ELEMENT_DESC skyboxInputDesc[] = {
@@ -161,6 +172,11 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		texturePass->addObjectData(box);
 		texturePass->addObject(boxObject);
 
+		signalMachineObject->setTranslation({ 5.f, 0.f, -5.f });
+		signalMachineObject->updateWorldMatrix();
+		texturePass->addObjectData(signalMachine);
+		texturePass->addObject(signalMachineObject);
+
 		colorPass->addObjectData(quad);
 		colorPass->addObject(quadObject);
 		colorPass->addObject(quadObject2);
@@ -171,8 +187,32 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		editor.getRenderer()->addPass(colorPass);
 		editor.getRenderer()->addPass(texturePass);
 		editor.getRenderer()->addPass(skyBoxPass);
+
+		// Sound
+		FMOD_RESULT result;
+		FMOD::System *soundSystem = NULL;
+
+		result = FMOD::System_Create(&soundSystem);      // Create the main system object.
+		if (result != FMOD_OK)
+		{
+			printf("FMOD error! (%d) %s\n", result, FMOD_ErrorString(result));
+			exit(-1);
+		}
+
+		result = soundSystem->init(512, FMOD_INIT_NORMAL, 0);    // Initialize FMOD.
+		if (result != FMOD_OK)
+		{
+			printf("FMOD error! (%d) %s\n", result, FMOD_ErrorString(result));
+			exit(-1);
+		}
 		ShowWindow(wndHandle, nCmdShow);
 
+		FMOD::Channel* channel;
+		FMOD::Sound* sound;
+		result = soundSystem->createSound("Resources/whitenoise.wav", FMOD_LOOP_NORMAL, NULL, &sound);
+		soundSystem->playSound(sound, NULL, false, &channel);
+
+		bool answer = true;
 		while (WM_QUIT != msg.message)
 		{
 			if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
@@ -181,7 +221,10 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 				DispatchMessage(&msg);
 			}
 			else
+			{
+				channel->setVolume(soundAtt(Vector3(signalMachineObject->getTranslation() - camera->getPosition()).Length()));
 				editor.update();
+			}
 		}
 		DestroyWindow(wndHandle);
 	}
@@ -217,6 +260,11 @@ HWND InitWindow(HINSTANCE hInstance)
 		nullptr);
 
 	return handle;
+}
+
+float soundAtt(float dist)
+{
+	return exp(-0.1f * dist);
 }
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)

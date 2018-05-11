@@ -127,7 +127,10 @@ ObjectData::ObjectData(string name, string fileName, ID3D11Device * device)
 						if (i == 0)
 							stringstream(number) >> UV.x;
 						if (i == 1)
+						{
 							stringstream(number) >> UV.y;
+							UV.y = 1.f - UV.y; // blender uses opengl as it's rendering API. (0, 0) in opengl is bottom left while (0, 0) is top left in direct X
+						}
 					}
 					crateUvList.push_back(UV);
 				}
