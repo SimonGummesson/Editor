@@ -11,6 +11,7 @@
 #include "texturePass.hpp"
 #include "Camera.hpp"
 #include "SimpleMath.h"
+#include "SoundManager.hpp"
 
 using namespace DirectX::SimpleMath;
 
@@ -28,6 +29,7 @@ private:
 
 	vector<Pass*> passes;
 	Camera* camera;
+	SoundManager* soundManager;
 	std::string command;
 
 	void getInput(float dt);
@@ -40,6 +42,7 @@ public:
 	void update(float dt);
 	void addPass(Pass *colorPass);
 	void setCamera(Camera* camera);
+	SoundManager* getSoundManager();
 	IDXGISwapChain* getSwapChain();
 	ID3D11Device* getDevice();
 	ID3D11DeviceContext* getDeviceContext();

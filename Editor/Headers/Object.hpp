@@ -21,6 +21,7 @@ public:
 	virtual ~Object();
 	Matrix getWorldMatrix();
 	Vector3 getTranslation();
+	Vector3* getTranslationPointer();
 	void translate(Vector3 translation);
 	void setTranslation(Vector3 translation);
 	void rotate(Vector3 rotation);

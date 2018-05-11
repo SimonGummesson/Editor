@@ -164,6 +164,7 @@
     <ClCompile Include="Sources\main.cpp" />
     <ClCompile Include="Sources\SkyBoxObject.cpp" />
     <ClCompile Include="Sources\skyBoxPass.cpp" />
+    <ClCompile Include="Sources\SoundManager.cpp" />
     <ClCompile Include="Sources\StaticObject.cpp" />
     <ClCompile Include="Sources\TestObject.cpp" />
     <ClCompile Include="Sources\texturePass.cpp" />
@@ -209,6 +210,7 @@
     <ClInclude Include="Headers\SimpleMath.h" />
     <ClInclude Include="Headers\SkyBoxObject.hpp" />
     <ClInclude Include="Headers\SkyBoxPass.hpp" />
+    <ClInclude Include="Headers\SoundManager.hpp" />
     <ClInclude Include="Headers\StaticObject.hpp" />
     <ClInclude Include="Headers\stb_image.h" />
     <ClInclude Include="Headers\structs.hpp" />

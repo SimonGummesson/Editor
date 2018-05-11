@@ -23,6 +23,11 @@ Vector3 Object::getTranslation()
 	return translation;
 }
 
+Vector3 * Object::getTranslationPointer()
+{
+	return &translation;
+}
+
 void Object::translate(Vector3 translation)
 {
 	this->translation += translation;

@@ -105,6 +105,8 @@ Renderer::Renderer(HWND& wndHandle, float width, float height)
 	vp.TopLeftX = 0.f;
 	vp.TopLeftY = 0.f;
 	deviceContext->RSSetViewports(1, &vp);
+
+	soundManager = new SoundManager();
 }
 
 void Renderer::drawFrame()
@@ -123,6 +125,7 @@ void Renderer::update(float dt)
 {
 	getInput(dt);
 	camera->update(inputs, dt);
+	soundManager->update();
 	for (size_t i = 0; i < passes.size(); i++)
 		passes[i]->update(dt);
 }
@@ -135,6 +138,12 @@ void Renderer::addPass(Pass * pass)
 void Renderer::setCamera(Camera * camera)
 {
 	this->camera = camera;
+	soundManager->setPlayerPosPointer(camera->getPositionPointer());
+}
+
+SoundManager * Renderer::getSoundManager()
+{
+	return soundManager;
 }
 
 IDXGISwapChain * Renderer::getSwapChain()
@@ -161,8 +170,10 @@ Renderer::~Renderer()
 {
 	for (size_t i = 0; i < passes.size(); i++)
 		delete passes[i];
+
 	delete camera;
-	
+	delete soundManager;
+
 	backBufferRTV->Release();
 	swapChain->Release();
 	device->Release();
