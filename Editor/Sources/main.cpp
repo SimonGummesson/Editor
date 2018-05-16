@@ -79,15 +79,15 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		light2.maxDist = 5.f;
 		light2.diffuseColor = float4(1.f, 0.f, 0.f, 1.f);
 		light2.specularColor = float4(1.f, 0.f, 0.f, 1.f);
-		light2.position = float4(10.f, 5.f, 0.f, 0.f);
+		light2.position = float4(60.f, 5.f, 0.f, 0.f);
 
 		Light light3 = Light(POINT_LIGHT);
 		light3.attA = 0.f;
 		light3.attB = 0.01f;
-		light3.maxDist = 5.f;
-		light3.diffuseColor = float4(0.f, 0.f, 1.f, 1.f);
+		light3.maxDist = 50.f;
+		light3.diffuseColor = float4(1.f, 1.f, 1.f, 1.f);
 		light3.specularColor = float4(0.f, 0.f, 1.f, 1.f);
-		light3.position = float4(-10.f, 5.f, 0.f, 0.f);
+		light3.position = float4(0.f, 15.f, 50.f, 0.f);
 
 		Light light4 = Light(DIRECTIONAL_LIGHT);
 		light4.diffuseColor = float4(0.05f, 0.05f, 0.05f, 1.f);
@@ -148,10 +148,15 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
 		camera->setHeightMap(HeightMapObject);
 		ObjectData *box = new ObjectData("box", "Resources/Crate.obj",editor.getRenderer()->getDevice());
-		Object *boxObject = new TestObject("box");
+		Object *boxObject = new StaticObject("box");
+		boxObject->setTranslation({ 60.f, 1.f, 0.f });
+		boxObject->updateWorldMatrix();
 
 		ObjectData *signalMachine = new ObjectData("signalMachine", "Resources/SignalMachine.obj", editor.getRenderer()->getDevice());
 		Object *signalMachineObject = new StaticObject("signalMachine");
+
+		signalMachineObject->setTranslation({ 5.f, 0.f, -5.f });
+		signalMachineObject->updateWorldMatrix();
 
 		SkyBoxPass* skyBoxPass = new SkyBoxPass(editor.getRenderer()->getDevice(), editor.getRenderer()->getDeviceContext(), 1.f, camera->getWPMatrixPointer(), camera->getPositionPointer());
 		skyBoxPass->setCubeMap("Resources/skybox", ".png");
@@ -164,14 +169,31 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		skyBoxPass->setVertexSizeAndOffset(sizeof(VertexUV), 0);
 		skyBoxPass->setPixelShader(editor.getRenderer()->getDevice(), L"Shaders/Sky box pass/skyBoxPixelShader.hlsl");
 
-		boxObject->setTranslation({0.f, 5.f, 0.f});
+		ObjectData *radio = new ObjectData("radio", "Resources/RadioEngine.obj", editor.getRenderer()->getDevice());
+		Object *radioObject = new StaticObject("radio");
+
+		radioObject->setTranslation({ 0.f, 0.f, 60.f });
+		radioObject->setScale({ 10.f, 10.f, 10.f });
+		radioObject->updateWorldMatrix();
+
+		editor.getRenderer()->getSoundManager()->addSound("whiteNoise", "Resources/whitenoise.wav", signalMachineObject->getTranslationPointer(), 50, 0.05f, Loop);
+		editor.getRenderer()->getSoundManager()->playSound("whiteNoise");
+
+		editor.getRenderer()->getSoundManager()->addSound("scratching", "Resources/scratching.wav", boxObject->getTranslationPointer(), 50, 1.f, Loop);
+		editor.getRenderer()->getSoundManager()->playSound("scratching");
+
+		editor.getRenderer()->getSoundManager()->addSound("countryRoads", "Resources/CountryRoads.mp3", radioObject->getTranslationPointer(), 100, 1.f, Loop);
+		editor.getRenderer()->getSoundManager()->playSound("countryRoads");
+
+		editor.getRenderer()->getSoundManager()->addSound("ambient", "Resources/Thief ambience.mp3", nullptr, 0, 0.1f, Loop, true);
+		editor.getRenderer()->getSoundManager()->playSound("ambient");
+
+		texturePass->addObjectData(radio);
+		texturePass->addObject(radioObject);
+
 		texturePass->addObjectData(box);
 		texturePass->addObject(boxObject);
 
-		signalMachineObject->setTranslation({ 5.f, 0.f, -5.f });
-		signalMachineObject->updateWorldMatrix();
-		editor.getRenderer()->getSoundManager()->addSound("whiteNoise", "Resources/whitenoise.wav", signalMachineObject->getTranslationPointer(), 50, Loop);
-		editor.getRenderer()->getSoundManager()->playSound("whiteNoise");
 		texturePass->addObjectData(signalMachine);
 		texturePass->addObject(signalMachineObject);
 

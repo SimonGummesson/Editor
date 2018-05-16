@@ -125,7 +125,7 @@ void Renderer::update(float dt)
 {
 	getInput(dt);
 	camera->update(inputs, dt);
-	soundManager->update();
+	soundManager->update(camera->getViewMatrix());
 	for (size_t i = 0; i < passes.size(); i++)
 		passes[i]->update(dt);
 }
