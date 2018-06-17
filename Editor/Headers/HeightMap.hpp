@@ -7,8 +7,8 @@ public:
 	HeightMap(std::string name, std::vector<VertexColor> vertices, Vector2 quadDimension);
 	~HeightMap();
 	void update(float dt) override;
-	float getIntersection(Vector3 pos);
-	float triangleIntersection(Vector3 v0, Vector3 v1, Vector3 v2, Vector3 dir, Vector3 origin);
+	float getIntersection(Vector3 pos) const;
+	float triangleIntersection(Vector3 v0, Vector3 v1, Vector3 v2, Vector3 dir, Vector3 origin) const;
 	void setQuadDimensions(float quadWidth, float quadHeight);
 	void setDimensions(int width, int height);
 private:

@@ -42,10 +42,10 @@ public:
 	void update(float dt);
 	void addPass(Pass *colorPass);
 	void setCamera(Camera* camera);
-	SoundManager* getSoundManager();
-	IDXGISwapChain* getSwapChain();
-	ID3D11Device* getDevice();
-	ID3D11DeviceContext* getDeviceContext();
-	ID3D11RenderTargetView* getBackBufferRTV();
+	SoundManager* const getSoundManager();
+	IDXGISwapChain* const getSwapChain();
+	ID3D11Device* const getDevice();
+	ID3D11DeviceContext* const getDeviceContext();
+	ID3D11RenderTargetView* const getBackBufferRTV();
 	~Renderer();
 };

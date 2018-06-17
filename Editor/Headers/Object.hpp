@@ -17,11 +17,11 @@ protected:
 	Vector3 scaling;
 
 public:
-	Object(std::string name);
+	explicit Object(std::string name);
 	virtual ~Object();
-	Matrix getWorldMatrix();
-	Vector3 getTranslation();
-	Vector3* getTranslationPointer();
+	Matrix getWorldMatrix() const;
+	Vector3 getTranslation() const;
+	Vector3* const getTranslationPointer();
 	void translate(Vector3 translation);
 	void setTranslation(Vector3 translation);
 	void rotate(Vector3 rotation);
@@ -30,5 +30,5 @@ public:
 	void setScale(Vector3 scale);
 	void updateWorldMatrix();
 	virtual void update(float dt) = 0;
-	std::string getName();
+	std::string getName() const;
 };

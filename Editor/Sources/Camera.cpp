@@ -149,47 +149,47 @@ void Camera::setHeight(float height)
 	cameraHeight = height;
 }
 
-Matrix Camera::getViewMatrix()
+Matrix Camera::getViewMatrix() const
 {
 	return viewMatrix;
 }
 
-Matrix Camera::getProjectionMatrix()
+Matrix Camera::getProjectionMatrix() const
 {
 	return projectionMatrix;
 }
 
-Matrix Camera::getVPMatrix()
+Matrix Camera::getVPMatrix() const
 {
 	return VPMatrix;
 }
 
-Vector3 Camera::getForward()
+Vector3 Camera::getForward() const
 {
 	return forwardVector;
 }
 
-Vector3 Camera::getPosition()
+Vector3 Camera::getPosition() const
 {
 	return position;
 }
 
-Vector3 Camera::getRight()
+Vector3 Camera::getRight() const
 {
 	return rightVector;
 }
 
-Vector3 Camera::getUp()
+Vector3 Camera::getUp() const
 {
 	return upVector;
 }
 
-Vector3 * Camera::getPositionPointer()
+Vector3 *const Camera::getPositionPointer()
 {
 	return &position;
 }
 
-Matrix * Camera::getWPMatrixPointer()
+Matrix *const Camera::getWPMatrixPointer()
 {
 	return &VPMatrix;
 }

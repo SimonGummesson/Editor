@@ -16,7 +16,7 @@ void HeightMap::update(float dt)
 	return;
 }
 
-float HeightMap::getIntersection(Vector3 pos)
+float HeightMap::getIntersection(Vector3 pos) const
 {
 	// Transfer position into heightmaps model space
 	pos = pos - translation;
@@ -46,7 +46,7 @@ float HeightMap::getIntersection(Vector3 pos)
 	return -1.f;
 }
 
-float HeightMap::triangleIntersection(Vector3 v0, Vector3 v1, Vector3 v2, Vector3 dir, Vector3 origin)
+float HeightMap::triangleIntersection(Vector3 v0, Vector3 v1, Vector3 v2, Vector3 dir, Vector3 origin) const
 {
 	bool hit = false;
 	Vector3 edge0 = v1 - v0;

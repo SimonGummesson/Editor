@@ -325,37 +325,37 @@ ObjectData::ObjectData(string name, string fileName, ID3D11Device * device)
 	}
 }
 
-string ObjectData::getName()
+string ObjectData::getName() const
 {
 	return name;
 }
 
-ID3D11Buffer ** ObjectData::getVertexBuffer()
+ID3D11Buffer ** const ObjectData::getVertexBuffer()
 {
 	return &vertexBuffer;
 }
 
-ID3D11Buffer ** ObjectData::getIndexBuffer()
+ID3D11Buffer ** const ObjectData::getIndexBuffer()
 {
 	return &indexBuffer;
 }
 
-ID3D11ShaderResourceView ** ObjectData::getTextureView()
+ID3D11ShaderResourceView ** const ObjectData::getTextureView()
 {
 	return &textureView;
 }
 
-unsigned int ObjectData::getVertexCount()
+unsigned int ObjectData::getVertexCount() const
 {
 	return vertexCount;
 }
 
-unsigned int ObjectData::getIndexCount()
+unsigned int ObjectData::getIndexCount() const
 {
 	return indexCount;
 }
 
-D3D_PRIMITIVE_TOPOLOGY ObjectData::getPrimitiveTopology()
+D3D_PRIMITIVE_TOPOLOGY ObjectData::getPrimitiveTopology() const
 {
 	return primitiveTopology;
 }

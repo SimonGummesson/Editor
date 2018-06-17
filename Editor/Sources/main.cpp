@@ -134,7 +134,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		int heightMapWidth, heightMapHeight;
 		float spacingX = 1.f;
 		float spacingZ = 1.f;
-		initiateheightMap("Resources/heightmap.png", heightMapVertexes, heightMapIndices, spacingX, spacingZ, 5.f, heightMapWidth, heightMapHeight);
+		initiateheightMap("Resources/heightmap.png", heightMapVertexes, heightMapIndices, spacingX, spacingZ, 50.f, heightMapWidth, heightMapHeight);
 
 		ObjectData *heightMapData = new ObjectData("heightMap", editor.getRenderer()->getDevice(), heightMapVertexes, heightMapIndices, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 		heightMapData->lightData.ambientColor = Vector3(0.3f, 0.3f, 0.3f);
@@ -281,12 +281,12 @@ void initiateheightMap(string filename, std::vector<VertexColor>& heightMapVerte
 	{
 		for (int x = 0; x < heightmapWidth; x++)
 		{
-			VertexColor v0;
+			VertexColor vertex;
 
-			v0.position = Vector3(x * spacingX, rgb[z * heightmapWidth + x] * heightScaling, z * spacingZ);
-			v0.color = Vector3(0.25f, 1.f, 0.25f);
+			vertex.position = Vector3(x * spacingX, rgb[z * heightmapWidth + x] * heightScaling, z * spacingZ);
+			vertex.color = Vector3(0.25f, 1.f, 0.25f);
 
-			heightMapVertexes.push_back(v0);
+			heightMapVertexes.push_back(vertex);
 		}
 	}
 
@@ -346,6 +346,6 @@ void initiateheightMap(string filename, std::vector<VertexColor>& heightMapVerte
 		}
 
 		heightMapIndices.push_back(heightMapIndices[heightMapIndices.size() - 1]);
-		heightMapIndices.push_back((z + 2) * heightmapWidth);
+		heightMapIndices.push_back((z + 1) * heightmapWidth);
 	}
 }

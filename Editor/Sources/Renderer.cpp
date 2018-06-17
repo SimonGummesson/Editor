@@ -146,27 +146,27 @@ void Renderer::setCamera(Camera * camera)
 	soundManager->setPlayerPosPointer(camera->getPositionPointer());
 }
 
-SoundManager * Renderer::getSoundManager()
+SoundManager * const Renderer::getSoundManager()
 {
 	return soundManager;
 }
 
-IDXGISwapChain * Renderer::getSwapChain()
+IDXGISwapChain * const Renderer::getSwapChain()
 {
 	return swapChain;
 }
 
-ID3D11Device * Renderer::getDevice()
+ID3D11Device * const Renderer::getDevice()
 {
 	return device;
 }
 
-ID3D11DeviceContext * Renderer::getDeviceContext()
+ID3D11DeviceContext * const Renderer::getDeviceContext()
 {
 	return deviceContext;
 }
 
-ID3D11RenderTargetView * Renderer::getBackBufferRTV()
+ID3D11RenderTargetView * const Renderer::getBackBufferRTV()
 {
 	return backBufferRTV;
 }

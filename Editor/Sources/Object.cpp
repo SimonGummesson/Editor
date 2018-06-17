@@ -13,17 +13,17 @@ Object::~Object()
 {
 }
 
-Matrix Object::getWorldMatrix()
+Matrix Object::getWorldMatrix() const
 {
 	return worldMatrix;
 }
 
-Vector3 Object::getTranslation()
+Vector3 Object::getTranslation() const
 {
 	return translation;
 }
 
-Vector3 * Object::getTranslationPointer()
+Vector3 * const Object::getTranslationPointer()
 {
 	return &translation;
 }
@@ -63,7 +63,7 @@ void Object::updateWorldMatrix()
 	worldMatrix = DirectX::XMMatrixScalingFromVector(scaling) * DirectX::XMMatrixRotationQuaternion(XMQuaternionRotationRollPitchYawFromVector(rotation)) * XMMatrixTranslationFromVector(translation);
 }
 
-std::string Object::getName()
+std::string Object::getName() const
 {
 	return name;
 }

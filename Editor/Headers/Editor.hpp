@@ -8,7 +8,7 @@ class Editor
 public:
 	float fps;
 	void update();
-	Renderer* getRenderer();
+	Renderer* const getRenderer();
 	void setRendererCamera(Camera* camera);
 	Editor(HWND &wndHandle, float width, float height, float fps);
 	~Editor();

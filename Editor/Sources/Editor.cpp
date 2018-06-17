@@ -17,7 +17,7 @@ void Editor::update()
 	}
 }
 
-Renderer * Editor::getRenderer()
+Renderer * const Editor::getRenderer()
 {
 	return renderer;
 }
