@@ -6,7 +6,7 @@ Camera::Camera(float width, float height, float rotationSpeed, float walkSpeed, 
 	speed = walkSpeed;
 	this->runSpeed = runSpeed;
 
-	position = Vector3(0.f, 0.f, 7.5f);
+	position = Vector3(0.f, 5.f, 0.f);
 	rightVector = Vector3(1.f, 0.f, 0.f);
 	upVector = Vector3(0.f, 1.f, 0.f);
 	forwardVector = Vector3(0.f, 0.f, 1.f);
@@ -45,7 +45,7 @@ void Camera::update(InputStatus& inputs, float dt)
 	if (inputs.LCTRLKey)
 		moveCamera({ 0, -dt, 0 }, running);
 
-	if (inputs.LMouse)
+	if (inputs.RMouse)
 	{
 		if (mousePressed == true)
 		{

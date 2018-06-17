@@ -50,6 +50,7 @@ public:
 	void setPlayerPosPointer(Vector3* pointer);
 	void addSound(std::string name, std::string source, Vector3* origin, float dist, float volumefactor, soundSettings setting, bool ambient = false);
 	void playSound(std::string name);
+	void stopSound(std::string name);
 	void update(Matrix viewMatrix);
 private:
 	float soundAttenuation(float a, float dist);

@@ -9,7 +9,7 @@ void Renderer::getInput(float dt)
 	inputs.ShiftKey = GetAsyncKeyState(VK_SHIFT);
 	inputs.SpaceKey = GetAsyncKeyState(VK_SPACE);
 	inputs.LCTRLKey = GetAsyncKeyState(VK_CONTROL);
-	inputs.LMouse = GetAsyncKeyState(VK_LBUTTON);
+	inputs.RMouse = GetAsyncKeyState(VK_RBUTTON);
 }
 
 Renderer::Renderer(HWND& wndHandle, float width, float height)
@@ -125,6 +125,11 @@ void Renderer::update(float dt)
 {
 	getInput(dt);
 	camera->update(inputs, dt);
+	if (inputs.WKey || inputs.AKey || inputs.SKey || inputs.DKey)
+		soundManager->playSound("Footsteps");
+	else
+		soundManager->stopSound("Footsteps");
+
 	soundManager->update(camera->getViewMatrix());
 	for (size_t i = 0; i < passes.size(); i++)
 		passes[i]->update(dt);

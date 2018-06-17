@@ -108,7 +108,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		texturePass->setAmbientLight(Vector3(0.05f, 0.05f, 0.05f));
 		texturePass->updateLightBuffer(editor.getRenderer()->getDeviceContext());
 
-		std::vector<VertexColor> vertexes;
+		/*std::vector<VertexColor> vertexes;
 		vertexes.push_back(VertexColor({ -0.5f, -0.5f, 3.f }, { 1.f, 0.f, 0.f }, { 0.f, 0.f, -1.f }));
 		vertexes.push_back(VertexColor({ -0.5f,  0.5f, 3.f }, { 0.f, 1.f, 0.f }, { 0.f, 0.f, -1.f }));
 		vertexes.push_back(VertexColor({  0.5f, -0.5f, 3.f }, { 0.f, 1.f, 0.f }, { 0.f, 0.f, -1.f }));
@@ -126,7 +126,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		quadObject2->setTranslation({ 0.f, 20.f, 0.f });
 		quadObject2->scale({ 10.5f, 10.5f, 0.f });
 		quadObject2->rotate({0.f, 0.f, 3.14159265359f / 2.f });
-		quadObject2->updateWorldMatrix();
+		quadObject2->updateWorldMatrix();*/
 
 
 		std::vector<VertexColor> heightMapVertexes;
@@ -182,11 +182,13 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		editor.getRenderer()->getSoundManager()->addSound("scratching", "Resources/scratching.wav", boxObject->getTranslationPointer(), 50, 1.f, Loop);
 		editor.getRenderer()->getSoundManager()->playSound("scratching");
 
-		editor.getRenderer()->getSoundManager()->addSound("countryRoads", "Resources/CountryRoads.mp3", radioObject->getTranslationPointer(), 100, 1.f, Loop);
+		editor.getRenderer()->getSoundManager()->addSound("countryRoads", "Resources/CountryRoadsMono.wav", radioObject->getTranslationPointer(), 100, 1.f, Loop);
 		editor.getRenderer()->getSoundManager()->playSound("countryRoads");
 
 		editor.getRenderer()->getSoundManager()->addSound("ambient", "Resources/Thief ambience.mp3", nullptr, 0, 0.1f, Loop, true);
 		editor.getRenderer()->getSoundManager()->playSound("ambient");
+
+	//	editor.getRenderer()->getSoundManager()->addSound("Footsteps", "Resources/Footsteps.mp3", camera->getPositionPointer(), 1, 1.f, Loop);
 
 		texturePass->addObjectData(radio);
 		texturePass->addObject(radioObject);
@@ -197,9 +199,9 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		texturePass->addObjectData(signalMachine);
 		texturePass->addObject(signalMachineObject);
 
-		colorPass->addObjectData(quad);
+	/*	colorPass->addObjectData(quad);
 		colorPass->addObject(quadObject);
-		colorPass->addObject(quadObject2);
+		colorPass->addObject(quadObject2);*/
 
 		colorPass->addObjectData(heightMapData);
 		colorPass->addObject(HeightMapObject);

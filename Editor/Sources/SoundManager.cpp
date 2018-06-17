@@ -27,24 +27,42 @@ void SoundManager::setPlayerPosPointer(Vector3 * pointer)
 
 void SoundManager::addSound(std::string name, std::string source, Vector3* origin, float dist, float volumefactor, soundSettings setting, bool ambient)
 {
+	FMOD_RESULT result;
+
+	// In the third parameter a calculation is performed in which the constant "a" in "y = e^(-ax)" is calculated when y is equal to 0.01
+	// if 0 is specified then the sound will be a considered to be ambient, during normal calculations the a constant can never assume a value of 0.
 	Sound* sound = new Sound(name, origin, ambient ? 0.f : log(0.01f) / -dist, volumefactor);
-	soundSystem->createSound(source.c_str(), setting, NULL, &sound->sound);
+	result = soundSystem->createSound(source.c_str(), setting, NULL, &sound->sound);
 	soundList[name] = sound;
 }
 
 void SoundManager::playSound(std::string name)
 {
+	FMOD_RESULT result;
 	std::map<std::string, Sound*>::iterator it = soundList.find(name);
 
 	if (soundList.end() != it) // if found the sound
 	{
-		soundSystem->playSound(it->second->sound, NULL, false, &it->second->channel);
-		it->second->channel->setVolume(it->second->volumeFactor);
+		bool status;
+		result = it->second->channel->isPlaying(&status);
+		if (status)
+			return;
+		result = soundSystem->playSound(it->second->sound, NULL, false, &it->second->channel);
+		result = it->second->channel->setVolume(it->second->volumeFactor);
 	}
+}
+
+void SoundManager::stopSound(std::string name)
+{
+	std::map<std::string, Sound*>::iterator it = soundList.find(name);
+
+	if (soundList.end() != it)
+		it->second->channel->stop();
 }
 
 void SoundManager::update(Matrix viewMatrix)
 {
+	soundSystem->update();
 	for (auto c : soundList)
 	{
 		if (c.second->maxDist != 0.f)

@@ -5,7 +5,7 @@ using namespace DirectX::SimpleMath;
 struct InputStatus {
 	SHORT WKey, AKey, SKey, DKey;
 	SHORT ShiftKey, SpaceKey, LCTRLKey;
-	SHORT LMouse;
+	SHORT RMouse;
 };
 
 struct VertexColor {
